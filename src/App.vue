@@ -2,6 +2,7 @@
 
 </script>
 
-<style rel="stylesheet/less" lang="less">
-
+<style>
+    @import "../static/1px.wxss";
+    @import "../static/font.wxss";
 </style>

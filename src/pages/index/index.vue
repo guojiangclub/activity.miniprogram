@@ -1,46 +1,62 @@
 <template>
   <div id="activity-index">
-    <div class="search">
-      <input type="text" placeholder="想要参与的活动" placeholder-class="input-placeholder"/>
-    </div>
-    <div class="tab">
-      <div class="tab-title">
-        <div class="city" :class="activeIndex == 0 ? 'tabactive':''" @click="choosecity(0)">
-          <span class="name">选择城市</span>
-          <span class="iconfont icon-gouwuche"></span>
-          <scroll-view scroll-y @scrolltolower="lower" :class="maskcity ? 'cur':''">
-            <div class="type-content">
-              <div data-id="all">所有城市</div>
-              <div v-for="item in cityList">{{item.name}}</div>
-            </div>
-          </scroll-view>
-        </div>
-        <div class="classify" :class="activeIndex == 1 ? 'tabactive':''" @click="choosefy(1)">
-          <span class="name">活动类型</span>
-          <span class="iconfont icon-gouwuche"></span>
-          <scroll-view scroll-y :class="maskfy ? 'cur':''">
-            <div class="type-content">
-              <div class="active">所有分类</div>
-              <div>赛事报名</div>
-              <div>志愿者报名</div>
-            </div>
-          </scroll-view>
-        </div>
+    <div class="pagetop">
+      <div class="search">
+        <input type="text" placeholder="想要参与的活动" placeholder-class="input-placeholder"/>
       </div>
-      <div class="tab-pop" :class="mask ? 'cur':''"></div>
+      <div class="tab">
+        <div class="tab-title">
+          <!--<div class="city" :class="activeIndex == 0 ? 'tabactive':''" @click="choosecity(0)">
+            <span class="name">选择城市</span>
+            <span class="iconfont icon-gouwuche"></span>
+            <scroll-view scroll-y @scrolltolower="lower" :class="maskcity ? 'cur':''">
+              <div class="type-content">
+                <div data-id="all">所有城市</div>
+                <div v-for="item in cityList">{{item.name}}</div>
+              </div>
+            </scroll-view>
+          </div>
+          <div class="classify" :class="activeIndex == 1 ? 'tabactive':''" @click="choosefy(1)">
+            <span class="name">活动类型</span>
+            <span class="iconfont icon-gouwuche"></span>
+            <scroll-view scroll-y :class="maskfy ? 'cur':''">
+              <div class="type-content">
+                <div class="active">所有分类</div>
+                <div>赛事报名</div>
+                <div>志愿者报名</div>
+              </div>
+            </scroll-view>
+          </div>-->
+          <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'']">
+            <span class="name">{{item.title}}</span>
+            <span class="iconfont"></span>
+            <!--<scroll-view scroll-y @scrolltolower="lower">-->
+            <div class="type-content">
+              <div :class="" v-for="(k,i) in item.content" @click="change(i,index)" :class="[k.active ? 'active' :'']">{{k.title}}</div>
+            </div>
+            <!--</scroll-view>-->
+          </div>
+        </div>
+        <div class="tab-pop" v-if="isPop"></div>
+      </div>
     </div>
     <div class="tab-content">
-      <div class="item">
+      <div class="no-more" v-if="activityData.length==0">没有更多了</div>
+      <div class="item mx-1px-bottom" v-for="(t,j) in activityData">
         <div class="info-left">
-          <image src="http://img4.imgtn.bdimg.com/it/u=3589159941,155458327&fm=27&gp=0.jpg"></image>
+          <image :src="t.img_list"></image>
         </div>
         <div class="info-rigth">
-          <div class="name">五一特惠 长沙一日游洲橘子岳麓三岳麓三岳麓三</div>
-          <div class="time">2018.04.30 周一 10:00 - 2018.05.122018.05.122018.05.12</div>
-          <div class="address">湖南省长沙市岳麓区</div>
+          <div class="name">{{t.title}}</div>
+          <div class="time">{{ t.starts_at | time(t.ends_at) }}</div>
+          <div class="address">{{t.address}}</div>
           <div class="money">
-            <span class="text">￥290.00</span>
-            <span class="enroll-btn">活动报名中</span>
+            <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
+            <span class="text" v-if="t.payments[0] && t.payments[0].type == 0">{{t.payments[0].point}}积分</span>
+            <span class="text" v-if="t.payments[0] && t.payments[0].type == 1">￥{{t.payments[0].price}}</span>
+            <span class="text" v-if="t.payments[0] && t.payments[0].type == 2">￥{{t.payments[0].price}}+{{t.payments[0].point}}积分</span>
+            <span class="text" v-if="t.payments[0] && t.payments[0].type == 4">￥{{t.payments[0].price}}</span>
+            <span class="enroll-btn" :class="{'red' : t.status==1}">{{t.txt}}</span>
           </div>
         </div>
       </div>
@@ -56,25 +72,62 @@
 export default {
   data () {
     return {
-        tabtitle:[{
-            name:"选择城市",
-            type:0
+        tabTitleList:[{
+            title:"选择城市",
+            name:"city",
+            content:[{
+                title:"所有城市",
+                active:true,
+                id:'all'
+            }],
+            active:false
         }, {
-            name:"活动类型",
-            type:1
+            title:"活动类型",
+            name:'time',
+            content:[{
+                title:'所有分类',
+                active:true,
+                id:'all'
+            }],
+            active:false
         }],
-        activeIndex:2,
-        maskcity:false,
-        maskfy:false,
+        isPop:false,
+        submitDatas:{
+            "city":"all",
+            "time":"all"
+        },
       cityList:[],//城市列表
-      cityPage:{
+      activityPage:{
           page:1,
           hasMore:true, //图片列表是否加载更多
           per_page:''//分页每页数量
-      }
+      },
+        activityData:[],
     }
   },
-
+    //小程序触底事件
+    onReachBottom() {
+        //城市加载更多
+            wx.showLoading({
+                title:"加载中",
+                mask:true
+            });
+            var page = this.activityPage.page + 1;
+            this.activityPage.page = page;
+            if(this.activityPage.hasMore){
+                console.log(this.submitDatas);
+                let id = this.submitDatas.city;
+                let category_id = this.submitDatas.time;
+                this.askActivity(id,page,category_id,false)
+            } else{
+                wx.showToast({
+                    title: '没有更多了',
+                    icon: 'none'
+                });
+                wx.hideLoading();
+            }
+    },
+    //城市加载更多
   methods:{
       //请求接口返回活动数据给我
      /* getList(id ='all') {
@@ -86,29 +139,73 @@ export default {
             console.log(res);
           })
       }*/
+     //区分活动是在那个状态
+      statusTxt(){
+          var text = this.activityData;
+          text.forEach(function (val,index) {
+              if (val.status == 0){
+                  val['txt'] = "报名未开始";
+              } else if(val.status == 1){
+                  val['txt'] = "活动报名中";
+              } else if(val.status == 2){
+                  val['txt'] = "报名已截止";
+              } else if(val.status == 3){
+                  val['txt'] = "活动已结束";
+              } else if(val.status == 4){
+                  val['txt'] = "报名已截止";
+              } else if(val.status == 5){
+                  val['txt'] = "活动已满额";
+              }
+          })
+
+      },
      //  请求城市的数据
-      getChooseCity(page = 1){
+      getChooseCity(){
+          wx.showLoading({
+              title:"加载中",
+              mask:true
+          });
           this.$http
               .get(this.$config.GLOBAL.baseUrl + 'api/city',{
-                  limit:50,
-                  page:page
+                  limit:50
               })
               .then(res =>{
                   res = res.data;
                   if(res.status){
                       var list;
-                      var page = res.meta.pagination;//拿到后台的分页数据
+                     /* var page = res.meta.pagination;//拿到后台的分页数据
                       var current_page = page.current_page;//获取后台数据当前页面
                       var total_page = page.total_page;// 获取后台数据总共页数
-                      this.cityPage.per_page = page.per_page;
-                      if(current_page === 1){
+                      this.cityPage.per_page = page.per_page;*/
                           list = this.cityList.concat(res.data);
-                      } else{
+                          var that = this;
+                          list.forEach(function (val,index) {
+                              let title = val.name;
+                              let id = val.id;
+                              let active = false;
+                              that.tabTitleList[0].content.push({
+                                  title,
+                                  id,
+                                  active
+                              })
+                          });
+                     /* } else{
                           list = this.cityList.concat(res.data);
+                          var that = this;
+                          list.forEach(function (val,index) {
+                              let title = val.name;
+                              let id = val.id;
+                              let active = false;
+                              that.tabTitleList[0].content.push({
+                                  title,
+                                  id,
+                                  active
+                              })
+                          })
                       }
                       this.cityList = list;
                       this.cityPage.page = current_page;
-                      this.cityPage.hasMore = current_page < total_page;
+                      this.cityPage.hasMore = current_page < total_page;*/
 
                   } else {
                       wx.showModal({
@@ -126,37 +223,148 @@ export default {
                   wx.hideLoading()
               })
       },
-      //城市加载更多
-      lower(){
+      //请求活动类型数据
+      getChooseCategory(){
           wx.showLoading({
               title:"加载中",
               mask:true
           });
-          var page = this.cityPage.page + 1;
-           if(this.cityPage.hasMore){
-               this.getChooseCity(page);
-           } else{
-               wx.showToast({
-                   title: '没有更多了',
-                   icon: 'none'
-               });
-               wx.hideLoading()
-           }
+        this.$http
+            .get(this.$config.GLOBAL.baseUrl +'api/category',{})
+            .then(res =>{
+                res = res.data;
+                if(res.status){
+                    var category = [];
+                    category = category.concat(res.data);
+                    var that = this;
+                    category.forEach(function (val,index) {
+                        let title = val.name;
+                        let id = val.id;
+                        let active = false;
+                        that.tabTitleList[1].content.push({
+                            title,
+                            id,
+                            active
+                        })
+                    });
+                } else{
+                    wx.showModal({
+                        content:res.messages || "请求失败",
+                        showCancel:false
+                    })
+                }
+                wx.hideLoading();
+            },err =>{
+                wx.showModal({
+                    content: '请求失败，请重试',
+                    showCancel: false,
+                })
+                wx.hideLoading()
+          })
       },
-      choosecity(index){
-          this.activeIndex = index;
-          this.maskcity = !this.maskcity;
-      },
-      choosefy(index){
-          this.activeIndex = index
-          this.maskfy = !this.maskfy;
-      }
-  },
 
-  created () {
+      toggle(i){ //点击选择城市或者选择分类的事件函数
+          if(this.tabTitleList[i].active){
+              this.tabTitleList[i].active = false;
+              this.popAlert();
+              return;
+          }
+          this.tabTitleList.forEach((val,index) =>{
+              val.active = false;
+          });
+          this.tabTitleList[i].active = true;
+          this.popAlert();
+      },
+     popAlert(){
+         for (var i = 0; i<this.tabTitleList.length;i++){ //循环数组
+             if(this.tabTitleList[i].active){ // active是判断是否弹出遮罩层
+                 this.isPop = true;
+                 break;
+             } else {
+                 this.isPop = false;
+             }
+         }
+     },
+      change(i,index){
+         let key = this.tabTitleList[index].name;
+         let arr = this.tabTitleList[index].content;
+         arr.forEach((val,index) =>{
+             val.active = false;
+         });
+         arr[i].active = true;
+         this.submitDatas[key] = arr[i].id;
+          let id = this.submitDatas.city;
+          let category_id = this.submitDatas.time;
+          let page = 1;
+          this.askActivity(id,page,category_id,true);
+      },
+     /* getData(datas){
+          console.log(datas);
+          this.submitDatas = datas;
+        let id = datas.city;
+        let time = datas.time;
+        /!*this.askActivity(id,1,time) *!/
+          console.log(id);
+          console.log(time);
+      },*/
+      //请求活动页面数据
+      askActivity(id,page,category_id,isfrshen){
+          wx.showLoading({
+              title:"加载中",
+              mask:true
+          });
+          this.$http
+              .get(this.$config.GLOBAL.baseUrl + 'api/activity/list/'+id,{
+                  page:page,
+                  category_id:category_id,
+                  limit:5
+              })
+              .then(res =>{
+                  res = res.data;
+                  if(res.status){
+                   if(isfrshen){
+                       this.activityData = [];
+                       var activityList;
+                       var page = res.meta.pagination;//拿到后台的分页数据
+                       var current_page = page.current_page;//获取后台数据当前页面
+                       var total_page = page.total_pages;// 获取后台数据总共页数
+                       this.activityPage.page = page.per_page;
+                       activityList = this.activityData.concat(res.data);
+                       this.activityData = activityList;
+                       this.activityPage.page = current_page;
+                       this.activityPage.hasMore = current_page < total_page;
+                   } else {
+                       var activityList;
+                       var page = res.meta.pagination;//拿到后台的分页数据
+                       var current_page = page.current_page;//获取后台数据当前页面
+                       var total_page = page.total_pages;// 获取后台数据总共页数
+                       this.activityPage.page = page.per_page;
+                       activityList = this.activityData.concat(res.data);
+                       this.activityData = activityList;
+                       this.activityPage.page = current_page;
+                       this.activityPage.hasMore = current_page < total_page;
+                   }
+                      this.statusTxt();
+                  } else {
+                      wx.showModal({
+                          content:res.messages || "请求失败",
+                          showCancel:false
+                      })
+                  }
+                  wx.hideLoading();
+              },err =>{
+                  wx.showModal({
+                      content: '请求失败，请重试',
+                      showCancel: false,
+                  })
+                  wx.hideLoading()
+              })
+      }
   },
     mounted(){
       this.getChooseCity();
+      this.getChooseCategory();
+      this.askActivity("all",1,"all",true)
     }
 }
 </script>
@@ -169,7 +377,19 @@ export default {
     height: 100%;
   }
   #activity-index{
+    .pagetop{
+      width: 100%;
+      height:125px;
+      position: fixed;
+      z-index: 2;
+      background-color: #ffffff;
+      top: 0;
+    }
   .search{
+    /*position: fixed;
+    top:0px;
+    width: 100%;*/
+    /*height:42px;*/
     background-color:#ffffff;
     padding: 10px 15px;
     input{
@@ -185,15 +405,15 @@ export default {
   }
   .tab{
     .tab-title{
-      background-color: #ffffff;
+      /*background-color: #ffffff;
       z-index: 2;
       position: fixed;
+      width: 100%;*/
       height: 50px;
-      width: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 5px;
+      /*margin-bottom: 5px;*/
       .city{
         border-right: 1px solid #DBDBDB;
         flex: 1;
@@ -211,23 +431,22 @@ export default {
         .name{
           color: #000;
         }
+        .type-content{
+          display: block;
+        }
       }
-      scroll-view{
+      .type-content{
         display: none;
         position: absolute;
-        top: 100%;
+        top: 92%;
         left: 0;
         width: 100%;
-        height: 360%;
+        height: 140%;
         z-index: 2;
         text-align: left;
         font-size: 0;
         background-color: #ffffff;
-        &.cur{
-          display:block;
-        }
-      }
-      .type-content{
+        overflow: auto;
         div{
           font-size: 14px;
           box-sizing: border-box;
@@ -248,22 +467,23 @@ export default {
       }
     }
     .tab-pop{
-      display: none;
       position: fixed;
       width: 100%;
       height: 100%;
       background: rgba(1, 1, 1, 0.5);
       z-index: 1;
-      &.cur{
-        display: block;
-      }
     }
   }
   .tab-content{
-    margin-top: 55px;
-    margin-bottom: 30px;
-    background-color: #ffffff;
+    margin-top: 135px;
+    margin-bottom: 80px;
+    .no-more {
+      text-align:center;
+      font-size: 14px;
+    }
+    /**/
     .item{
+      background-color: #ffffff;
       padding: 10px 15px;
       display: flex;
       align-items: center;
@@ -291,6 +511,10 @@ export default {
           text-overflow:ellipsis;
           padding-bottom: 4px;
       }
+        .subtitle{
+          color: #9c9c9c;
+          font-size: 12px;
+        }
         .time,.address{
           font-size: 12px;
           color: #9B9B9B;
@@ -305,6 +529,7 @@ export default {
           display: flex;
           align-items: center;
           justify-content:space-between ;
+          margin-top:10px;
           .text{
             color: @globalColor;
             font-size: 12px;
@@ -315,6 +540,9 @@ export default {
             font-size:12px;
             color: #ffffff;
             line-height: 16px;
+            background-color: #d8d8d8;
+          }
+          .red{
             background-color: @globalColor;
           }
         }

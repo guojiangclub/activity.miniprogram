@@ -6,28 +6,7 @@
       </div>
       <div class="tab">
         <div class="tab-title">
-          <!--<div class="city" :class="activeIndex == 0 ? 'tabactive':''" @click="choosecity(0)">
-            <span class="name">选择城市</span>
-            <span class="iconfont icon-gouwuche"></span>
-            <scroll-view scroll-y @scrolltolower="lower" :class="maskcity ? 'cur':''">
-              <div class="type-content">
-                <div data-id="all">所有城市</div>
-                <div v-for="item in cityList">{{item.name}}</div>
-              </div>
-            </scroll-view>
-          </div>
-          <div class="classify" :class="activeIndex == 1 ? 'tabactive':''" @click="choosefy(1)">
-            <span class="name">活动类型</span>
-            <span class="iconfont icon-gouwuche"></span>
-            <scroll-view scroll-y :class="maskfy ? 'cur':''">
-              <div class="type-content">
-                <div class="active">所有分类</div>
-                <div>赛事报名</div>
-                <div>志愿者报名</div>
-              </div>
-            </scroll-view>
-          </div>-->
-          <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'']">
+          <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'mx-1px-right':'']">
             <span class="name">{{item.title}}</span>
             <span class="iconfont"></span>
             <!--<scroll-view scroll-y @scrolltolower="lower">-->
@@ -41,7 +20,7 @@
       </div>
     </div>
     <div class="tab-content">
-      <div class="no-more" v-if="activityData.length==0">没有更多了</div>
+      <div class="no-more" v-if="activityData.length==0&&init">没有更多了</div>
       <div class="item mx-1px-bottom" v-for="(t,j) in activityData">
         <div class="info-left">
           <image :src="t.img_list"></image>
@@ -103,6 +82,7 @@ export default {
           per_page:''//分页每页数量
       },
         activityData:[],
+        init:false
     }
   },
     //小程序触底事件
@@ -344,6 +324,7 @@ export default {
                        this.activityPage.page = current_page;
                        this.activityPage.hasMore = current_page < total_page;
                    }
+                      this.init = true;
                       this.statusTxt();
                   } else {
                       wx.showModal({
@@ -415,7 +396,7 @@ export default {
       justify-content: center;
       /*margin-bottom: 5px;*/
       .city{
-        border-right: 1px solid #DBDBDB;
+        /*border-right: 1px solid #DBDBDB;*/
         flex: 1;
         font-size: 15px;
         color:#9B9B9B;

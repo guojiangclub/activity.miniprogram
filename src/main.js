@@ -17,7 +17,7 @@ app.$mount();
 var textStatus = {
     0: '',
     1: '',
-    2: ''
+
 }
 
 export default {

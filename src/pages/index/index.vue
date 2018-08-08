@@ -2,11 +2,12 @@
   <div id="activity-index">
     <div class="pagetop">
       <div class="search">
+
         <input type="text" placeholder="想要参与的活动" placeholder-class="input-placeholder"/>
       </div>
       <div class="tab">
         <div class="tab-title">
-          <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'mx-1px-right':'']">
+          <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'px-b':'']">
             <span class="name">{{item.title}}</span>
             <span class="iconfont"></span>
             <!--<scroll-view scroll-y @scrolltolower="lower">-->
@@ -396,13 +397,16 @@ export default {
       display: flex;
       align-items: center;
       justify-content: center;
+        position: relative;
       /*margin-bottom: 5px;*/
       .city{
-        /*border-right: 1px solid #DBDBDB;*/
         flex: 1;
         font-size: 15px;
         color:#9B9B9B;
         text-align: center;
+        }
+        .px-b{
+            border-right: 1px solid #DBDBDB;
         }
       .classify{
         flex: 1;
@@ -410,21 +414,13 @@ export default {
         color:#9B9B9B;
         text-align: center;
       }
-      .tabactive{
-        .name{
-          color: #000;
-        }
-        .type-content{
-          display: block;
-        }
-      }
       .type-content{
         display: none;
         position: absolute;
-        top: 92%;
+        top: 100%;
         left: 0;
         width: 100%;
-        height: 140%;
+        height: 360%;
         z-index: 2;
         text-align: left;
         font-size: 0;
@@ -448,6 +444,14 @@ export default {
           }
         }
       }
+        .tabactive{
+            .name{
+                color: #000;
+            }
+            .type-content{
+                display: block;
+            }
+        }
     }
     .tab-pop{
       position: fixed;

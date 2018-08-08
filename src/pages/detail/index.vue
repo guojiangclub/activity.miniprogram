@@ -1,14 +1,18 @@
 <template>
     <div id="detailIndex">
         <div class="activity-content">
-            <image src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1533635241199&di=9eb4367dfe084e906b39d80f228170d1&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fphotoblog%2F1611%2F02%2Fc14%2F29324329_1478094146549.jpg" mode="widthFix"></image>
+            <image :src="detail.img" mode="widthFix"></image>
             <div class="introduce">
                 <div class="name">
-                    五一特惠 长沙一日游橘子洲岳麓山爱晚亭 自定义规划行程路线
+                    {{ detail.title }}
                 </div>
                 <div class="money mx-1px-bottom">
-                    <span class="txt">￥290.00</span>
-                    <span class="btn">活动报名中</span>
+                    <span class="txt subtitle" v-if="detail.fee_type != 'OFFLINE_CHARGES' && detail.fee_type != 'CHARGING'">{{ detail.subtitle}}</span>
+                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 0">{{detail.payments[0].point}}积分</span>
+                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 1"> <span>￥</span>{{detail.payments[0].price}}</span>
+                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 2"> <span>￥</span>{{detail.payments[0].price}}+{{detail.payments[0].point}}积分</span>
+                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 4"> <span>￥</span>{{detail.payments[0].price}}</span>
+                    <span class="btn" :class="{'red':detail.status==1}">{{info[detail.status]}}</span>
                 </div>
                 <div class="concrete">
                     <div class="date padd mx-1px-bottom">
@@ -17,12 +21,12 @@
                     </div>
                     <div class="addr padd mx-1px-bottom">
                         <span></span>
-                        <span class="text">湖南省长沙市岳麓区</span>
+                        <span class="text">{{detail.address}}</span>
                         <span></span>
                     </div>
                     <div class="num padd">
                         <span></span>
-                        <span class="text">已报名 10人</span>
+                        <span class="text">已报名 {{ detail.member_count }}人</span>
                     </div>
                 </div>
             </div>
@@ -34,14 +38,37 @@
     export default{
         data(){
             return{
-
+                detail:{
+                    payments: []
+                },
+                info:getApp().textStatus
             }
         },
         mounted(){
-            console.log(this.$root);
+           this.getDetail()
         },
         methods:{
-
+            //请求活动详情页数据
+            getDetail(){
+                this.$http
+                    .get(this.$config.GLOBAL.baseUrl+'api/activity/show/13',{
+                    }).then(res =>{
+                        res = res.data;
+                        if (res.status){
+                            this.detail = res.data;
+                        } else{
+                            wx.showModal({
+                                content:res.messages || "请求失败",
+                                showCancel:false
+                            })
+                        }
+                },err =>{
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                })
+            }
         }
     }
 </script>
@@ -74,13 +101,23 @@
                     .txt{
                         color: @globalColor;
                         font-size: 20px;
+                        span{
+                            font-size: 14px;
+                        }
+                    }
+                    .subtitle{
+                        color:#959595;
                     }
                     .btn{
                         font-size:12px;
                         padding:4px 8px;
-                        border:1px solid @globalColor;
+                        border:1px solid #959595;
                         border-radius: 2px;
                         line-height: 16px;
+                        color: #959595;
+                    }
+                    .red{
+                        border:1px solid @globalColor;
                         color: @globalColor;
                     }
                 }

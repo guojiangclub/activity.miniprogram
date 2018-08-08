@@ -14,10 +14,14 @@ App.mpType = 'app'
 const app = new Vue(App)
 app.$mount();
 
-var textStatus = {
-    0: '',
-    1: '',
-
+var AppData = getApp();
+AppData.textStatus = {
+    0: '报名未开始',
+    1: '活动报名中',
+    2: '报名已截止',
+    3: '活动已结束',
+    4: '报名已截止',
+    5: '活动已满额'
 }
 
 export default {

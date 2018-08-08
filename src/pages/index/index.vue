@@ -35,7 +35,7 @@
             <span class="text" v-if="t.payments[0] && t.payments[0].type == 1">￥{{t.payments[0].price}}</span>
             <span class="text" v-if="t.payments[0] && t.payments[0].type == 2">￥{{t.payments[0].price}}+{{t.payments[0].point}}积分</span>
             <span class="text" v-if="t.payments[0] && t.payments[0].type == 4">￥{{t.payments[0].price}}</span>
-            <span class="enroll-btn" :class="{'red' : t.status==1}">{{t.txt}}</span>
+            <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>
           </div>
         </div>
       </div>
@@ -82,7 +82,8 @@ export default {
           per_page:''//分页每页数量
       },
         activityData:[],
-        init:false
+        init:false,
+        info: getApp().textStatus
     }
   },
     //小程序触底事件
@@ -120,7 +121,7 @@ export default {
           })
       }*/
      //区分活动是在那个状态
-      statusTxt(){
+      /*statusTxt(){
           var text = this.activityData;
           text.forEach(function (val,index) {
               if (val.status == 0){
@@ -138,7 +139,7 @@ export default {
               }
           })
 
-      },
+      },*/
      //  请求城市的数据
       getChooseCity(){
           wx.showLoading({
@@ -325,7 +326,6 @@ export default {
                        this.activityPage.hasMore = current_page < total_page;
                    }
                       this.init = true;
-                      this.statusTxt();
                   } else {
                       wx.showModal({
                           content:res.messages || "请求失败",
@@ -346,6 +346,8 @@ export default {
       this.getChooseCity();
       this.getChooseCategory();
       this.askActivity("all",1,"all",true)
+
+        console.log(getApp().textStatus);
     }
 }
 </script>

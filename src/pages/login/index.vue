@@ -1,25 +1,25 @@
 <template>
     <view id="login">
-        <div class="tips" v-show="!message">{{message}}</div>
+        <div class="tips" v-show="message">{{message}}</div>
         <!--<view class="register_header iconfont icon-youhuiquan"></view>-->
         <div class="register_input">
             <div class="tellphone">
-                <input type="text" placeholder="手机号码" @input="changeCode" placeholder-class="input-placeholder"/>
+                <input type="text" placeholder="手机号码" v-model="tellphone" placeholder-class="input-placeholder"/>
             </div>
             <div class="code">
                 <div class="writecode">
-                    <input type="text" placeholder="验证码" @input="changeIdentifyCode" placeholder-class="input-placeholder"/>
+                    <input type="text" placeholder="验证码" v-model="identifyingcode" placeholder-class="input-placeholder"/>
                 </div>
 
                 <div class="getCode" @click="getCode">{{codes.codeText}}</div>
             </div>
         </div>
         <div class="submit">
-            <button type="default"  @click="submit" :disabled="showLoading" :loading="showLoading">快速登录/注册</button>
+            <button type="default" :class="checked ? 'check' : ''" @click="submit" :disabled="showLoading" :loading="showLoading">快速登录/注册</button>
         </div>
         <div class="select">
             <!--<checkbox-group bindchange="changeChecked">-->
-            <checkbox @click="changeChecked" color="#fff" :checked="checked" />
+            <checkbox @click="changeChecked" color="#fff" :checked="checked"/>
             <text> 同意《{{brand}}》用户协议</text>
             <!--</checkbox-group>-->
         </div>
@@ -27,21 +27,21 @@
 </template>
 
 <script>
+    import {is} from '@/utils/index'
     export default{
         data(){
             return {
-                codes:{
-                    total:60,
-                    access_token:null,
-                    codeText:"获取验证码"
+                codes: {
+                    total: 60,
+                    access_token: null,
+                    codeText: "获取验证码"
                 },
-                tellphone:"",
-                identifyingcode:"",
-                sending:false,
-                checked:false,
-                orginUrl:"",
+                tellphone: "",
+                identifyingcode: "",
+                sending: false,
+                checked: false,
                 showLoading: false,
-                message:"",
+                message: "",
                 open_id: '',
                 brand: this.$config.BRAND.name,
 
@@ -58,7 +58,6 @@
                 this.url = decodeURIComponent(url);
             }
             ;
-
             var token = this.$storage.get('user_token');
             this.token = token;
 
@@ -67,297 +66,174 @@
                     url: '/pages/index/main'
                 })
             } else {
-                this.wxLogin();
+
             }
         },
         methods: {
-//            获取到的code
-            wxLogin() {
-                wx.showLoading({
-                    title: '正在自动登录',
-                    mask: true
-                })
-                wx.login({
-                    success: res => {
-                        if (res.code) {
-                            this.autoLogin(res.code);
-                        } else {
-                            wx.showToast({
-                                title: '获取code失败',
-                                image: '../../../assets/image/error.png'
-                            })
-                        }
-                    }
-                })
+//            登录按钮切换
+            changeChecked(e){
+                // console.log(e);
+                this.checked = !this.checked
             },
-//            利用获取到的code登录
-            autoLogin(code) {
+            getCode() {
+                if (this.sending) return;
+                var randoms = this.random();
+                this.sending = true;
+                this.codes.codeText = "短信发送中";
+                this.codes.access_token = randoms;
+                var fn;
+                fn = this.getLoginCode;
+                fn(() => {
+                    var total = this.codes.total;
+                    this.codes.codeText = total + "秒后再发送"
+                    var timer = setInterval(() => {
+                        total--;
+                        this.codes.codeText = total + "秒后再发送"
+                        if (total < 1) {
+                            this.sending = false;
+                            this.codes.codeText = '获取验证码';
+                            clearInterval(timer);
+                        }
+                    }, 1000);
+                }, () => {
+                    this.sending = false;
+                    this.codes.codeText = '获取验证码';
+                });
+
+            },
+            getLoginCode(resolve, reject) {
+                var message = null;
+                if (!is.has(this.tellphone)) {
+                    message = "请输入您的手机号";
+                } else if (!is.mobile(this.tellphone)) {
+                    message = '手机号格式不正确，请重新输入';
+                }
+
+                if (message) {
+                    this.message = message;
+                    reject();
+                    setTimeout(() => {
+                        this.message = ''
+                    }, 3000)
+                    return
+                }
+
                 this.$http
-                    .post(this.$config.GLOBAL.baseUrl + 'api/oauth/MiniProgramLogin', {
-                        code: code,
-                        open_type: 'miniprogram'
+                    .post(this.$config.GLOBAL.baseUrl + 'api/sms/verify-code', {
+                        mobile: this.tellphone,
+                        access_token: this.codes.access_token
                     }).then(res => {
                     res = res.data;
-                    if (res.data && res.data.open_id) {
-                        this.open_id = res.data.open_id
-                        return
-                    }
-
-                    // 如果接口返回token就直接登录，如果没有则弹出授权
-                    if (res.access_token) {
-                        wx.hideLoading();
-                        var access_token = res.token_type + ' ' + res.access_token;
-                        var expires_in = res.expires_in || 315360000;
-                        this.$storage.set("user_token", access_token, expires_in);
-                        if (this.url) {
-                            var path = [
-                                'pages/entity/store/store',
-                                'pages/index/index/index',
-                                'pages/index/classification/classification',
-                                'pages/store/tabCart/tabCart',
-                                'pages/user/personal/personal'
-                            ];
-                            var pathIndex = path.indexOf(this.url);
-                            if (pathIndex == -1) {
-                                wx.redirectTo({
-                                    url: "/" + this.url
-                                })
-                            } else {
-                                wx.switchTab({
-                                    url: "/" + this.url
-                                })
-                            }
-                        } else {
-                            wx.redirectTo({
-                                url: '/pages/index/main'
-                            })
-                        }
+                    if (res.success) {
+                        resolve();
                     } else {
-                        // 弹出授权
-                        this.getUserAuthorize();
-                    }
-                }, err => {
-                    wx.showModal({
-                        content: '请求失败，请重试',
-                        showCancel: false,
-                        success: res => {
-                            if (res.confirm || (!res.cancel && !res.confirm)) {
-                                this.wxLogin();
-                            }
-                        }
-                    })
-                })
-
-            },
-//            获取用户授权
-            getUserAuthorize() {
-                wx.getSetting({
-                    success: res => {
-                        // 如果之前没有授权
-                        if (!res.authSetting['scope.userInfo']) {
-                            // 重新请求用户授权
-                            wx.authorize({
-                                scope: 'scope.userInfo',
-                                success: res => {
-                                    this.getUserInfo();
-                                },
-                                // 用户拒绝授权
-                                fail: ret => {
-                                    wx.hideLoading();
-                                    wx.showModal({
-                                        content: '需要授权才能登录',
-                                        showCancel: false,
-                                        success: res => {
-                                            if (res.confirm || (!res.cancel && !res.confirm)) {
-                                                wx.openSetting({
-                                                    success: res => {
-                                                        if (res.authSetting['scope.userInfo']) {
-                                                            this.getUserInfo();
-                                                        }
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    })
-                                }
-                            })
-                        } else {
-                            this.getUserInfo();
-                        }
-                    }
-                })
-            },
-            // 封装获取用户信息
-            getUserInfo() {
-                wx.login({
-                    success: res => {
-                        wx.getUserInfo({
-                            lang: 'zh_CN',
-                            withCredentials: true,
-                            success: res => {
-                                this.login(res);
-                                this.userInfo = res
-                                this.$storage.set('login_user_info', res.userInfo)
-                            }
-                        })
-                    }
-                })
-            },
-            // 封装登录
-            login(data) {
-                this.$http
-                    .post(this.$config.GLOBAL.baseUrl + 'api/oauth/MiniProgramUnionIdLogin', {
-                        iv: data.iv,
-                        encryptedData: data.encryptedData,
-                        open_id: this.open_id,
-                        userInfo: data.userInfo,
-                        open_type: 'miniprogram',
-                    }).then(res => {
-                    res = res.data;
-                    wx.hideLoading();
-
-                    // 如果接口返回token就直接登录
-                    if (res.access_token) {
-                        var access_token = res.token_type + ' ' + res.access_token;
-                        var expires_in = res.expires_in || 315360000;
-                        this.$storage.set("user_token", access_token, expires_in);
-                        if (this.url) {
-                            var path = [
-                                'pages/entity/store/store',
-                                'pages/index/index/index',
-                                'pages/index/classification/classification',
-                                'pages/store/tabCart/tabCart',
-                                'pages/user/personal/personal'
-                            ];
-                            var pathIndex = path.indexOf(this.url);
-                            if (pathIndex == -1) {
-                                wx.redirectTo({
-                                    url: "/" + this.url
-                                })
-                            } else {
-                                wx.switchTab({
-                                    url: "/" + this.url
-                                })
-                            }
-                        } else {
-                            wx.redirectTo({
-                                url: '/pages/index/main'
-                            })
-                        }
-                    } else {
-                        var data = {
-                            open_id: res.data.open_id,
-                            union_id: res.data.union_id
-                        }
-                        this.$storage.set('user_login_idInfo', data);
-                        this.open_id = res.data.open_id;
-                        this.union_id = res.data.union_id
-                    }
-
-
-                    if (!res.status && !res.access_token) {
                         wx.showModal({
                             content: res.message || '请求失败，请重试',
                             showCancel: false,
-                            success: res => {
-                                if (res.confirm || (!res.cancel && !res.confirm)) {
-                                    this.login(this.data.userInfo);
+                        })
+                        reject();
+                    }
+                })
+            },
+            random(){
+                return Math.random().toString(36).substr(2, 24);
+            },
+//            登录
+            submit() {
+                var message = null;
+                if (!is.has(this.tellphone)) {
+                    message = "请输入您的手机号";
+                } else if (!is.mobile(this.tellphone)) {
+                    message = '手机号格式不正确，请重新输入';
+                } else if (!is.has(this.identifyingcode)) {
+                    message = "请填写验证码";
+                } else if (!is.has(this.checked)) {
+                    message = "请同意此协议";
+                }
+
+                if (message) {
+                    this.message = message;
+
+                    setTimeout(() => {
+                        this.message = ''
+                    }, 3000)
+                    return
+                }
+
+                this.showLoading = true;
+                this.quickLogin();
+            },
+            quickLogin() {
+                var infoData = {
+                    open_id: '',
+                    union_id: ''
+                };
+                var idInfo = this.$storage.get('user_login_idInfo');
+                if (idInfo) {
+                    infoData.open_id = idInfo.open_id;
+                    infoData.union_id = idInfo.union_id;
+                }
+                var that = this;
+                var data = {
+                    grant_type: 'sms_token',
+                    access_token: that.codes.access_token,
+                    mobile: that.tellphone,
+                    code: that.identifyingcode,
+                    open_type: 'miniprogram',
+                    open_id: infoData.open_id,
+                    union_id: infoData.union_id,
+                }
+
+                this.$http
+                    .post(this.$config.GLOBAL.baseUrl + 'api/oauth/sms', data)
+                    .then(res => {
+                        res = res.data;
+                        if (res.access_token) {
+                            var result = res;
+                            if (result.access_token) {
+                                result.access_token = result.token_type + ' ' + result.access_token;
+                                var expires_in = result.expires_in || 315360000;
+                                this.$storage.set("user_token", result.access_token, expires_in);
+                                if (this.url) {
+                                    var path = [
+                                        'pages/entity/store/store',
+                                        'pages/index/index/index',
+                                        'pages/index/classification/classification',
+                                        'pages/store/tabCart/tabCart',
+                                        'pages/user/personal/personal'
+                                    ];
+                                    var pathIndex = path.indexOf(this.url);
+                                    if (pathIndex == -1) {
+                                        wx.redirectTo({
+                                            url: "/" + this.url
+                                        })
+                                    } else {
+                                        wx.switchTab({
+                                            url: "/" + this.url
+                                        })
+                                    }
+                                } else {
+                                    wx.redirectTo({
+                                        url: '/pages/index/main'
+                                    })
                                 }
                             }
-                        })
-                    }
-                }, err => {
-                    wx.showModal({
-                        content: res.message || '请求失败，请重试',
-                        showCancel: false,
-                        success: res => {
-                            if (res.confirm || (!res.cancel && !res.confirm)) {
-                                this.login(this.data.userInfo);
-                            }
-                        }
-                    })
-                })
-            },
-//            获取手机号
-            getPhoneNumber(e) {
-                console.log(e.mp.detail.encryptedData);
-                if (e.mp.detail.encryptedData) {
-                    wx.login({
-                        success: res => {
-                            if (res.code) {
-                                this.code = res.code;
-                                this.phone(e)
-                                /*this.setData({
-                                 code: res.code
-                                 }, res => {
-                                 this.phone(e);
-                                 })*/
-                            } else {
-                                wx.showModal({
-                                    content: " 获取code失败",
-                                    showCancel: false
-                                })
-                            }
-                        }
-                    });
-                    return
-                } else {
-                    this.jumpLogin();
-                }
-            },
-//            利用手机号直接登录
-            phone(e) {
-                this.$http
-                    .post(this.$config.GLOBAL.baseUrl + 'api/oauth/MiniProgramMobileLogin', {
-                        open_type: 'miniprogram',
-                        code: this.code,
-                        encryptedData: e.mp.detail.encryptedData,
-                        iv: e.mp.detail.iv,
-                        open_id: this.open_id,
-                        union_id: this.union_id,
-                        userInfo: this.userInfo.userInfo,
-                    }).then(res => {
-                    res = res.data;
-                    if (res.access_token) {
-                        var access_token = res.token_type + ' ' + res.access_token;
-                        var expires_in = res.expires_in || 315360000;
-                        this.$storage.set("user_token", access_token, expires_in);
-                        if (this.url) {
-                            var path = [
-                                'pages/entity/store/store',
-                                'pages/index/index/index',
-                                'pages/index/classification/classification',
-                                'pages/store/tabCart/tabCart',
-                                'pages/user/personal/personal'
-                            ];
-                            var pathIndex = path.indexOf(this.url);
-                            if (pathIndex == -1) {
-                                wx.redirectTo({
-                                    url: "/" + this.url
-                                })
-                            } else {
-                                wx.switchTab({
-                                    url: "/" + this.url
-                                })
-                            }
                         } else {
-                            wx.redirectTo({
-                                url: '/pages/index/main'
-                            })
+                            wx.showModal({
+                                content: res.message || "验证码不正确",
+                                showCancel: false
+                            });
                         }
-                    } else {
+                        this.showLoading = false;
+                    }, err => {
                         wx.showModal({
-                            content: res.message || '请求失败，请重试',
+                            content: "请求失败",
                             showCancel: false
-                        })
-                    }
-                }, err => {
-                    wx.showModal({
-                        content: '请求失败，请重试',
-                        showCancel: false
+                        });
+                        this.showLoading = false;
                     })
-                })
             }
+
         }
     }
 </script>
@@ -365,57 +241,114 @@
 <style rel="stylesheet/less" lang="less">
     @import "../../../static/global.less";
 
-    #register {
-        //margin-top: 100px;
+    body {
+        background: #ffffff;
+    }
+
+    #login {
+        font-size: 16px;
+        background-color: #ffffff;
         padding: 0 15px;
-        .phone__warning {
+        margin-top: 50px;
+
+        .tips {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             text-align: center;
-            width: 80px;
-            height: 80px;
-            margin: 80px auto 180px auto;
-            border-radius: 100%;
-            overflow: hidden;
+            line-height: 35px;
+            background-color: #e64340;
+            height: 35px;
+            color: #FFFFFF;
+        }
+        .register_header {
+            padding: 36px 0 56px 0;
+            text-align: center;
+            color: @globalColor;
+            font-size: 30px;
+        }
+        .register_input {
+            margin-bottom: 60px;
+            .tellphone {
+                background: rgba(155, 155, 155, .3);
+                margin-bottom: 20px;
+                border-radius: 4px;
+                input {
+                    padding: 15px 0 15px 15px;
+                    border-radius: 4px;
+                }
+                .input-placeholder {
+                    color: #9B9B9B;
+                    font-size: 14px;
+                }
 
-            image {
-                width: 100%;
-                height: 100%;
             }
-            i {
-
-                color: #FFBE00;
-                font-size: 50px;
+            .code {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .writecode {
+                    width: 60%;
+                    background: rgba(155, 155, 155, .3);
+                    border-radius: 4px;
+                    input {
+                        padding: 15px 0 15px 15px;
+                    }
+                    .input-placeholder {
+                        color: #9B9B9B;
+                        font-size: 14px;
+                    }
+                }
+                .getCode {
+                    padding: 15px 0;
+                    flex: 1;
+                    margin-left: 17px;
+                    background-color: #EB7073;
+                    text-align: center;
+                    color: #FFFFFF;
+                    border-radius: 4px;
+                    font-size: 14px;
+                }
             }
         }
-        .phone__text {
-            font-size: 14px;
-            color: #888888;
-            line-height: 20px;
-            margin-bottom: 32px;
-        }
-        .phone__btn {
-            width: 100%;
-            padding: 15px 0;
-            line-height: 1;
-            font-size: 17px;
+        .select {
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 3px;
-            &.wechat-phoneBtn {
-                color: #FFFFFF;
-                background: @globalColor;
-                border: @globalColor;
-                margin-bottom: 20px;
+            margin-top: 15px;
+            color: #4A4A4A;
+            font-size: 12px;
+
+            //重置按钮样式
+            checkbox .wx-checkbox-input {
+                background-color: #fff;
+                border: 1px solid #c1caca;
+                box-shadow: 0 1px 2px rgba(0, 0, 0, .05), inset 0 -15px 10px -12px rgba(0, 0, 0, .05);
+                height: 14px;
+                width: 14px;
             }
-            &.again-phoneBtn {
-                color: @globalColor;
-                background: #ffffff;
+            checkbox .wx-checkbox-input.wx-checkbox-input-checked {
+                background-color: @globalColor;
                 border: 1px solid @globalColor;
             }
-            i {
-                padding-right: 10px;
+        }
+        .submit {
+
+            button {
+                //position: static;
+                color: #ffffff;
+                padding: 10px 0;
+                border: none;
+                border-radius: 4px;
+                background-color: #C9C8C8;
+                font-size: 16px;
+                &.check {
+                    background: @globalColor;
+                }
             }
         }
+
     }
 
 </style>

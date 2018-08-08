@@ -51,8 +51,9 @@
 				},
 				{
 					"id": -1,
-					"name": "地图",
-					"pathName": "pages/map/main"
+					"name": "登录页面",
+					"pathName": "pages/login/main",
+					"query": ""
 				}
 			]
 		}

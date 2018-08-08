@@ -54,6 +54,8 @@ export default {
             'pages/myActivity/main',
             'pages/detail/main',
             'pages/register/main',
+            'pages/login/main'
+            'pages/register/main',
             'pages/map/main'
         ],
         window: {

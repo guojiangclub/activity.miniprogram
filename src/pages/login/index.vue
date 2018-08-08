@@ -18,10 +18,8 @@
             <button type="default" :class="checked ? 'check' : ''" @click="submit" :disabled="showLoading" :loading="showLoading">快速登录/注册</button>
         </div>
         <div class="select">
-            <!--<checkbox-group bindchange="changeChecked">-->
             <checkbox @click="changeChecked" color="#fff" :checked="checked"/>
             <text> 同意《{{brand}}》用户协议</text>
-            <!--</checkbox-group>-->
         </div>
     </view>
 </template>

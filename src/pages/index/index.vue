@@ -2,14 +2,14 @@
   <div id="activity-index">
     <div class="pagetop">
       <div class="search">
-
+        <span class="iconfont icon-sousuo"></span>
         <input type="text" placeholder="想要参与的活动" placeholder-class="input-placeholder"/>
       </div>
       <div class="tab">
         <div class="tab-title">
           <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'px-b':'']">
             <span class="name">{{item.title}}</span>
-            <span class="iconfont"></span>
+            <span class="iconfont icon-Group16"></span>
             <!--<scroll-view scroll-y @scrolltolower="lower">-->
             <div class="type-content">
               <div :class="" v-for="(k,i) in item.content" @click="change(i,index)" :class="[k.active ? 'active' :'']">{{k.title}}</div>
@@ -28,7 +28,7 @@
         </div>
         <div class="info-rigth">
           <div class="name">{{t.title}}</div>
-          <div class="time">{{ t.starts_at | time(t.ends_at) }}</div>
+          <div class="time">{{time}}</div>
           <div class="address">{{t.address}}</div>
           <div class="money">
             <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
@@ -84,6 +84,7 @@ export default {
       },
         activityData:[],
         init:false,
+        time:'',
         info: getApp().textStatus
     }
   },
@@ -374,8 +375,18 @@ export default {
     top:0px;
     width: 100%;*/
     /*height:42px;*/
+    position: relative;
     background-color:#ffffff;
     padding: 10px 15px;
+    span{
+      &.iconfont{
+        font-size: 15px;
+        color: #9B9B9B;
+        position: absolute;
+        top: 26px;
+        left: 24px;
+      }
+    }
     input{
       border: 1px solid rgba(0,0,0,.1354);
       padding:10px 0 10px 30px;
@@ -404,6 +415,16 @@ export default {
         font-size: 15px;
         color:#9B9B9B;
         text-align: center;
+        .name{
+          padding-right:6px;
+        }
+        span{
+          display: inline-block;
+          &.iconfont{
+            font-size: 10px;
+            transform:rotate(90deg);
+          }
+        }
         }
         .px-b{
             border-right: 1px solid #DBDBDB;
@@ -447,6 +468,9 @@ export default {
         .tabactive{
             .name{
                 color: #000;
+            }
+            .iconfont{
+              color: #000000;
             }
             .type-content{
                 display: block;

@@ -25,6 +25,24 @@ AppData.textStatus = {
     3: '活动已结束',
     4: '报名已截止',
     5: '活动已满额'
+};
+AppData.timefiter = function (v1,v2) {
+    if(v1 && v2) {
+        const weekDay = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
+            date1 = v1.substring(0,10),
+            date2 = v2.substring(0,10),
+            _date1 = date1.replace(/-/g,"."),
+            _date2 = date2.replace(/-/g,"."),
+            day1 = weekDay[new Date(date1).getDay()],
+            day2 = weekDay[new Date(date2).getDay()],
+            time1 = v1.substring(11,16),
+            time2 = v2.substring(11,16);
+        if(date1==date2){
+            return _date1 +' '+ day1 +' '+ time1 + '-' + time2;
+        }else{
+            return _date1 +' '+ day1 +' '+ time1 + ' - ' + _date2 +' '+ day2 +' '+ time2;
+        }
+    }
 }
 
 export default {
@@ -35,7 +53,8 @@ export default {
             '^pages/index/main',
             'pages/myActivity/main',
             'pages/detail/main',
-            'pages/register/main'
+            'pages/register/main',
+            'pages/map/main'
         ],
         window: {
             backgroundTextStyle: 'light',

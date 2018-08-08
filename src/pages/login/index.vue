@@ -1,33 +1,55 @@
 <template>
-    <div id="register">
-        <div class="phone__warning">
-            <image :src="logo"></image>
-            <!--<i class="iconfont icon-anquanjinggao"></i>-->
+    <view id="login">
+        <div class="tips" v-show="!message">{{message}}</div>
+        <!--<view class="register_header iconfont icon-youhuiquan"></view>-->
+        <div class="register_input">
+            <div class="tellphone">
+                <input type="text" placeholder="手机号码" @input="changeCode" placeholder-class="input-placeholder"/>
+            </div>
+            <div class="code">
+                <div class="writecode">
+                    <input type="text" placeholder="验证码" @input="changeIdentifyCode" placeholder-class="input-placeholder"/>
+                </div>
+
+                <div class="getCode" @click="getCode">{{codes.codeText}}</div>
+            </div>
         </div>
-        <button class="wechat-phoneBtn phone__btn" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">
-            <i class="iconfont icon-hudong"></i>
-            <div class="btn__text">微信登录</div>
-        </button>
-        <div class="again-phoneBtn phone__btn" @click="jumpLogin">
-            <i class="iconfont icon--dianhua"></i>
-            <div class="btn__text">手机号登录</div>
+        <div class="submit">
+            <button type="default"  @click="submit" :disabled="showLoading" :loading="showLoading">快速登录/注册</button>
         </div>
-    </div>
+        <div class="select">
+            <!--<checkbox-group bindchange="changeChecked">-->
+            <checkbox @click="changeChecked" color="#fff" :checked="checked" />
+            <text> 同意《{{brand}}》用户协议</text>
+            <!--</checkbox-group>-->
+        </div>
+    </view>
 </template>
 
 <script>
     export default{
         data(){
             return {
-                url: '',
-                logo: this.$config.BRAND.logo,
-                code: '',
+                codes:{
+                    total:60,
+                    access_token:null,
+                    codeText:"获取验证码"
+                },
+                tellphone:"",
+                identifyingcode:"",
+                sending:false,
+                checked:false,
+                orginUrl:"",
+                showLoading: false,
+                message:"",
                 open_id: '',
-                union_id: '',
-                token: '',
-                userInfo: {
-                    userInfo: {}
-                }
+                brand: this.$config.BRAND.name,
+
+                url: '',
+                code: '',
+                shop_id: '',
+                unionInFo: '',
+                openInFo: ''
             }
         },
         mounted(){

@@ -35,7 +35,8 @@ export default {
             '^pages/index/main',
             'pages/myActivity/main',
             'pages/detail/main',
-            'pages/register/main'
+            'pages/register/main',
+            'pages/login/main'
         ],
         window: {
             backgroundTextStyle: 'light',

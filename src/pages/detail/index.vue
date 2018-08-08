@@ -105,11 +105,16 @@
                     home:false,
                     collect:false,
                     share:false
-                }
+                },
+                id:''
             }
         },
         mounted(){
-            this.getDetail()
+            this.getDetail(this.id)
+        },
+        onLoad(e){
+            console.log(e.id);
+            this.id = e.id;
         },
         methods: {
             changeTab(index){
@@ -137,9 +142,9 @@
 
             },*/
             //请求活动详情页活动的数据
-            getDetail(){
+            getDetail(id){
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/15', {}).then(res => {
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/'+ id).then(res => {
                     res = res.data;
                     console.log(res);
                     if (res.status) {
@@ -162,7 +167,53 @@
             },
             // 跳到地图
             jumpMap(){
-                
+                var  point = this.detail.address_point.split(',');
+                var latitude = Number(point[0]);
+                var longitude = Number(point[1]);
+                var name = this.detail.address_name;
+                 var address = this.detail.address;
+                wx.getSetting({
+                    success :ret =>{
+                        // 如果之前没有授权
+                        if(!ret.authSetting['scope.userLocation']){
+                            wx.authorize({
+                                scope:'scope.userLocation',
+                                success: rej =>{
+                                    wx.openLocation({
+                                        latitude: latitude,
+                                        longitude: longitude,
+                                        scale: 18,
+                                        name:name,
+                                        address:address
+
+                                    })
+                                },
+                                //用户拒绝授权
+                                fail:ret =>{
+                                  wx.openSetting({
+                                      success:res =>{
+                                          if(!res.authSetting['scope.userLocation']){
+                                              wx.openSetting({
+                                                  success:res =>{
+
+                                                  }
+                                              })
+                                          }
+                                      }
+                                  })
+                                }
+                            })
+                        } else{
+                            wx.openLocation({
+                                latitude: latitude,
+                                longitude: longitude,
+                                scale: 18,
+                                name:name,
+                                address:address
+                            })
+                        }
+                    }
+                })
             }
         }
     }
@@ -221,6 +272,15 @@
                 }
                 .concrete {
                     padding-left: 16px;
+                   /* button{
+                        text-align: left;
+                        background-color: #FFFFFF;
+                        border-radius: 0px;
+                        padding: 0;
+                    }
+                    button::after{
+                        border: none;
+                    }*/
                     .padd {
                         padding: 8px 16px 8px 0;
                         font-size: 12px;
@@ -303,6 +363,12 @@
                         font-size:12px;
                         line-height: 16px;
                     }
+                }
+                .coach-txt{
+                    padding: 0 12px;
+                    font-size: 14px;
+                    line-height: 24px;
+                    margin: 10px 0 15px;
                 }
             }
         }

@@ -31,8 +31,8 @@ AppData.timefiter = function (v1,v2) {
         const weekDay = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
             date1 = v1.substring(0,10),
             date2 = v2.substring(0,10),
-            _date1 = date1.replace(/-/g,"."),
-            _date2 = date2.replace(/-/g,"."),
+            _date1 = date1.replace(/-/g,"/"),
+            _date2 = date2.replace(/-/g,"/"),
             day1 = weekDay[new Date(date1).getDay()],
             day2 = weekDay[new Date(date2).getDay()],
             time1 = v1.substring(11,16),
@@ -54,9 +54,8 @@ export default {
             'pages/myActivity/main',
             'pages/detail/main',
             'pages/register/main',
-            'pages/login/main'
-            'pages/register/main',
-            'pages/map/main'
+            'pages/login/main',
+            'pages/register/main'
         ],
         window: {
             backgroundTextStyle: 'light',

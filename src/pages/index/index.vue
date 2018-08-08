@@ -22,13 +22,13 @@
     </div>
     <div class="tab-content">
       <div class="no-more" v-if="activityData.length==0&&init">没有更多了</div>
-      <div class="item mx-1px-bottom" v-for="(t,j) in activityData">
+      <div class="item mx-1px-bottom" v-for="(t,j) in activityData" @click="jumpDetail(t.id)">
         <div class="info-left">
           <image :src="t.img_list"></image>
         </div>
         <div class="info-rigth">
           <div class="name">{{t.title}}</div>
-          <div class="time">{{time}}</div>
+          <div class="time">{{t.time_section}}</div>
           <div class="address">{{t.address}}</div>
           <div class="money">
             <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
@@ -112,6 +112,12 @@ export default {
     },
     //城市加载更多
   methods:{
+      //跳转到详情页
+      jumpDetail(id){
+          wx.navigateTo({
+              url:'/pages/detail/main?id='+ id
+          })
+      },
       //请求接口返回活动数据给我
      /* getList(id ='all') {
           this.$http

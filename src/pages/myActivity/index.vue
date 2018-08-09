@@ -91,6 +91,7 @@
         },
         methods:{
             getMyList(page){
+                var token = this.$storage.get('user_token')
                 wx.showLoading({
                     title:"加载中",
                     mask:true
@@ -98,6 +99,10 @@
                 this.$http
                     .get(this.$config.GLOBAL.baseUrl + 'api/activity/myList',{
                         page:page
+                    },{
+                        headers: {
+                            Authorization: token
+                        }
                     }).then(res=>{
                         res = res.data;
                         if (res.status){

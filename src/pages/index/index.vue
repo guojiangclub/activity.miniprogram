@@ -98,7 +98,7 @@ export default {
             var page = this.activityPage.page + 1;
             this.activityPage.page = page;
             if(this.activityPage.hasMore){
-                console.log(this.submitDatas);
+                /*console.log(this.submitDatas);*/
                 let id = this.submitDatas.city;
                 let category_id = this.submitDatas.time;
                 this.askActivity(id,page,category_id,false)
@@ -355,7 +355,7 @@ export default {
       this.getChooseCategory();
       this.askActivity("all",1,"all",true)
 
-        console.log(getApp().textStatus);
+       /* console.log(getApp().textStatus);*/
     }
 }
 </script>
@@ -429,6 +429,8 @@ export default {
           &.iconfont{
             font-size: 10px;
             transform:rotate(90deg);
+            transition: all .3s linear;
+            transform-origin: center 30%;
           }
         }
         }
@@ -476,7 +478,8 @@ export default {
                 color: #000;
             }
             .iconfont{
-              color: #000000;
+              color:#000;
+              transform:rotate(180deg);
             }
             .type-content{
                 display: block;

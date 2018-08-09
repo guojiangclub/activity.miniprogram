@@ -24,7 +24,7 @@
       <div class="no-more" v-if="activityData.length==0&&init">没有更多了</div>
       <div class="item mx-1px-bottom" v-for="(t,j) in activityData" @click="jumpDetail(t.id)">
         <div class="info-left">
-          <image :src="t.img_list"></image>
+          <image :src="t.img_list" mode="aspectFill"></image>
         </div>
         <div class="info-rigth">
           <div class="name">{{t.title}}</div>
@@ -41,7 +41,7 @@
         </div>
       </div>
     </div>
-    <div class="my-activity">
+    <div class="my-activity" @click="jumpMine">
       <button type="warn">我的活动</button>
     </div>
   </div>
@@ -112,6 +112,12 @@ export default {
     },
     //城市加载更多
   methods:{
+      //跳到我的活动去
+      jumpMine(){
+          wx.navigateTo({
+              url:'/pages/myActivity/main'
+          })
+      },
       //跳转到详情页
       jumpDetail(id){
           wx.navigateTo({
@@ -198,7 +204,7 @@ export default {
 
                   } else {
                       wx.showModal({
-                          content:res.messages || "请求失败",
+                          content:res.message || "请求失败",
                           showCancel:false
                       })
 
@@ -238,7 +244,7 @@ export default {
                     });
                 } else{
                     wx.showModal({
-                        content:res.messages || "请求失败",
+                        content:res.message || "请求失败",
                         showCancel:false
                     })
                 }
@@ -336,7 +342,7 @@ export default {
                       this.init = true;
                   } else {
                       wx.showModal({
-                          content:res.messages || "请求失败",
+                          content:res.message || "请求失败",
                           showCancel:false
                       })
                   }
@@ -429,7 +435,7 @@ export default {
           &.iconfont{
             font-size: 10px;
             transform:rotate(90deg);
-            transition: all .3s linear;
+            transition: all .4s linear;
             transform-origin: center 30%;
 
           }
@@ -478,9 +484,12 @@ export default {
             .name{
                 color: #000;
             }
-            .iconfont{
-              color:#000;
-              transform:rotate(180deg);
+            span{
+              display: inline-block;
+              &.iconfont{
+                color:#000;
+                transform:rotate(-90deg);
+              }
             }
             .type-content{
                 display: block;

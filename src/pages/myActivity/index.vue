@@ -2,33 +2,145 @@
     <div id="myactivity">
         <div class="navbar">
             <div class="vlc-slideBar-wrapper vlc-slideBar-flex normal" style="width: auto">
-                <div class="vlc-slideBar-child" v-for="(item,index) in tabList" style="text-align: center; width: 75px; height: 30px; line-height: 30px;">
-                    <span>{{item.name}}</span>
+                <div class="vlc-slideBar-child" v-for="(item,index) in tabList" style="text-align: center; height: 30px; line-height: 30px;" @click="changeTab($event,index)">
+                    <span :class="activeIndex == index ? 'active':''">{{item.name}}</span>
                 </div>
             </div>
+            <div class="navar-slider" :style="{width: width +'px', transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>
         </div>
         <div class="content">
-            <div class="mar-bottom">
-                <div class="item mx-1px-bottom">
-                    <div class="info-left">
-                        <image src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1533635241199&di=9eb4367dfe084e906b39d80f228170d1&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fphotoblog%2F1611%2F02%2Fc14%2F29324329_1478094146549.jpg"></image>
-                    </div>
-                    <div class="info-rigth">
-                        <div class="name">五一特惠 长沙一日游橘子洲岳…</div>
-                        <div class="time">2018.04.30 周一 10:00 - 2018.05.12 </div>
-                        <div class="address">湖南省长沙市岳麓区</div>
-                        <div class="money">
-                            <!-- <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                             <span class="text" v-if="t.payments[0] && t.payments[0].type == 0">{{t.payments[0].point}}积分</span>
-                             <span class="text" v-if="t.payments[0] && t.payments[0].type == 1">￥{{t.payments[0].price}}</span>
-                             <span class="text" v-if="t.payments[0] && t.payments[0].type == 2">￥{{t.payments[0].price}}+{{t.payments[0].point}}积分</span>
-                             <span class="text" v-if="t.payments[0] && t.payments[0].type == 4">￥{{t.payments[0].price}}</span>-->
+            <div class="bo-m" v-if="activeIndex==0">
+                <div class="noMore" v-if="dataList[0].length == 0&& tabList[0].init">暂无数据</div>
+                <div  v-for="(t,key) in dataList[0]"  class="mar-bottom">
+                    <div class="item mx-1px-bottom">
+                        <div class="info-left">
+                            <image :src="t.img_list" mode="aspectFill"></image>
+                        </div>
+                        <div class="info-rigth">
+                            <div class="name">{{t.title}}</div>
+                            <div class="time">{{t.time_section}} </div>
+                            <div class="address">{{t.address}}</div>
+                            <div class="money">
+                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
+                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
+                            </div>
                         </div>
                     </div>
+                    <div class="btn-status">
+                        <span :class="t.usercolor">{{t.usertxt}}</span>
+                    </div>
                 </div>
-                <div class="btn-status">
-                    <span>已取消</span>
+            </div>
+            <div class="bo-m" v-if="activeIndex==1">
+                <div class="noMore" v-if="dataList[1].length == 0&& tabList[1].init">暂无数据</div>
+                <div class="mar-bottom" v-for="(t,key) in dataList[1]" >
+                    <div class="item mx-1px-bottom">
+                        <div class="info-left">
+                            <image :src="t.img_list"></image>
+                        </div>
+                        <div class="info-rigth">
+                            <div class="name">{{t.title}}</div>
+                            <div class="time">{{t.time_section}} </div>
+                            <div class="address">{{t.address}}</div>
+                            <div class="money">
+                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
+                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-status">
+                        <span :class="t.usercolor">{{t.usertxt}}</span>
+                    </div>
                 </div>
+            </div>
+            <div class="bo-m" v-if="activeIndex==2">
+                <div class="noMore" v-if="dataList[2].length == 0&& tabList[2].init">暂无数据</div>
+                <div class="mar-bottom" v-for="(t,key) in dataList[2]" >
+                    <div class="item mx-1px-bottom">
+                        <div class="info-left">
+                            <image :src="t.img_list"></image>
+                        </div>
+                        <div class="info-rigth">
+                            <div class="name">{{t.title}}</div>
+                            <div class="time">{{t.time_section}} </div>
+                            <div class="address">{{t.address}}</div>
+                            <div class="money">
+                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
+                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-status">
+                        <span :class="t.usercolor">{{t.usertxt}}</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="bo-m" v-if="activeIndex==3">
+                <div class="noMore" v-if="dataList[3].length == 0&& tabList[3].init">暂无数据</div>
+                <div class="mar-bottom" v-for="(t,key) in dataList[3]" >
+                    <div class="item mx-1px-bottom">
+                        <div class="info-left">
+                            <image :src="t.img_list"></image>
+                        </div>
+                        <div class="info-rigth">
+                            <div class="name">{{t.title}}</div>
+                            <div class="time">{{t.time_section}} </div>
+                            <div class="address">{{t.address}}</div>
+                            <div class="money">
+                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
+                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-status">
+                        <span :class="t.usercolor">{{t.usertxt}}</span>
+                    </div>
+                </div>
+
+            </div>
+            <div class="bo-m" v-if="activeIndex==4">
+                <div class="noMore" v-if="dataList[4].length == 0&& tabList[4].init">暂无数据</div>
+                <div class="mar-bottom" v-for="(t,key) in dataList[4]" >
+                    <div class="item mx-1px-bottom">
+                        <div class="info-left">
+                            <image :src="t.img_list"></image>
+                        </div>
+                        <div class="info-rigth">
+                            <div class="name">{{t.title}}</div>
+                            <div class="time">{{t.time_section}} </div>
+                            <div class="address">{{t.address}}</div>
+                            <div class="money">
+                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
+                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
+                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-status">
+                        <span :class="t.usercolor">{{t.usertxt}}</span>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -39,6 +151,9 @@
     export default {
         data () {
             return{
+                activeIndex: 0,
+                sliderOffset: 0,
+                width: 0,
                 tabList:[
                     {
                         id:0,
@@ -81,24 +196,63 @@
                         isList:false
                     }
                 ],
-                dataList:{},
+                dataList:{
+                    0:[],
+                    1:[],
+                    2:[],
+                    3:[],
+                    4:[]
+                }
             }
         },
-        created () {
-        },
         mounted(){
-            this.getMyList(1)
+           /* console.log(getApp().user_status_class(1, 1));*/
+            this.getMyList(1,0,true);
+            wx.getSystemInfo({
+                success: res =>{
+                    this.width = res.windowWidth /this.tabList.length,
+                    this.sliderOffset = res.windowWidth / this.tabList.length * this.activeIndex
+                }
+            });
+        },
+        //小程序触底事件,加载更多
+        onReachBottom() {
+//                我的列表页加载更多
+            wx.showLoading({
+                title:"加载中",
+                mask:true
+            });
+            var page = this.tabList[this.activeIndex].page + 1;
+            this.tabList[this.activeIndex].page = page;
+            if(this.tabList[this.activeIndex].hasMore){
+                this.getMyList(page,this.activeIndex,false)
+            } else{
+                wx.showToast({
+                    title: '没有更多了',
+                    icon: 'none'
+                });
+                wx.hideLoading();
+            }
         },
         methods:{
-            getMyList(page){
+            changeTab(e,index){
+                this.activeIndex = index;
+                this.sliderOffset = e.currentTarget.offsetLeft;
+                if(!this.tabList[index].init){
+                    this.getMyList(1,index,true);
+                }
+            },
+            //请求我的活动列表
+            getMyList(page,status,isfresh){
                 var token = this.$storage.get('user_token')
                 wx.showLoading({
                     title:"加载中",
                     mask:true
                 });
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/myList',{
-                        page:page
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/myList/',{
+                        page:page,
+                        status:status
                     },{
                         headers: {
                             Authorization: token
@@ -106,10 +260,43 @@
                     }).then(res=>{
                         res = res.data;
                         if (res.status){
-                            this.dataList = res.data;
+                            /*this.dataList = res.data;*/
+                            //拿到数据后需要分页
+                            if(isfresh){
+                                this.dataList[status] = [];
+                                var myList;
+                                var page = res.meta.pagination;//拿到后台的分页数据
+                                var current_page = page.current_page;//获取后台数据当前页面
+                                var total_page = page.total_pages;// 获取后台数据总共页数
+                                myList = this.dataList[status].concat(res.data);
+                                this.dataList[status]  = myList;
+                                this.tabList[status].page = current_page;
+                                this.tabList[status].hasMore = current_page < total_page;
+                                this.dataList[status].forEach(function (val,index) {
+                                    val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
+                                    val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
+                                })
+                                /*this.dataList.forEach(function (val,index) {
+
+                                })*/
+                            } else {
+                                var myList;
+                                var page = res.meta.pagination;//拿到后台的分页数据
+                                var current_page = page.current_page;//获取后台数据当前页面
+                                var total_page = page.total_pages;// 获取后台数据总共页数
+                                myList = this.dataList[status].concat(res.data);
+                                this.dataList[status]  = myList;
+                                this.tabList[status].page = current_page;
+                                this.tabList[status].hasMore = current_page < total_page;
+                                this.dataList[status].forEach(function (val,index) {
+                                    val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
+                                    val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
+                                })
+                            }
+                            this.tabList[status].init = true;
                         } else{
                             wx.showModal({
-                                content:res.messages || "请求失败",
+                                content:res.message || "请求失败",
                                 showCancel:false
                             })
                         }
@@ -153,9 +340,7 @@
                         color:#9B9B9B;
                         font-size: 15px;
                     }
-                }
-                .active{
-                    span{
+                    .active{
                         color:@globalColor;
                     }
                 }
@@ -163,10 +348,28 @@
             .normal{
                 flex-direction: row;
             }
+            .navar-slider{
+                position: absolute;
+                content: " ";
+                left: 0;
+                bottom: 0;
+                width: 4em;
+                height: 3px;
+                background-color: @globalColor;
+                transition: transform .3s;
+            }
         }
         .content{
             .mar-bottom{
-                margin-bottom:10px;
+                margin: 5px 0 10px 0;
+            }
+            .bo-m{
+                margin-bottom: 18px;
+            }
+            .noMore{
+                text-align: center;
+                font-size:14px;
+                line-height: 40px;
             }
             .item{
                 background-color: #ffffff;
@@ -218,8 +421,15 @@
                         margin-top:10px;
                         .text{
                             color: @globalColor;
-                            font-size: 12px;
+                            font-size: 16px;
                             line-height: 16px;
+                            span{
+                                font-size: 12px;
+                            }
+                        }
+                        .subtitle{
+                            color: #9c9c9c;
+                            font-size: 12px;
                         }
                         .enroll-btn{
                             padding: 4px 8px;
@@ -249,6 +459,18 @@
                 color:#9B9B9B;
                 border: 1px solid #9B9B9B;
                 border-radius: 2px;
+                &.red{
+                    color: @globalColor;
+                    border: 1px solid @globalColor;
+                }
+                &.grey{
+                    color: #cbcbcb;
+                    border: 1px solid  #cbcbcb;
+                }
+                &.blue{
+                    color: #036eb8;
+                    border: 1px solid  #036eb8;
+                }
             }
         }
     }

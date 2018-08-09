@@ -12,7 +12,7 @@
                     <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 1"> <span>￥</span>{{detail.payments[0].price}}</span>
                     <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 2"> <span>￥</span>{{detail.payments[0].price}}+{{detail.payments[0].point}}积分</span>
                     <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 4"> <span>￥</span>{{detail.payments[0].price}}</span>
-                    <span class="btn" :class="{'red':detail.status==1}">{{info[detail.status]}}</span>
+                    <span class="btn" :class="ac_status">{{info[detail.status]}}</span>
                 </div>
                 <div class="concrete">
                     <div class="date padd mx-1px-bottom">
@@ -36,23 +36,24 @@
                 <div class="tab-title">
                     <!--<div class="item active">活动详情</div>
                     <div class="item">活动领队</div>-->
-                    <div class="item" v-for="(i,k) in tabList" @click="changeTab(k)" :class="activeIndex == k ? 'active':''">
-                        <span>{{i.title}}</span>
+                    <div class="item" v-for="(i,k) in tabList" :class="activeIndex == k ? 'active':''">
+                        <span  @click="changeTab($event,k)">{{i.title}}</span>
                     </div>
+                    <div class="navar-slider" :style="{transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>
                 </div>
             </div>
-            <div class="content" v-if="activeIndex == 0">
+            <div class="content" v-if="activeIndex == 0" v-show="detail.content">
                 <wxParse :content="article" @preview="preview" @navigate="navigate"></wxParse>
             </div>
             <div class="content" v-if="activeIndex == 1">
-                <div class="coach-intro">
+                <div class="coach-intro" v-show="detail.coach">
                     <div class="avatar">
                         <image :src="detail.coach.avatar"></image>
                     </div>
                     <div class='coach-name'>{{detail.coach.nick_name}}</div>
-                    <div class="coach-nick">{{detail.coach.sex}}   99岁</div>
+                    <div class="coach-nick">{{detail.coach.title}}</div>
                 </div>
-                <div class="coach-txt">
+                <div class="coach-txt" v-show="detail.coach">
                     <wxParse :content="describe"></wxParse>
                 </div>
             </div>
@@ -73,7 +74,7 @@
                 </div>
             </div>
             <div class="btn-right">
-                <button :class="statusClass">{{statusTxt}}</button>
+                <button type="warn">立即报名</button>
             </div>
         </div>
         <!--弹出分享部分-->
@@ -122,10 +123,8 @@
                     payments: [],
                     coach:{}
                 },
-                loginDetail: {
-
-                },
                 info: getApp().textStatus,
+                ac_status:"",
                 article: "",
                 describe:'',
                 time: '',
@@ -142,31 +141,25 @@
                 },
                 id:'',
                 show_share: false,           // 弹出分享
-                share_img: false,             // 弹出到分享到朋友圈
-                statusTxt: '',
-                statusClass: ''
+                share_img: false,           // 弹出到分享到朋友圈
+                /*activebar:0,//sliderbar*/
+                sliderOffset:0
             }
         },
         mounted(){
-//            将旧数据清空
-            this.detail = {
-                payments: [],
-                coach:{}
-            };
-            this.article = '';
-            this.describe = '';
-
-
-            var token = this.$storage.get('user_token');
-            if (token) {
-                this.getLoginDetail(this.id);
-            }
+            this.id = this.$root.$mp.query.id;
             this.getDetail(this.id);
+            wx.getSystemInfo({
+                    success: res =>{
+                    /*this.width = res.windowWidth /this.tabList.length*2,*/
+                this.sliderOffset = res.windowWidth / this.tabList.length/2.8
+        }
+        });
         },
-        onLoad(e){
+       /* onLoad(e){
 //            console.log(e.id);
             this.id = e.id;
-        },
+        },*/
         methods: {
             // 弹出图片
             changeImg() {
@@ -176,8 +169,9 @@
             changeShare() {
                    this.show_share = !this.show_share;
             },
-            changeTab(index){
-                this.activeIndex = index
+            changeTab(e,index){
+                this.activeIndex = index;
+                this.sliderOffset =  e.currentTarget.offsetLeft;
             },
             //点击收藏
             collect(){
@@ -199,7 +193,7 @@
             //请求活动详情页活动的数据
             getDetail(id){
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/' + id).then(res => {
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/'+id).then(res => {
                     res = res.data;
                     console.log(res);
                     if (res.status) {
@@ -207,35 +201,10 @@
                         this.article = res.data.content;
                         this.describe = res.data.coach.describe;
                         this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
+                        this.ac_status = getApp().ac_status(this.detail.status);
                     } else {
                         wx.showModal({
-                            content: res.messages || "请求失败",
-                            showCancel: false
-                        })
-                    }
-                }, err => {
-                    wx.showModal({
-                        content: '请求失败，请重试',
-                        showCancel: false,
-                    })
-                })
-            },
-//            登录状态请求这个接口
-            getLoginDetail(id) {
-                var token = this.$storage.get('user_token')
-                this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/check/' + id, {}, {
-                        headers: {
-                            Authorization: token
-                        }
-                    })
-                    .then(res => {
-                    res = res.data;
-                    if (res.status) {
-                        this.loginDetail = res.data;
-                    } else {
-                        wx.showModal({
-                            content: res.messages || "请求失败",
+                            content: res.message || "请求失败",
                             showCancel: false
                         })
                     }
@@ -296,121 +265,6 @@
                     }
                 })
             }
-        },
-        computed: {
-            statusClassF() {
-                const s1 = this.detail.status,
-                    s2 = this.loginDetail.member_status;
-                console.log(s2);
-                switch (s1) {
-                    case 1:
-                        switch (s2) {
-                            default:
-                                this.statusClass = 'bgred';
-                                break;
-                            case 1:
-                                this.statusClass =  'bgblack';
-                                break;
-                            case 4:
-                                this.statusClass =  'bggrey';
-                                break;
-                        }
-                        break;
-                    case 2:
-                        switch (s2) {
-                            default:
-                                this.statusClass =  'bggrey';
-                                break;
-                            case 1:
-                                this.statusClass =  'bgblack';
-                                break;
-                            case  2:
-                                this.statusClass =  'bgblue';
-                                break;
-                        }
-                        break;
-                    case 4:
-                    case 5:
-                        switch (s2) {
-                            case 1:
-                                this.statusClass =  'bgblack';
-                                break;
-                        }
-                        break;
-                }
-            },
-            statusTxtsF() {
-                const s1 = this.detail.status,
-                    s2 = this.loginDetail.member_status,
-                    s3 = this.loginDetail.order;
-                switch (s1) {
-                    case 0:
-                        this.statusTxt = '即将开始报名'
-                        break;
-                    case 1:
-                        switch (s2) {
-                            default:
-                                this.statusTxt =  '立即报名';
-                                break;
-                            case 0:
-                                if (s3) {
-                                    const pay_status = s3.pay_status;
-                                    if (pay_status == 0) {
-                                        this.statusTxt = '在线活动待支付';
-                                    }
-                                    else {
-                                        this.statusTxt = '立即报名';
-                                    }
-
-                                }
-                                else {
-                                    this.statusTxt = '立即报名';
-                                }
-                                break;
-                            case 1:
-                                this.statusTxt =  '活动已报名';
-                                break;
-                            case 4:
-                                this.statusTxt = '线下活动待审核';
-                                break;
-                        }
-                        break;
-                    case 2:
-                        switch (s2) {
-                            default:
-                                this.statusTxt =  '报名已截止';
-                                break;
-                            case 1:
-                                this.statusTxt =  '未签到';
-                                break;
-                            case 2:
-                                this.statusTxt =  '签到成功';
-                                break;
-                        }
-                        break;
-                    case 3:
-                        this.statusTxt =  '活动已结束';
-                        break;
-                    case 4:
-                        switch (s2) {
-                            default:
-                                this.statusTxt =  '报名已截止';
-                            case 1:
-                                this.statusTxt =  '活动已报名';
-                                break;
-                        }
-                        break;
-                    case 5:
-                        switch (s2) {
-                            default:
-                                this.statusTxt =  '活动已满额';
-                            case 1:
-                                this.statusTxt =  '活动已报名';
-                                break;
-                        }
-                        break;
-                }
-            }
         }
     }
 </script>
@@ -465,6 +319,14 @@
                         border: 1px solid @globalColor;
                         color: @globalColor;
                     }
+                    .grey{
+                        color: #cbcbcb;
+                        border: 1px solid  #cbcbcb;
+                    }
+                    .green{
+                        color: #62aa12;
+                        border: 1px solid #62aa12;
+                    }
                 }
                 .concrete {
                     padding-left: 16px;
@@ -506,6 +368,7 @@
                 margin-bottom: 5px;
             }
             .tab-title {
+                position: relative;
                 padding: 10px 0;
                 display: flex;
                 align-items: center;
@@ -517,14 +380,20 @@
                     flex: 1;
                     span{
                         display: inline-block;
-                        padding-bottom: 12px;
                     }
                 }
                 .active {
                     color: @globalColor;
-                    span{
-                        border-bottom: 2px solid @globalColor;
-                    }
+                }
+                .navar-slider{
+                    position: absolute;
+                    content: " ";
+                    left: 0;
+                    bottom: 0;
+                    width: 4em;
+                    height: 3px;
+                    background-color: @globalColor;
+                    transition: transform .3s;
                 }
             }
             /*.slideBar{
@@ -537,6 +406,8 @@
             }*/
             .content{
                 background-color: #FFFFFF;
+                min-height:200px;
+                padding: 0 12px;
                 .coach-intro{
                     text-align: center;
                     .avatar{
@@ -561,7 +432,6 @@
                     }
                 }
                 .coach-txt{
-                    padding: 0 12px;
                     font-size: 14px;
                     line-height: 24px;
                     margin: 10px 0 15px;

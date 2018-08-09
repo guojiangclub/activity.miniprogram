@@ -18,14 +18,67 @@ const app = new Vue(App)
 app.$mount();
 
 var AppData = getApp();
+//详情页按钮
 AppData.textStatus = {
     0: '报名未开始',
     1: '活动报名中',
-    2: '报名已截止',
+    2: '活动进行中',
     3: '活动已结束',
     4: '报名已截止',
     5: '活动已满额'
 };
+//详情页按钮样式
+AppData.ac_status = function (v) {
+    switch (v) {
+        case 1:
+            return 'red';
+        case 2:
+            return 'green';
+        default:
+            return 'grey';
+    }
+}
+// 我的活动列表按钮
+AppData.user_status_txt = function (s1,s2) {
+    switch (s2) {
+        case 0:
+            return '待付款';
+        case 1:
+            switch (s1) {
+                case 2:
+                    return '立即签到';
+                default:
+                    return '未签到';
+            }
+            break;
+        case 2:
+            return '签到成功';
+        case 3:
+            return '取消成功';
+        case 4:
+            return '待审核';
+    }
+}
+// 我的活动列表大按钮 class
+AppData.user_status_class = function (s1,s2) {
+    switch (s2) {
+        case 0:
+            return 'red';
+        case 1:
+            if( s1==2 ) {
+                return 'blue';
+            } else {
+                return 'grey';
+            }
+            break;
+        case 2:
+            return 'blue';
+        default:
+            return 'grey';
+    }
+}
+
+//时间处理
 AppData.timefiter = function (v1,v2) {
     if(v1 && v2) {
         const weekDay = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"],
@@ -55,7 +108,9 @@ export default {
             'pages/detail/main',
             'pages/register/main',
             'pages/login/main',
-            'pages/register/main'
+            'pages/register/main',
+            'pages/enrolmentDetail/main'
+
         ],
         window: {
             backgroundTextStyle: 'light',

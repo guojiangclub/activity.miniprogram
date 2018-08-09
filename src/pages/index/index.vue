@@ -431,6 +431,7 @@ export default {
             transform:rotate(90deg);
             transition: all .3s linear;
             transform-origin: center 30%;
+
           }
         }
         }

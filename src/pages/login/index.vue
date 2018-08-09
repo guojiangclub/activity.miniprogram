@@ -25,6 +25,7 @@
 </template>
 
 <script>
+
     import {is} from '@/utils/index'
     export default{
         data(){

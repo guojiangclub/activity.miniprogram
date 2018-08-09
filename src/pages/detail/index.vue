@@ -73,7 +73,7 @@
                 </div>
             </div>
             <div class="btn-right">
-                <button type="warn">立即报名</button>
+                <button :class="statusClass">{{statusTxt}}</button>
             </div>
         </div>
         <!--弹出分享部分-->
@@ -122,6 +122,9 @@
                     payments: [],
                     coach:{}
                 },
+                loginDetail: {
+
+                },
                 info: getApp().textStatus,
                 article: "",
                 describe:'',
@@ -139,11 +142,26 @@
                 },
                 id:'',
                 show_share: false,           // 弹出分享
-                share_img: false             // 弹出到分享到朋友圈
+                share_img: false,             // 弹出到分享到朋友圈
+                statusTxt: '',
+                statusClass: ''
             }
         },
         mounted(){
-            this.getDetail(this.id)
+//            将旧数据清空
+            this.detail = {
+                payments: [],
+                coach:{}
+            };
+            this.article = '';
+            this.describe = '';
+
+
+            var token = this.$storage.get('user_token');
+            if (token) {
+                this.getLoginDetail(this.id);
+            }
+            this.getDetail(this.id);
         },
         onLoad(e){
 //            console.log(e.id);
@@ -181,7 +199,7 @@
             //请求活动详情页活动的数据
             getDetail(id){
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/15').then(res => {
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/' + id).then(res => {
                     res = res.data;
                     console.log(res);
                     if (res.status) {
@@ -189,6 +207,32 @@
                         this.article = res.data.content;
                         this.describe = res.data.coach.describe;
                         this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
+                    } else {
+                        wx.showModal({
+                            content: res.messages || "请求失败",
+                            showCancel: false
+                        })
+                    }
+                }, err => {
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                })
+            },
+//            登录状态请求这个接口
+            getLoginDetail(id) {
+                var token = this.$storage.get('user_token')
+                this.$http
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/check/' + id, {}, {
+                        headers: {
+                            Authorization: token
+                        }
+                    })
+                    .then(res => {
+                    res = res.data;
+                    if (res.status) {
+                        this.loginDetail = res.data;
                     } else {
                         wx.showModal({
                             content: res.messages || "请求失败",
@@ -251,6 +295,121 @@
                         }
                     }
                 })
+            }
+        },
+        computed: {
+            statusClassF() {
+                const s1 = this.detail.status,
+                    s2 = this.loginDetail.member_status;
+                console.log(s2);
+                switch (s1) {
+                    case 1:
+                        switch (s2) {
+                            default:
+                                this.statusClass = 'bgred';
+                                break;
+                            case 1:
+                                this.statusClass =  'bgblack';
+                                break;
+                            case 4:
+                                this.statusClass =  'bggrey';
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (s2) {
+                            default:
+                                this.statusClass =  'bggrey';
+                                break;
+                            case 1:
+                                this.statusClass =  'bgblack';
+                                break;
+                            case  2:
+                                this.statusClass =  'bgblue';
+                                break;
+                        }
+                        break;
+                    case 4:
+                    case 5:
+                        switch (s2) {
+                            case 1:
+                                this.statusClass =  'bgblack';
+                                break;
+                        }
+                        break;
+                }
+            },
+            statusTxtsF() {
+                const s1 = this.detail.status,
+                    s2 = this.loginDetail.member_status,
+                    s3 = this.loginDetail.order;
+                switch (s1) {
+                    case 0:
+                        this.statusTxt = '即将开始报名'
+                        break;
+                    case 1:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '立即报名';
+                                break;
+                            case 0:
+                                if (s3) {
+                                    const pay_status = s3.pay_status;
+                                    if (pay_status == 0) {
+                                        this.statusTxt = '在线活动待支付';
+                                    }
+                                    else {
+                                        this.statusTxt = '立即报名';
+                                    }
+
+                                }
+                                else {
+                                    this.statusTxt = '立即报名';
+                                }
+                                break;
+                            case 1:
+                                this.statusTxt =  '活动已报名';
+                                break;
+                            case 4:
+                                this.statusTxt = '线下活动待审核';
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '报名已截止';
+                                break;
+                            case 1:
+                                this.statusTxt =  '未签到';
+                                break;
+                            case 2:
+                                this.statusTxt =  '签到成功';
+                                break;
+                        }
+                        break;
+                    case 3:
+                        this.statusTxt =  '活动已结束';
+                        break;
+                    case 4:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '报名已截止';
+                            case 1:
+                                this.statusTxt =  '活动已报名';
+                                break;
+                        }
+                        break;
+                    case 5:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '活动已满额';
+                            case 1:
+                                this.statusTxt =  '活动已报名';
+                                break;
+                        }
+                        break;
+                }
             }
         }
     }

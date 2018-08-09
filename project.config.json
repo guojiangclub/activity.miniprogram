@@ -41,7 +41,7 @@
 					"id": 1,
 					"name": "活动详情",
 					"pathName": "pages/detail/main",
-					"query": ""
+					"query": "id=21"
 				},
 				{
 					"id": -1,

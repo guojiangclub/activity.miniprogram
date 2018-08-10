@@ -109,6 +109,9 @@ export default {
             'pages/register/main',
             'pages/login/main',
             'pages/register/main',
+            'pages/enroll/main',
+            'pages/pay/main',
+            'pages/success/main',
             'pages/enrolmentDetail/main'
 
         ],

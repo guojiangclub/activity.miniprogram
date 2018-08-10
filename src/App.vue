@@ -3,6 +3,9 @@
 </script>
 
 <style>
+    body{
+        background: #F3F3F3;
+    }
     .bgred {
         background: #EA4448;
     }

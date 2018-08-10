@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="btn-right">
-                <button type="warn">立即报名</button>
+                <button :class="statusClass" @click="submit">{{statusTxt}}</button>
             </div>
         </div>
         <!--弹出分享部分-->
@@ -108,6 +108,46 @@
                 <i class="iconfont icon-Group100" @click="changeImg"></i>
             </view>
         </view>
+
+
+        <!--选择票种弹出-->
+        <div class="maks" :class="show_ticket ? 'cur':''">
+
+        </div>
+        <div class="ticket-box" :class="show_ticket ? 'cur':''">
+            <div class="shaer-item title mx-1px-bottom">
+                <span></span>
+                <span>请选择票种</span>
+            </div>
+            <div class="shaer-item mx-1px-bottom">
+               <div class="ticket-name">
+                   金额支付
+               </div>
+                <div class="ticket-value">
+                    ￥1000.00
+                </div>
+            </div>
+            <div class="shaer-item mx-1px-bottom">
+                <div class="ticket-name">
+                    积分支付
+                </div>
+                <div class="ticket-value">
+                    100积分
+                </div>
+            </div>
+            <div class="shaer-item mx-1px-bottom">
+                <div class="ticket-name">
+                    积分加金额支付
+                </div>
+                <div class="ticket-value">
+                    ￥1000.00 + 100积分
+                </div>
+            </div>
+
+            <div class="bottom">
+                确定
+            </div>
+        </div>
     </div>
 </template>
 
@@ -122,6 +162,9 @@
                 detail: {
                     payments: [],
                     coach:{}
+                },
+                loginDetail: {
+
                 },
                 info: getApp().textStatus,
                 ac_status:"",
@@ -141,20 +184,34 @@
                 },
                 id:'',
                 show_share: false,           // 弹出分享
-                share_img: false,           // 弹出到分享到朋友圈
-                /*activebar:0,//sliderbar*/
-                sliderOffset:0
+                share_img: false,             // 弹出到分享到朋友圈
+                statusTxt: '',
+                statusClass: '',
+                show_ticket: true
             }
         },
         mounted(){
             this.id = this.$root.$mp.query.id;
-            this.getDetail(this.id);
             wx.getSystemInfo({
-                    success: res =>{
+                success: res =>{
                     /*this.width = res.windowWidth /this.tabList.length*2,*/
-                this.sliderOffset = res.windowWidth / this.tabList.length/2.8
-        }
-        });
+                    this.sliderOffset = res.windowWidth / this.tabList.length/2.8
+                }
+            });
+//            将旧数据清空
+            this.detail = {
+                payments: [],
+                coach:{}
+            };
+            this.article = '';
+            this.describe = '';
+
+
+            var token = this.$storage.get('user_token');
+            if (token) {
+                this.getLoginDetail(this.id);
+            }
+            this.getDetail(this.id);
         },
        /* onLoad(e){
 //            console.log(e.id);
@@ -172,6 +229,9 @@
             changeTab(e,index){
                 this.activeIndex = index;
                 this.sliderOffset =  e.currentTarget.offsetLeft;
+            },
+            changeTicket() {
+                this.show_ticket = !this.show_ticket;
             },
             //点击收藏
             collect(){
@@ -193,7 +253,7 @@
             //请求活动详情页活动的数据
             getDetail(id){
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/'+id).then(res => {
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/' + id).then(res => {
                     res = res.data;
                     console.log(res);
                     if (res.status) {
@@ -202,6 +262,32 @@
                         this.describe = res.data.coach.describe;
                         this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
                         this.ac_status = getApp().ac_status(this.detail.status);
+                    } else {
+                        wx.showModal({
+                            content: res.message || "请求失败",
+                            showCancel: false
+                        })
+                    }
+                }, err => {
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                })
+            },
+//            登录状态请求这个接口
+            getLoginDetail(id) {
+                var token = this.$storage.get('user_token')
+                this.$http
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/check/' + id, {}, {
+                        headers: {
+                            Authorization: token
+                        }
+                    })
+                    .then(res => {
+                    res = res.data;
+                    if (res.status) {
+                        this.loginDetail = res.data;
                     } else {
                         wx.showModal({
                             content: res.message || "请求失败",
@@ -264,6 +350,147 @@
                         }
                     }
                 })
+            },
+//            报名
+            submit() {
+                if (this.detail.fee_type == 'CHARGING') {
+                    if (this.loginDetail.order) {
+                        let payment_id = this.loginDetail.order.payment_id;
+                        let pay_status = this.loginDetail.order.pay_status;
+                        let index = this.detail.payments.findIndex(function (val) {
+                            return val.id == payment_id;
+                        });
+                        if (pay_status == 0) {
+//                            跳转到线上支付
+
+                        } else {
+                            // 弹出票种选择
+                            this.changeTicket();
+                        }
+                    } else {
+                        // 弹出票种选择
+                        this.changeTicket()
+                    }
+                } else {
+                    wx.navigateTo({
+                        url: '/pages/enroll/main?id=' + this.id
+                    })
+                }
+            }
+        },
+        computed: {
+            statusClassF() {
+                const s1 = this.detail.status,
+                    s2 = this.loginDetail.member_status;
+                console.log(s2);
+                switch (s1) {
+                    case 1:
+                        switch (s2) {
+                            default:
+                                this.statusClass = 'bgred';
+                                break;
+                            case 1:
+                                this.statusClass =  'bgblack';
+                                break;
+                            case 4:
+                                this.statusClass =  'bggrey';
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (s2) {
+                            default:
+                                this.statusClass =  'bggrey';
+                                break;
+                            case 1:
+                                this.statusClass =  'bgblack';
+                                break;
+                            case  2:
+                                this.statusClass =  'bgblue';
+                                break;
+                        }
+                        break;
+                    case 4:
+                    case 5:
+                        switch (s2) {
+                            case 1:
+                                this.statusClass =  'bgblack';
+                                break;
+                        }
+                        break;
+                }
+            },
+            statusTxtsF() {
+                const s1 = this.detail.status,
+                    s2 = this.loginDetail.member_status,
+                    s3 = this.loginDetail.order;
+                switch (s1) {
+                    case 0:
+                        this.statusTxt = '即将开始报名'
+                        break;
+                    case 1:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '立即报名';
+                                break;
+                            case 0:
+                                if (s3) {
+                                    const pay_status = s3.pay_status;
+                                    if (pay_status == 0) {
+                                        this.statusTxt = '在线活动待支付';
+                                    }
+                                    else {
+                                        this.statusTxt = '立即报名';
+                                    }
+
+                                }
+                                else {
+                                    this.statusTxt = '立即报名';
+                                }
+                                break;
+                            case 1:
+                                this.statusTxt =  '活动已报名';
+                                break;
+                            case 4:
+                                this.statusTxt = '线下活动待审核';
+                                break;
+                        }
+                        break;
+                    case 2:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '报名已截止';
+                                break;
+                            case 1:
+                                this.statusTxt =  '未签到';
+                                break;
+                            case 2:
+                                this.statusTxt =  '签到成功';
+                                break;
+                        }
+                        break;
+                    case 3:
+                        this.statusTxt =  '活动已结束';
+                        break;
+                    case 4:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '报名已截止';
+                            case 1:
+                                this.statusTxt =  '活动已报名';
+                                break;
+                        }
+                        break;
+                    case 5:
+                        switch (s2) {
+                            default:
+                                this.statusTxt =  '活动已满额';
+                            case 1:
+                                this.statusTxt =  '活动已报名';
+                                break;
+                        }
+                        break;
+                }
             }
         }
     }
@@ -506,8 +733,6 @@
             z-index: 50;
             transition:all .3s linear;
             .shaer-item {
-                height: 50px;
-                line-height: 50px;
                 text-align: center;
                 font-size: 18px;
                 color: #2E2D2D;
@@ -527,6 +752,57 @@
                 height: 155px;
 
             }
+
+
+        }
+        /*弹出票种选择*/
+        .ticket-box {
+            background: #F3F3F3;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 0;
+            z-index: 50;
+            transition:all .3s linear;
+            .shaer-item {
+                padding: 10px 15px;
+                text-align: center;
+                font-size: 16px;
+                color: #2E2D2D;
+                background: #ffffff;
+                border-radius: 0;
+
+                .ticket-value {
+                    font-size: 12px;
+                }
+                &:after {
+                    border: none;
+                }
+                &.title {
+                    font-size: 14px;
+                }
+                &.clear {
+                    margin-top: 5px;
+                    color: #9B9B9B;
+                }
+            }
+
+
+            &.cur{
+                height: auto;
+
+            }
+            .bottom {
+                height: 50px;
+                line-height: 50px;
+                text-align: center;
+                background: @globalColor;
+                font-size: 16px;
+                color: #ffffff;
+                margin-top: 5px;
+            }
+
+
         }
         //分享到朋友圈弹出
         .share-img-box {

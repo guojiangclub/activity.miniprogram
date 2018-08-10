@@ -77,6 +77,33 @@ AppData.user_status_class = function (s1,s2) {
             return 'grey';
     }
 }
+//我的报名详情 txt
+AppData.register_status_txt = function (s1,s2) {
+    switch (s2) {
+        case 1:
+            switch (s1) {
+                case 1:
+                    return '活动已报名';
+                case 2:
+                    return '活动进行中';
+                case 3:
+                    return '活动已结束';
+                case 4:
+                    return '报名已截止';
+                case 5:
+                    return '活动已满额';
+            }
+            break;
+        case 2:
+            return '活动已签到';
+        case 3:
+            return '报名已取消';
+        case 4:
+            return '活动待审核';
+        case 0:
+            return '活动待支付'
+    }
+}
 
 //时间处理
 AppData.timefiter = function (v1,v2) {
@@ -112,7 +139,10 @@ export default {
             'pages/enroll/main',
             'pages/pay/main',
             'pages/success/main',
-            'pages/enrolmentDetail/main'
+            'pages/enrolmentDetail/main',
+            'pages/myLeader/main'
+
+
 
         ],
         window: {

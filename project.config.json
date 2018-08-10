@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 8,
 			"list": [
 				{
 					"id": -1,
@@ -72,6 +72,18 @@
 					"name": "支付页面",
 					"pathName": "pages/pay/main",
 					"query": "id=21"
+				},
+				{
+					"id": -1,
+					"name": "报名详情",
+					"pathName": "pages/enrolmentDetail/main",
+					"query": ""
+				},
+				{
+					"id": -1,
+					"name": "我的带队活动",
+					"pathName": "pages/myLeader/main",
+					"query": ""
 				}
 			]
 		}

@@ -165,14 +165,6 @@
                     },
                     {
                         id:1,
-                        name:"未开始",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
-                    },
-                    {
-                        id:2,
                         name:"进行中",
                         page: 0,
                         hasMore: true,
@@ -180,16 +172,8 @@
                         isList:false
                     },
                     {
-                        id:3,
+                        id:2,
                         name:"已结束",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
-                    },
-                    {
-                        id:4,
-                        name:"已取消",
                         page: 0,
                         hasMore: true,
                         init: false,
@@ -207,12 +191,12 @@
         },
         mounted(){
 
-           /* console.log(getApp().user_status_class(1, 1));*/
+            /* console.log(getApp().user_status_class(1, 1));*/
             this.getMyList(1,0,true);
             wx.getSystemInfo({
                 success: res =>{
                     this.width = res.windowWidth /this.tabList.length,
-                    this.sliderOffset = res.windowWidth / this.tabList.length * this.activeIndex
+                        this.sliderOffset = res.windowWidth / this.tabList.length * this.activeIndex
                 }
             });
         },
@@ -265,48 +249,48 @@
                             Authorization: token
                         }
                     }).then(res=>{
-                        res = res.data;
-                        if (res.status){
-                            /*this.dataList = res.data;*/
-                            //拿到数据后需要分页
-                            if(isfresh){
-                                this.dataList[status] = [];
-                                var myList;
-                                var page = res.meta.pagination;//拿到后台的分页数据
-                                var current_page = page.current_page;//获取后台数据当前页面
-                                var total_page = page.total_pages;// 获取后台数据总共页数
-                                myList = this.dataList[status].concat(res.data);
-                                this.dataList[status]  = myList;
-                                this.tabList[status].page = current_page;
-                                this.tabList[status].hasMore = current_page < total_page;
-                                this.dataList[status].forEach(function (val,index) {
-                                    val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
-                                    val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
-                                })
-                                /*this.dataList.forEach(function (val,index) {
+                    res = res.data;
+                    if (res.status){
+                        /*this.dataList = res.data;*/
+                        //拿到数据后需要分页
+                        if(isfresh){
+                            this.dataList[status] = [];
+                            var myList;
+                            var page = res.meta.pagination;//拿到后台的分页数据
+                            var current_page = page.current_page;//获取后台数据当前页面
+                            var total_page = page.total_pages;// 获取后台数据总共页数
+                            myList = this.dataList[status].concat(res.data);
+                            this.dataList[status]  = myList;
+                            this.tabList[status].page = current_page;
+                            this.tabList[status].hasMore = current_page < total_page;
+                            this.dataList[status].forEach(function (val,index) {
+                                val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
+                                val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
+                            })
+                            /*this.dataList.forEach(function (val,index) {
 
-                                })*/
-                            } else {
-                                var myList;
-                                var page = res.meta.pagination;//拿到后台的分页数据
-                                var current_page = page.current_page;//获取后台数据当前页面
-                                var total_page = page.total_pages;// 获取后台数据总共页数
-                                myList = this.dataList[status].concat(res.data);
-                                this.dataList[status]  = myList;
-                                this.tabList[status].page = current_page;
-                                this.tabList[status].hasMore = current_page < total_page;
-                                this.dataList[status].forEach(function (val,index) {
-                                    val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
-                                    val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
-                                })
-                            }
-                            this.tabList[status].init = true;
-                        } else{
-                            wx.showModal({
-                                content:res.message || "请求失败",
-                                showCancel:false
+                             })*/
+                        } else {
+                            var myList;
+                            var page = res.meta.pagination;//拿到后台的分页数据
+                            var current_page = page.current_page;//获取后台数据当前页面
+                            var total_page = page.total_pages;// 获取后台数据总共页数
+                            myList = this.dataList[status].concat(res.data);
+                            this.dataList[status]  = myList;
+                            this.tabList[status].page = current_page;
+                            this.tabList[status].hasMore = current_page < total_page;
+                            this.dataList[status].forEach(function (val,index) {
+                                val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
+                                val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
                             })
                         }
+                        this.tabList[status].init = true;
+                    } else{
+                        wx.showModal({
+                            content:res.message || "请求失败",
+                            showCancel:false
+                        })
+                    }
                     wx.hideLoading()
                 },err =>{
                     wx.showModal({

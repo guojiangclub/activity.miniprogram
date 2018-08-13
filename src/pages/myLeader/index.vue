@@ -86,61 +86,6 @@
                         <span :class="t.usercolor">{{t.usertxt}}</span>
                     </div>
                 </div>
-
-            </div>
-            <div class="bo-m" v-if="activeIndex==3">
-                <div class="noMore" v-if="dataList[3].length == 0&& tabList[3].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[3]" @click="jumpEnrol(t.id)">
-                    <div class="item mx-1px-bottom">
-                        <div class="info-left">
-                            <image :src="t.img_list"></image>
-                        </div>
-                        <div class="info-rigth">
-                            <div class="name">{{t.title}}</div>
-                            <div class="time">{{t.time_section}} </div>
-                            <div class="address">{{t.address}}</div>
-                            <div class="money">
-                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
-                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btn-status">
-                        <span :class="t.usercolor">{{t.usertxt}}</span>
-                    </div>
-                </div>
-
-            </div>
-            <div class="bo-m" v-if="activeIndex==4">
-                <div class="noMore" v-if="dataList[4].length == 0&& tabList[4].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[4]" @click="jumpEnrol(t.id)">
-                    <div class="item mx-1px-bottom">
-                        <div class="info-left">
-                            <image :src="t.img_list"></image>
-                        </div>
-                        <div class="info-rigth">
-                            <div class="name">{{t.title}}</div>
-                            <div class="time">{{t.time_section}} </div>
-                            <div class="address">{{t.address}}</div>
-                            <div class="money">
-                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
-                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btn-status">
-                        <span :class="t.usercolor">{{t.usertxt}}</span>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
@@ -183,9 +128,7 @@
                 dataList:{
                     0:[],
                     1:[],
-                    2:[],
-                    3:[],
-                    4:[]
+                    2:[]
                 }
             }
         },
@@ -223,7 +166,7 @@
             //点击item跳到报名详情页
             jumpEnrol(id){
                 wx.navigateTo({
-                    url:'/pages/enrolmentDetail/main?id='+id
+                    url:'/pages/leaderDetail/main?id='+id
                 })
             },
             changeTab(e,index){
@@ -241,7 +184,7 @@
                     mask:true
                 });
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/myList/',{
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/coachActList/',{
                         page:page,
                         status:status
                     },{

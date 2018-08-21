@@ -3,7 +3,7 @@
         <div class="ac-status">
             <div class="status-title">
                 <span class="txt">活动状态：</span>
-                <span class="btn" :class="{'fade':enrolData.status==3 || enrolData.member_status==3}">{{register_txt}}</span>
+                <span class="btn" :class="{'fade':enrolData.status==3 }">{{register_txt}}</span>
             </div>
             <div class="item mx-1px-bottom">
                 <div class="info-left">
@@ -34,7 +34,7 @@
                     <div class="info-tit">地点</div>
                     <div class="info-detail">{{enrolData.address}}</div>
                 </div>
-                <div class="info mx-1px-bottom">
+                <div class="info mx-1px-bottom" @click="jumpSign(myId)">
                     <div class="info-tit">报名人</div>
                     <div class="info-detail">已签到{{enrolData.signed_count }}人 / {{enrolData.member_count}}人报名</div>
                 </div>
@@ -53,7 +53,7 @@
                 <p>会员名扫码签到</p>
             </div>
         </div>
-        <div class="endTxt">
+        <div class="endTxt" v-if="enrolData.status==3 && enrolData.can_reward>0">
             <div>活动已结束， <br>快来奖励表现出现的会员吧！</div>
             <div class="p2">奖励权限将于{{ enrolData.can_reward_limit }}失效<br />还可奖励{{ enrolData.can_reward }}积分</div>
         </div>
@@ -83,6 +83,10 @@
                 <div class="go-pay" @click="jumpPay(state.order.order_no)">去付款</div>
             </div>
         </div>-->
+        <div class="bottomBar">
+            <button v-if="enrolData.status==2" @click="jumpSign(myId)">查看报名人</button>
+            <button v-if="enrolData.status==3 && enrolData.can_reward>0">奖励积分</button>
+        </div>
     </div>
 </template>
 <script>
@@ -109,9 +113,15 @@
             var id = this.$root.$mp.query.id;
             this.myId = id;
             this.getMineEnrol(id);
-            this.getCheck(id);
+            /*this.getCheck(id);*/
         },
         methods:{
+            //跳到签到列表页
+            jumpSign(id){
+                wx.navigateTo({
+                    url:'/pages/signList/main?id='+id
+                })
+            },
 //            跳到支付页面
             jumpPay(order_no){
                 wx.navigateTo({
@@ -298,7 +308,7 @@
                         if (res.status){
                             this.enrolData = res.data;
                             this.enrolMeta = res.meta;
-                            this.register_txt = getApp().register_status_txt(res.data.status,res.data.member_status);
+                            this.register_txt = getApp().ac_status_txt(res.data.status);
                             this.isCancel = this.isCanCancel();
                             this.isSign = this.isCanSign();
                         } else {
@@ -461,6 +471,7 @@
         .ac-Info{
             background-color: #FFFFFF;
             padding: 0 15px;
+            margin-bottom: 80px;
             .txt{
                 font-size: 16px;
                 height: 40px;
@@ -511,7 +522,7 @@
                 }
             }
         }
-        .bottomBar{
+        /*.bottomBar{
             position: fixed;
             bottom: 0;
             width: 100%;
@@ -545,7 +556,7 @@
                 align-items: center;
                 justify-content: center;
                 text-align: center;
-                /*border-left:1px solid #DBDBDB;*/
+                !*border-left:1px solid #DBDBDB;*!
                 background-color:@globalColor;
                 color: #FFFFFF;
                 .money{
@@ -561,6 +572,22 @@
                     flex: 1;
                     font-size:16px;
                 }
+            }
+        }*/
+        .bottomBar{
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            button{
+                background-color: @globalColor;
+                color: #FFFFFF;
+                border-radius: 0;
+                &.orange{
+                    background-color: #ffbf7d;
+                }
+            }
+            button::after{
+                border: none;
             }
         }
     }

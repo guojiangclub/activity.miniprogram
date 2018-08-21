@@ -2,7 +2,7 @@
     <div id="myactivity">
         <div class="navbar">
             <div class="vlc-slideBar-wrapper vlc-slideBar-flex normal" style="width: auto">
-                <div class="vlc-slideBar-child" v-for="(item,index) in tabList" style="text-align: center; height: 30px; line-height: 30px;" @click="changeTab($event,index)">
+                <div class="vlc-slideBar-child" v-for="(item,index) in tabList" style="text-align: center; height: 30px; line-height: 30px;" @click="changeTab($event,index)" :key="index">
                     <span :class="activeIndex == index ? 'active':''">{{item.name}}</span>
                 </div>
             </div>
@@ -11,7 +11,7 @@
         <div class="content">
             <div class="bo-m" v-if="activeIndex==0">
                 <div class="noMore" v-if="dataList[0].length == 0&& tabList[0].init">暂无数据</div>
-                <div  v-for="(t,key) in dataList[0]"  class="mar-bottom" @click="jumpEnrol(t.id)">
+                <div  v-for="(t,key) in dataList[0]"  class="mar-bottom" @click="jumpEnrol(t.id)" :key="key">
                     <div class="item mx-1px-bottom">
                         <div class="info-left">
                             <image :src="t.img_list" mode="aspectFill"></image>
@@ -37,7 +37,7 @@
             </div>
             <div class="bo-m" v-if="activeIndex==1">
                 <div class="noMore" v-if="dataList[1].length == 0&& tabList[1].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[1]" >
+                <div class="mar-bottom" v-for="(t,key) in dataList[1]" :key="key">
                     <div class="item mx-1px-bottom">
                         <div class="info-left">
                             <image :src="t.img_list"></image>
@@ -63,7 +63,7 @@
             </div>
             <div class="bo-m" v-if="activeIndex==2">
                 <div class="noMore" v-if="dataList[2].length == 0&& tabList[2].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[2]" @click="jumpEnrol(t.id)">
+                <div class="mar-bottom" v-for="(t,key) in dataList[2]" @click="jumpEnrol(t.id)" :key="$key">
                     <div class="item mx-1px-bottom">
                         <div class="info-left">
                             <image :src="t.img_list"></image>
@@ -207,8 +207,8 @@
                             this.tabList[status].page = current_page;
                             this.tabList[status].hasMore = current_page < total_page;
                             this.dataList[status].forEach(function (val,index) {
-                                val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
-                                val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
+                                val['usertxt'] = getApp().ac_status_txt(val.status);
+                                val['usercolor'] = getApp().ac_status(val.status);
                             })
                             /*this.dataList.forEach(function (val,index) {
 
@@ -387,7 +387,7 @@
                 display: inline-block;
                 height: 25px;
                 line-height: 25px;
-                width: 60px;
+                width: 80px;
                 text-align: center;
                 font-size:14px;
                 color:#9B9B9B;

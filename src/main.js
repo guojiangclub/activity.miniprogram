@@ -38,6 +38,24 @@ AppData.ac_status = function (v) {
             return 'grey';
     }
 }
+//活动详情 上方标签txt & 我的活动列表 & 教练活动列表 & 教练活动详情
+AppData.ac_status_txt = function (v) {
+    switch (v) {
+        case 0:
+            return '报名未开始';
+        case 1:
+            return '活动报名中';
+        case 2:
+            return '活动进行中';
+        case 3:
+            return '活动已结束';
+        case 4:
+            return '报名已截止';
+        case 5:
+            return '活动已满额';
+    }
+}
+
 // 我的活动列表按钮
 AppData.user_status_txt = function (s1,s2) {
     switch (s2) {
@@ -140,7 +158,9 @@ export default {
             'pages/pay/main',
             'pages/success/main',
             'pages/enrolmentDetail/main',
-            'pages/myLeader/main'
+            'pages/myLeader/main',
+            'pages/signList/main',
+            'pages/member/main'
 
 
 

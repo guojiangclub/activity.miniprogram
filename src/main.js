@@ -160,7 +160,8 @@ export default {
             'pages/enrolmentDetail/main',
             'pages/myLeader/main',
             'pages/signList/main',
-            'pages/member/main'
+            'pages/member/main',
+            'pages/rewards/main'
 
 
 

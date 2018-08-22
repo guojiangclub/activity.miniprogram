@@ -24,13 +24,11 @@
                 </div>
             </div>
             <div class="content" v-if="activeIndex==1">
-                <scroll-view scroll-y>
-                    <div class="list mx-1px-bottom" v-for="item in listData" :key="index">
-                        <div class="title">{{item.title}}</div>
-                        <div class="info"><span class="iconfont icon-Group113"></span>{{item.timetxt}}</div>
-                        <div class="info"><span class="iconfont icon-Group113"></span>{{item.address}}</div>
-                    </div>
-                </scroll-view>
+                <div class="list mx-1px-bottom" v-for="item in listData" :key="index">
+                    <div class="title">{{item.title}}</div>
+                    <div class="info"><span class="iconfont icon-Group113"></span>{{item.timetxt}}</div>
+                    <div class="info"><span class="iconfont icon-Group113"></span>{{item.address}}</div>
+                </div>
             </div>
         </div>
     </div>

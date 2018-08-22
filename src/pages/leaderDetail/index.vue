@@ -85,7 +85,7 @@
         </div>-->
         <div class="bottomBar">
             <button v-if="enrolData.status==2" @click="jumpSign(myId)">查看报名人</button>
-            <button v-if="enrolData.status==3 && enrolData.can_reward>0">奖励积分</button>
+            <button v-if="enrolData.status==3 && enrolData.can_reward>0" @click="jumpRewards(myId)">奖励积分</button>
         </div>
     </div>
 </template>
@@ -116,6 +116,12 @@
             /*this.getCheck(id);*/
         },
         methods:{
+            //跳到奖励积分
+            jumpRewards(id){
+                wx.navigateTo({
+                    url:'/pages/rewards/main?id='+id
+                })
+            },
             //跳到签到列表页
             jumpSign(id){
                 wx.navigateTo({

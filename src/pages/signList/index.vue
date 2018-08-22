@@ -60,7 +60,8 @@
                         this.sliderOffset = res.windowWidth / this.tabList.length * this.activeIndex
                 }
             });
-            this.memberList(34);
+            var id = this.$root.$mp.query.id;
+            this.memberList(id);
         },
         methods:{
             //跳到会员资料页
@@ -156,11 +157,11 @@
             }
         }
         .content{
+            margin-bottom: 50px;
             .item{
                 padding: 12px;
                 background: #fff;
                 margin-top: 10px;
-                margin-bottom: 50px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;

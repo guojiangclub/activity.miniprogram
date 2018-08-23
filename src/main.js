@@ -161,7 +161,9 @@ export default {
             'pages/myLeader/main',
             'pages/signList/main',
             'pages/member/main',
-            'pages/rewards/main'
+            'pages/rewards/main',
+            'pages/user/main',
+            'pages/usersetting/main'
 
 
 

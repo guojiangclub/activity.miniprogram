@@ -81,9 +81,19 @@
             }
         },
         mounted(){
-
-           /* console.log(getApp().user_status_class(1, 1));*/
-            this.getMyList(1,0,0,true);
+            var type = this.$root.$mp.query.type || '';
+            if (type==0 || type==''){
+                this.getMyList(1,0,0,true);
+            } else if(type==1){
+                this.getMyList(1,1,0,true)
+            } else if(type==2){
+                this.getMyList(1,2,0,true)
+            } else if(type==3){
+                this.getMyList(1,3,0,true)
+            } else if(type==4){
+                this.getMyList(1,0,1,true)
+            }
+            this.activeIndex  = type;
             wx.getSystemInfo({
                 success: res =>{
                     this.width = res.windowWidth /this.tabList.length,
@@ -141,8 +151,7 @@
                     .get(this.$config.GLOBAL.baseUrl + 'api/activity/myList/',{
                         page:page,
                         status:status || '',
-                        canceled:canceled || '',
-                        limit:5
+                        canceled:canceled || ''
                     },{
                         headers: {
                             Authorization: token

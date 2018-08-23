@@ -119,32 +119,18 @@
                 <span></span>
                 <span>请选择票种</span>
             </div>
-            <div class="shaer-item mx-1px-bottom">
+            <div class="shaer-item mx-1px-bottom" :class="{ active:item.id==selectPayment }" v-for="item in detail.payments" @click="selectTickets(item)">
                <div class="ticket-name">
-                   金额支付
+                   {{item.title}}
                </div>
                 <div class="ticket-value">
-                    ￥1000.00
-                </div>
-            </div>
-            <div class="shaer-item mx-1px-bottom">
-                <div class="ticket-name">
-                    积分支付
-                </div>
-                <div class="ticket-value">
-                    100积分
-                </div>
-            </div>
-            <div class="shaer-item mx-1px-bottom">
-                <div class="ticket-name">
-                    积分加金额支付
-                </div>
-                <div class="ticket-value">
-                    ￥1000.00 + 100积分
+                    <span v-if="item.type == 0">{{item.point}}积分</span>
+                    <span v-if="item.type == 1">￥{{item.price}}</span>
+                    <span v-if="item.type == 2">￥{{item.price}} + {{item.point}}积分</span>
                 </div>
             </div>
 
-            <div class="bottom">
+            <div class="bottom" @click="submitTicket">
                 确定
             </div>
         </div>
@@ -187,7 +173,9 @@
                 share_img: false,             // 弹出到分享到朋友圈
                 statusTxt: '',
                 statusClass: '',
-                show_ticket: true
+                show_ticket: false,
+                selectPayment: '',
+                paymentIndex: ''
             }
         },
         mounted(){
@@ -376,6 +364,85 @@
                         url: '/pages/enroll/main?id=' + this.id
                     })
                 }
+            },
+//            选择电子票
+            selectTickets(item) {
+                if (!item.is_limit || item.limit > 0) {
+                    this.selectPayment = item.id;
+                    this.paymentIndex = this.detail.payments.findIndex((val) => {
+                        return val.id == this.selectPayment;
+                    });
+                    return
+                }
+                wx.showModal({
+                    content: '电子票不足',
+                    showCancel: false
+                })
+            },
+//            提交电子票
+            submitTicket() {
+                if (!this.selectPayment) {
+                    wx.showModal({
+                        content: '请选择电子票',
+                        showCancel: false
+                    })
+                } else {
+                    // 需要填写表单的活动
+                    if (this.detail.has_form) {
+                        // 跳转到填写表单页面
+                    } else {
+//                        不需要填写表单的活动
+                        var data = {
+                            activity_id: this.id,
+                            payment_id: this.selectPayment,
+                            paymentIndex: this.paymentIndex
+                        }
+                        wx.showLoading({
+                            title: '正在提交',
+                            mask: true
+                        });
+
+                        this.submitInfo(data);
+                    }
+                }
+            },
+//            报名
+            submitInfo(data) {
+                let token = this.$storage.get('user_token');
+                let payment_id = data.payment_id ? data.payment_id : '';
+                this.$http
+                    .post(this.$config.GLOBAL.baseUrl + 'api/activity/checkout/' + data.activity_id, {
+                        payment_id
+                    }, {
+                        headers: {
+                            Authorization: token
+                        }
+                    }).then(res => {
+                    res = res.data;
+                    if (res.status) {
+                        if (res.data.activity.fee_type == "CHARGING") {
+                            wx.redirectTo({
+                                url: '/pages/pay/main?id=' + res.data.order_no
+                            });
+                        } else if (res.data.activity.fee_type == "OFFLINE_CHARGES") {
+                            wx.redirectTo({
+                                url: '/pages/success/main?id=' + this.id
+                            });
+                        }
+                    } else {
+                        wx.showModal({
+                            content: res.message || "请求失败",
+                            showCancel: false
+                        })
+                    }
+                    wx.hideLoading();
+                }, err => {
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                    wx.hideLoading();
+                })
             }
         },
         computed: {
@@ -771,6 +838,10 @@
                 color: #2E2D2D;
                 background: #ffffff;
                 border-radius: 0;
+
+                &.active {
+                    color: @globalColor;
+                }
 
                 .ticket-value {
                     font-size: 12px;

@@ -175,7 +175,8 @@
                 statusClass: '',
                 show_ticket: false,
                 selectPayment: '',
-                paymentIndex: ''
+                paymentIndex: '',
+                sliderOffset:''
             }
         },
         mounted(){
@@ -592,9 +593,11 @@
                 }
                 .money {
                     padding: 7px 15px 11px 15px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: space-between;
+                    /*display: flex;*/
+                    /*align-items: center;*/
+                    /*justify-content: space-between;*/
+                    overflow: hidden;
+
                     .txt {
                         color: @globalColor;
                         font-size: 20px;
@@ -612,6 +615,7 @@
                         border-radius: 2px;
                         line-height: 16px;
                         color: #959595;
+                        float: right;
                     }
                     .red {
                         border: 1px solid @globalColor;

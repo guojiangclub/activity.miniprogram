@@ -1,10 +1,10 @@
 <template>
   <div id="activity-index">
     <div class="pagetop">
-      <div class="search">
+     <!-- <div class="search">
         <span class="iconfont icon-sousuo"></span>
         <input type="text" placeholder="想要参与的活动" placeholder-class="input-placeholder"/>
-      </div>
+      </div>-->
       <div class="tab">
         <div class="tab-title">
           <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'px-b':'']">
@@ -376,7 +376,7 @@ export default {
   #activity-index{
     .pagetop{
       width: 100%;
-      height:125px;
+      height:55px;
       position: fixed;
       z-index: 2;
       background-color: #ffffff;
@@ -505,7 +505,7 @@ export default {
     }
   }
   .tab-content{
-    margin-top: 135px;
+    margin-top:65px;
     margin-bottom: 80px;
     .no-more {
       text-align:center;
@@ -556,9 +556,10 @@ export default {
         }
         .money{
           /*text-align: justify;*/
-          display: flex;
-          align-items: center;
-          justify-content:space-between ;
+          /*display: flex;*/
+          /*align-items: center;*/
+          /*justify-content:space-between ;*/
+          overflow: hidden;
           margin-top:10px;
           .text{
             color: @globalColor;
@@ -571,6 +572,7 @@ export default {
             color: #ffffff;
             line-height: 16px;
             background-color: #d8d8d8;
+            float: right;
           }
           .red{
             background-color: @globalColor;

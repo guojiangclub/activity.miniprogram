@@ -9,7 +9,7 @@
             <div class="navar-slider" :style="{width: width +'px', transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>
         </div>
         <div class="content" v-if="activeIndex==0">
-            <div class="item" v-for="item in dataList.signed" :key="$index" @click="jumpmember(item.user_id)">
+            <div class="item mx-1px-bottom" v-for="item in dataList.signed" :key="$index" @click="jumpmember(item.user_id)">
                 <div class="avatar">
                     <image :src="item.avatar"></image>
                 </div>
@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="content" v-if="activeIndex==1">
-            <div class="item" v-for="item in dataList.unsigned" :key="$index" @click="jumpmember(item.user_id)">
+            <div class="item mx-1px-bottom" v-for="item in dataList.unsigned" :key="$index" @click="jumpmember(item.user_id)">
                 <div class="avatar">
                     <image :src="item.avatar"></image>
                 </div>
@@ -158,10 +158,10 @@
         }
         .content{
             margin-bottom: 50px;
+            margin-top: 10px;
             .item{
                 padding: 12px;
                 background: #fff;
-                margin-top: 10px;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;

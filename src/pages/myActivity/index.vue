@@ -9,9 +9,9 @@
             <div class="navar-slider" :style="{width: width +'px', transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>
         </div>
         <div class="content">
-            <div class="bo-m" v-if="activeIndex==0">
-                <div class="noMore" v-if="dataList[0].length == 0&& tabList[0].init">暂无数据</div>
-                <div  v-for="(t,key) in dataList[0]"  class="mar-bottom" @click="jumpEnrol(t.id)">
+            <div class="bo-m">
+                <div class="noMore" v-if="dataList.length == 0&& init">暂无数据</div>
+                <div  v-for="(t,key) in dataList"  class="mar-bottom" @click="jumpEnrol(t.id)" v-show="activeIndex!=2 && t.usertxt!='已取消'">
                     <div class="item mx-1px-bottom">
                         <div class="info-left">
                             <image :src="t.img_list" mode="aspectFill"></image>
@@ -35,113 +35,6 @@
                     </div>
                 </div>
             </div>
-            <div class="bo-m" v-if="activeIndex==1">
-                <div class="noMore" v-if="dataList[1].length == 0&& tabList[1].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[1]" >
-                    <div class="item mx-1px-bottom">
-                        <div class="info-left">
-                            <image :src="t.img_list"></image>
-                        </div>
-                        <div class="info-rigth">
-                            <div class="name">{{t.title}}</div>
-                            <div class="time">{{t.time_section}} </div>
-                            <div class="address">{{t.address}}</div>
-                            <div class="money">
-                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
-                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btn-status">
-                        <span :class="t.usercolor">{{t.usertxt}}</span>
-                    </div>
-                </div>
-            </div>
-            <div class="bo-m" v-if="activeIndex==2">
-                <div class="noMore" v-if="dataList[2].length == 0&& tabList[2].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[2]" @click="jumpEnrol(t.id)">
-                    <div class="item mx-1px-bottom">
-                        <div class="info-left">
-                            <image :src="t.img_list"></image>
-                        </div>
-                        <div class="info-rigth">
-                            <div class="name">{{t.title}}</div>
-                            <div class="time">{{t.time_section}} </div>
-                            <div class="address">{{t.address}}</div>
-                            <div class="money">
-                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
-                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btn-status">
-                        <span :class="t.usercolor">{{t.usertxt}}</span>
-                    </div>
-                </div>
-
-            </div>
-            <div class="bo-m" v-if="activeIndex==3">
-                <div class="noMore" v-if="dataList[3].length == 0&& tabList[3].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[3]" @click="jumpEnrol(t.id)">
-                    <div class="item mx-1px-bottom">
-                        <div class="info-left">
-                            <image :src="t.img_list"></image>
-                        </div>
-                        <div class="info-rigth">
-                            <div class="name">{{t.title}}</div>
-                            <div class="time">{{t.time_section}} </div>
-                            <div class="address">{{t.address}}</div>
-                            <div class="money">
-                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
-                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btn-status">
-                        <span :class="t.usercolor">{{t.usertxt}}</span>
-                    </div>
-                </div>
-
-            </div>
-            <div class="bo-m" v-if="activeIndex==4">
-                <div class="noMore" v-if="dataList[4].length == 0&& tabList[4].init">暂无数据</div>
-                <div class="mar-bottom" v-for="(t,key) in dataList[4]" @click="jumpEnrol(t.id)">
-                    <div class="item mx-1px-bottom">
-                        <div class="info-left">
-                            <image :src="t.img_list"></image>
-                        </div>
-                        <div class="info-rigth">
-                            <div class="name">{{t.title}}</div>
-                            <div class="time">{{t.time_section}} </div>
-                            <div class="address">{{t.address}}</div>
-                            <div class="money">
-                                <span class="text subtitle" v-if="t.fee_type != 'OFFLINE_CHARGES' && t.fee_type != 'CHARGING'">{{t.subtitle}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 0">{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 1"><span>￥</span>{{t.payments.price}}</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 2"><span>￥</span>{{t.payments.price}}+{{t.payments.point}}积分</span>
-                                <span class="text" v-if="t.payments && t.payments.type == 4"><span>￥</span>{{t.payments.price}}</span>
-                                <!-- <span class="enroll-btn" :class="{'red' : t.status==1}">{{info[t.status]}}</span>-->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="btn-status">
-                        <span :class="t.usercolor">{{t.usertxt}}</span>
-                    </div>
-                </div>
-
-            </div>
         </div>
     </div>
 </template>
@@ -158,57 +51,39 @@
                     {
                         id:0,
                         name:"全部",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
+                        status:0
                     },
                     {
                         id:1,
                         name:"未开始",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
+                        status:1
                     },
                     {
                         id:2,
                         name:"进行中",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
+                        status:2
                     },
                     {
                         id:3,
                         name:"已结束",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
+                        status:3
                     },
                     {
                         id:4,
                         name:"已取消",
-                        page: 0,
-                        hasMore: true,
-                        init: false,
-                        isList:false
+                        canceled:1
                     }
                 ],
-                dataList:{
-                    0:[],
-                    1:[],
-                    2:[],
-                    3:[],
-                    4:[]
-                }
+                dataList:[],
+                page: 0,
+                hasMore: true,
+                init: false
             }
         },
         mounted(){
 
            /* console.log(getApp().user_status_class(1, 1));*/
-            this.getMyList(1,0,true);
+            this.getMyList(1,0,0,true);
             wx.getSystemInfo({
                 success: res =>{
                     this.width = res.windowWidth /this.tabList.length,
@@ -223,10 +98,14 @@
                 title:"加载中",
                 mask:true
             });
-            var page = this.tabList[this.activeIndex].page + 1;
-            this.tabList[this.activeIndex].page = page;
-            if(this.tabList[this.activeIndex].hasMore){
-                this.getMyList(page,this.activeIndex,false)
+            var page = this.page + 1;
+            this.page = page;
+            if(this.hasMore){
+                if (this.activeIndex < 4){
+                    this.getMyList(page,this.activeIndex,'',false)
+                } else {
+                    this.getMyList(page,'',1,false)
+                }
             } else{
                 wx.showToast({
                     title: '没有更多了',
@@ -245,12 +124,14 @@
             changeTab(e,index){
                 this.activeIndex = index;
                 this.sliderOffset = e.currentTarget.offsetLeft;
-                if(!this.tabList[index].init){
-                    this.getMyList(1,index,true);
-                }
+                    if (index < 4){
+                        this.getMyList(1,this.tabList[index].status,'',true);
+                    } else {
+                        this.getMyList(1,'',1,true);
+                    }
             },
             //请求我的活动列表
-            getMyList(page,status,isfresh){
+            getMyList(page,status,canceled,isfresh){
                 var token = this.$storage.get('user_token')
                 wx.showLoading({
                     title:"加载中",
@@ -259,7 +140,9 @@
                 this.$http
                     .get(this.$config.GLOBAL.baseUrl + 'api/activity/myList/',{
                         page:page,
-                        status:status
+                        status:status || '',
+                        canceled:canceled || '',
+                        limit:5
                     },{
                         headers: {
                             Authorization: token
@@ -270,16 +153,16 @@
                             /*this.dataList = res.data;*/
                             //拿到数据后需要分页
                             if(isfresh){
-                                this.dataList[status] = [];
+                                this.dataList = [];
                                 var myList;
                                 var page = res.meta.pagination;//拿到后台的分页数据
                                 var current_page = page.current_page;//获取后台数据当前页面
                                 var total_page = page.total_pages;// 获取后台数据总共页数
-                                myList = this.dataList[status].concat(res.data);
-                                this.dataList[status]  = myList;
-                                this.tabList[status].page = current_page;
-                                this.tabList[status].hasMore = current_page < total_page;
-                                this.dataList[status].forEach(function (val,index) {
+                                myList = this.dataList.concat(res.data);
+                                this.dataList = myList;
+                                this.page = current_page;
+                                this.hasMore = current_page < total_page;
+                                this.dataList.forEach(function (val,index) {
                                     val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
                                     val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
                                 })
@@ -291,16 +174,16 @@
                                 var page = res.meta.pagination;//拿到后台的分页数据
                                 var current_page = page.current_page;//获取后台数据当前页面
                                 var total_page = page.total_pages;// 获取后台数据总共页数
-                                myList = this.dataList[status].concat(res.data);
-                                this.dataList[status]  = myList;
-                                this.tabList[status].page = current_page;
-                                this.tabList[status].hasMore = current_page < total_page;
-                                this.dataList[status].forEach(function (val,index) {
+                                myList = this.dataList.concat(res.data);
+                                this.dataList = myList;
+                                this.page = current_page;
+                                this.hasMore = current_page < total_page;
+                                this.dataList.forEach(function (val,index) {
                                     val['usertxt'] = getApp().user_status_txt(val.status,val.member_status);
                                     val['usercolor'] = getApp().user_status_class(val.status,val.member_status);
                                 })
                             }
-                            this.tabList[status].init = true;
+                            this.init = true;
                         } else{
                             wx.showModal({
                                 content:res.message || "请求失败",

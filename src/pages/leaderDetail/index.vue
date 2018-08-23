@@ -49,8 +49,8 @@
                 <div class="txt">签到码</div>
             </div>
             <div class="code-wrap">
-                <image :src="enrolMeta.img_src"></image>
-                <p>会员名扫码签到</p>
+                <image :src="enrolMeta.img_src" mode="widthFix"></image>
+                <p>会员扫码签到</p>
             </div>
         </div>
         <div class="endTxt" v-if="enrolData.status==3 && enrolData.can_reward>0">
@@ -476,7 +476,7 @@
         }
         .ac-Info{
             background-color: #FFFFFF;
-            padding: 0 15px;
+            padding: 0 15px 10px 15px;
             margin-bottom: 80px;
             .txt{
                 font-size: 16px;

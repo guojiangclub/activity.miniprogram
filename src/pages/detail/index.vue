@@ -116,7 +116,7 @@
         </div>
         <div class="ticket-box" :class="show_ticket ? 'cur':''">
             <div class="shaer-item title mx-1px-bottom">
-                <span></span>
+                <span class="iconfont icon-Group100" @click="changeTicket"></span>
                 <span>请选择票种</span>
             </div>
             <div class="shaer-item mx-1px-bottom" :class="{ active:item.id==selectPayment }" v-for="item in detail.payments" @click="selectTickets(item)">
@@ -420,15 +420,19 @@
                     }).then(res => {
                     res = res.data;
                     if (res.status) {
-                        if (res.data.activity.fee_type == "CHARGING") {
-                            wx.redirectTo({
-                                url: '/pages/pay/main?id=' + res.data.order_no
-                            });
-                        } else if (res.data.activity.fee_type == "OFFLINE_CHARGES") {
+//                        如果pay_status等于0，就跳转到支付页面
+                        if (res.data.pay_status == 0) {
+                            if (res.data.activity.fee_type == "CHARGING") {
+                                wx.redirectTo({
+                                    url: '/pages/pay/main?order_no=' + res.data.order_no
+                                });
+                            }
+                        } else {
                             wx.redirectTo({
                                 url: '/pages/success/main?id=' + this.id
                             });
                         }
+
                     } else {
                         wx.showModal({
                             content: res.message || "请求失败",
@@ -799,12 +803,15 @@
             height: 0;
             z-index: 50;
             transition:all .3s linear;
+
             .shaer-item {
                 text-align: center;
                 font-size: 18px;
                 color: #2E2D2D;
                 background: #ffffff;
                 border-radius: 0;
+                padding: 13px 0;
+                line-height: inherit;
                 &:after {
                     border: none;
                 }
@@ -850,6 +857,9 @@
                     border: none;
                 }
                 &.title {
+                    .iconfont {
+                        float: left;
+                    }
                     font-size: 14px;
                 }
                 &.clear {

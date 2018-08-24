@@ -4,7 +4,10 @@
             <div class="set" @click="jumpPath('/pages/usersetting/main')">
                 <image src="http://ovef29y3v.bkt.clouddn.com/seting.png"></image>
             </div>
-            <div class="avatar">
+            <div class="avatar" v-if="!token" @click="jumpPath('/pages/register/main')">
+                <div class="text">登录/注册</div>
+            </div>
+            <div class="avatar" v-if="token">
                 <div class="img">
                     <image :src=info.avatar></image>
                 </div>
@@ -49,11 +52,16 @@
     export default{
         data(){
             return{
-                info:{}
+                info:{},
+                token:''
             }
         },
         mounted(){
-            this.getMe();
+            var token = this.$storage.get('user_token');
+            this.token = token;
+           if(token){
+               this.getMe();
+           }
         },
         methods:{
             //跳到我的活动
@@ -135,6 +143,11 @@
                 .nick-name{
                     color:#FFFFFF;
                     font-size: 16px;
+                }
+                .text{
+                    font-size: 25px;
+                    color: #FFFFFF;
+                    line-height: 80px;
                 }
             }
         }

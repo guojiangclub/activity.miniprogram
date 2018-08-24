@@ -163,7 +163,8 @@ export default {
             'pages/member/main',
             'pages/rewards/main',
             'pages/user/main',
-            'pages/usersetting/main'
+            'pages/usersetting/main',
+            'pages/shareImg/main'
 
 
 

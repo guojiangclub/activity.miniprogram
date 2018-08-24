@@ -85,7 +85,7 @@
             <button class="shaer-item" open-type="share">
                 分享给好友
             </button>
-            <div class="shaer-item mx-1px-top" @click="changeImg">
+            <div class="shaer-item mx-1px-top" @click="jumpImg(id)">
                 分享到朋友圈
             </div>
             <div class="shaer-item clear" @click="changeShare">
@@ -94,7 +94,7 @@
         </div>
 
         <!--分享到朋友圈弹出-->
-        <view class="share-img-box" :class="share_img ? 'cur' : ''" >
+        <!--<view class="share-img-box" :class="share_img ? 'cur' : ''" >
             <view class="imgs-box">
                 <view class="img">
                     <image mode="widthFix" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1533781747&di=4c8242fb96e43f3ca7561074b1e6f980&src=http://pic10.photophoto.cn/20090112/0034034441685806_b.jpg"></image>
@@ -107,7 +107,7 @@
                 </view>
                 <i class="iconfont icon-Group100" @click="changeImg"></i>
             </view>
-        </view>
+        </view>-->
 
 
         <!--选择票种弹出-->
@@ -208,10 +208,17 @@
         },*/
         methods: {
             // 弹出图片
-            changeImg() {
+            /*changeImg() {
                    this.share_img = !this.share_img
-            },
+            },*/
             // 弹出分享
+            jumpImg(id){
+                wx.navigateTo({
+                    url:'/pages/shareImg/main?id='+id
+                })
+                this.show_share = !this.show_share
+
+            },
             changeShare() {
                    this.show_share = !this.show_share;
             },

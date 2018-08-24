@@ -10,7 +10,7 @@
                 </div>
                 <div class="code">
                     <div class="detail">性别</div>
-                    <picker :value=selectedIndex :range=list @change="change">
+                    <picker :value=selectedIndex :range=list @change="change($event,1)">
                         <!--<div class="picker">{{list[selectedIndex]}}</div>-->
                         <input type="text" placeholder="选择你的性别" disabled  :value=list[selectedIndex] />
                         <div class="iconfont icon-Group98 under"></div>
@@ -26,21 +26,29 @@
                 </div>
                 <div class="code">
                     <div class="detail">上衣尺寸</div>
-                    <input type="text" placeholder="请输入上衣尺寸" :value=emailSet />
+                    <picker :value=jackIndex :range=jacket  @change="change($event,2)">
+                        <input type="text" placeholder="请输入上衣尺寸" :value=jacket[jackIndex] />
+                        <view class="iconfont icon-Group98 under"></view>
+                    </picker>
                 </div>
                 <div class="code">
                     <div class="detail">裤子尺寸</div>
-                    <input type="text" placeholder="请输入裤子尺寸" :value=emailSet />
+                    <picker :value=pantsIndex :range=pants  @change="change($event,3)">
+                        <input type="text" placeholder="请输入裤子尺寸" :value=pants[pantsIndex] />
+                        <view class="iconfont icon-Group98 under"></view>
+                    </picker>
                 </div>
                 <div class="code">
                     <div class="detail">鞋子尺寸</div>
-                    <input type="text" placeholder="请输入鞋子尺寸" :value=emailSet />
+                    <picker :value=shoesIndex :range=shoes  @change="change($event,4)">
+                        <input type="text" placeholder="请输入鞋子尺寸" :value=shoes[shoesIndex] />
+                        <view class="iconfont icon-Group98 under"></view>
+                    </picker>
                 </div>
             </div>
-
-            <!--<div class="submit" @click="updateUserInfo">
+            <div class="submit" @click="updateUserInfo">
                 <button type="primary">确定</button>
-            </div>-->
+            </div>
         </div>
 </template>
 <script>
@@ -54,7 +62,29 @@
                 ],
                 selectedIndex:"",
                 birthdaydate:'',
-                end:''
+                end:'',
+                jacket:[
+                    'XS',
+                    'S',
+                    'M',
+                    'L',
+                    'XL'
+                ],
+                pants:[
+                    'XS',
+                    'S',
+                    'M',
+                    'L',
+                    'XL'
+                ],
+                shoes:[
+                    35,36,37,38,39,410,41,42,43,44,45,46,47,48,49
+                ],
+                jackIndex:'',
+                pantsIndex:'',
+                shoesIndex:''
+
+
             }
         },
         mounted(){
@@ -83,13 +113,43 @@
             this.end = time;
         },
         methods:{
+            //更换头像
+            changeImage(){
+                wx.chooseImage({
+                    count:1,
+                    success:res=> {
+                        var tempFilePaths = res.tempFilePaths;
+                        var token = this.$storage.get('user_token');
+                        wx.uploadFile({
+                            header: {
+                                'content-type': 'multipart/form-data',
+                                Authorization: token
+                            },
+                            url: this.$config.GLOBAL.baseUrl + 'api/users/upload/avatar',
+                            filePath: tempFilePaths[0],
+                            name: 'avatar_file',
+                            success: rej => {
+                                var result = JSON.parse(rej.data);
+                                this.detail.avatar = result.data.url;
+                            }
+                        })
+                    }
+                })
+
+            },
             changeName(e){
                     this.detail.nick_name = e.target.value
             },
-            change:function(e){
-                // console.log(e);
-                // 修改选中项文案
-                   this.selectedIndex = e.target.value
+            change:function(e,type){
+                    if (type==1){
+                        this.selectedIndex = e.target.value
+                    } else if(type==2){
+                        this.jackIndex = e.target.value
+                    } else if(type==3){
+                        this.pantsIndex = e.target.value
+                    } else if(type==4){
+                        this.shoesIndex = e.target.value
+                    }
             },
             changeDate(e){
                     this.birthdaydate = e.target.value
@@ -102,7 +162,9 @@
                     mask:true
                 });
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl+'api/me',{},{
+                    .get(this.$config.GLOBAL.baseUrl+'api/me',{
+                        include:'group,size'
+                    },{
                         headers:{
                             Authorization:token
                         }
@@ -110,7 +172,39 @@
                     .then(res=>{
                         res=res.data;
                         if (res.status){
+                            var info = res.data;
+                            //性别
+                            var sex = info.sex;
+                             var sexIndex = this.list.findIndex(val=>{
+                             return val == sex;
+                             })
+                             if(sexIndex== -1) sexIndex = '';
+
+                            // 上衣尺寸
+                             var jack = info.size.upper;
+                             var jackIndex = this.jacket.findIndex(val=>{
+                                 return val = jack;
+                             })
+                            if (jackIndex == -1) jackIndex='';
+                             //下衣尺寸
+                            var pants = info.size.lower;
+                            var pantsIndex = this.pants.findIndex(val=>{
+                                return val = pants;
+                            })
+                            if (pantsIndex == -1) pantsIndex = '';
+                            //鞋子尺寸
+                            var shoes = info.size.shoes;
+                            var shoesIndex = this.shoes.findIndex(val=>{
+                                return val = shoes;
+                            })
+                            if (shoesIndex == -1) shoesIndex = '';
+                            //修改数据
                             this.detail = res.data;
+                            this.selectedIndex = sexIndex;
+                            this.jackIndex = jackIndex;
+                            this.pantsIndex = pantsIndex;
+                            this.shoesIndex = shoesIndex;
+                            this.birthdaydate = info.birthday;
                         } else {
                             wx.showModal({
                                 content:res.message || "请求失败",
@@ -124,6 +218,65 @@
                             showCancel: false,
                         })
                         wx.hideLoading()
+                    })
+            },
+            //保存修改
+            updateUserInfo(){
+                var token = this.$storage.get('user_token')
+                var message=null;
+                if(!this.detail.nick_name){
+                    message="请填写用户昵称";
+                }
+                if(message){
+                    wx.showModal({
+                        content: message,
+                        showCancel: false
+                    });
+                    return
+                }
+                this.$http
+                    .post(this.$config.GLOBAL.baseUrl+'api/users/update/info',{
+                        nick_name:this.detail.nick_name,
+                        sex:this.list[this.selectedIndex],
+                        avatar:this.detail.avatar,
+                        birthday:this.birthdaydate,
+                        size:{
+                            lower:this.pants[this.pantsIndex],
+                            shoes:this.shoes[this.shoesIndex],
+                            upper:this.jacket[this.jackIndex]
+                        }
+                    },{
+                        headers:{
+                            Authorization:token
+                        }
+                    })
+                    .then(res=>{
+                        var res = res.data;
+                        if(res.status){
+                            wx.showToast({
+                                title:res.message,
+                                duration: 1500,
+                                success: res=> {
+                                    console.log(res);
+                                    setTimeout(() => {
+                                        console.log(1);
+                                        wx.redirectTo({
+                                            url: '/pages/user/main'
+                                        })
+                                    }, 1500)
+                                }
+                            })
+                        } else {
+                            wx.showModal({
+                                title:"提示",
+                                content:"修改失败",
+                            });
+                        }
+                    },err=>{
+                        wx.showModal({
+                            title:"提示",
+                            content:"请求失败",
+                        });
                     })
             }
         }

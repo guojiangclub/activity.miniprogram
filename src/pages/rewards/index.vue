@@ -1,8 +1,9 @@
 <template>
     <div id="rewards">
+        <div class="no" v-if="list.signed.length==0">暂无可以奖励的会员!!!</div>
         <div class="content">
             <checkbox-group @change="checkboxChange">
-                <div class="item mx-1px-bottom" v-for="i in list.signed">
+                <div class="item mx-1px-bottom" v-for="i in list.signed" :key="index">
                     <checkbox type="checkbox" color="#fff" :disabled="i.rewarded==1" :id="i.id" :value="i.user_id"/>
                     <label :for="i.id">
                            <div class="liIn">
@@ -14,7 +15,7 @@
                 </div>
             </checkbox-group>
         </div>
-        <div class="bottomBar">
+        <div class="bottomBar" v-if="list.signed.length !=0">
             <button @click="reward" :disabled="isReward">奖励积分</button>
         </div>
         <div class="pop" v-show="ispop">
@@ -179,6 +180,11 @@
         height: 100%;
     }
     #rewards{
+        .no{
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+        }
         .content{
             margin-bottom: 50px;
             background-color: #FFFFFF;

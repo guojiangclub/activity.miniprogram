@@ -31,6 +31,7 @@
                         </div>
                     </div>
                     <div class="btn-status">
+                        <span class="reward" v-if="t.status==3 && t.can_reward>=0" :class="{'red':t.can_reward>0}">{{t.rewardtxt}}</span>
                         <span :class="t.usercolor">{{t.usertxt}}</span>
                     </div>
                 </div>
@@ -101,6 +102,15 @@
             }
         },
         methods:{
+            //教练 活动列表  奖励积分或者积分已发
+            isRewarded(v){
+                switch (true) {
+                    case v==0:
+                        return '积分已发';
+                    case v>0:
+                        return '奖励积分';
+                }
+            },
             //点击item跳到报名详情页
             jumpEnrol(id){
                 wx.navigateTo({
@@ -142,9 +152,10 @@
                             this.dataList  = myList;
                             this.page = current_page;
                             this.hasMore = current_page < total_page;
-                            this.dataList.forEach(function (val,index) {
+                            this.dataList.forEach( val=> {
                                 val['usertxt'] = getApp().ac_status_txt(val.status);
                                 val['usercolor'] = getApp().ac_status(val.status);
+                                val['rewardtxt'] = this.isRewarded(val.can_reward);
                             })
                             /*this.dataList.forEach(function (val,index) {
 
@@ -318,6 +329,7 @@
         .btn-status{
             background-color: #ffffff;
             padding: 10px 15px 10px 0;
+            overflow: hidden;
             text-align: right;
             span{
                 display: inline-block;
@@ -340,6 +352,10 @@
                 &.blue{
                     color: #036eb8;
                     border: 1px solid  #036eb8;
+                }
+                &.reward{
+                    float:left;
+                    margin-left: 15px;
                 }
             }
         }

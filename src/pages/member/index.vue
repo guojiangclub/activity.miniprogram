@@ -110,7 +110,7 @@
                 });
                 this.$http
                     .get(this.$config.GLOBAL.baseUrl+'api/activity/memberInfo/'+ user_id,{
-                        page:page
+                        page:page,
                     },{
                         headers:{
                             Authorization:token
@@ -218,6 +218,7 @@
         }
         .content{
             background-color: #FFFFFF;
+            margin-bottom: 50px;
             scroll-view{
                 height: 100%;
             }

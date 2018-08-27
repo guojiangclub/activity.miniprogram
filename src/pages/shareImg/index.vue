@@ -32,8 +32,8 @@
                         title: "图片生成中",
                         mask: true
                     });
-                    this.$http.post(this.$config.GLOBAL.baseUrl + 'api/mini/shop/share', {
-                        shop_id: id,
+                    this.$http.post(this.$config.GLOBAL.baseUrl + 'api/activity/share', {
+                        activity_id: id,
                         page: path
                     }, {
                         headers: {

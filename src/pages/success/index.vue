@@ -10,7 +10,7 @@
         </div>
         <div class="wrap active-info">
             <div class="info-title">
-
+                {{sign.activity.title}}
             </div>
             <div class="info-item">
                 <div class="name">

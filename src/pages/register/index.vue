@@ -34,8 +34,7 @@
             var url = this.$root.$mp.query.url;
             if (url) {
                 this.url = decodeURIComponent(url);
-            }
-            ;
+            };
 
             var token = this.$storage.get('user_token');
             this.token = token;

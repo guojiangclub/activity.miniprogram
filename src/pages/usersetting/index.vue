@@ -82,13 +82,18 @@
                 ],
                 jackIndex:'',
                 pantsIndex:'',
-                shoesIndex:''
+                shoesIndex:'',
+                url: ''
 
 
             }
         },
         mounted(){
             this.getMe();
+            var url = this.$root.$mp.query.url;
+            if (url) {
+                this.url = decodeURIComponent(url);
+            };
             Date.prototype.format = function(fmt) {
                 var o = {
                     "M+" : this.getMonth()+1,                 //月份
@@ -260,9 +265,16 @@
                                     console.log(res);
                                     setTimeout(() => {
                                         console.log(1);
-                                        wx.redirectTo({
-                                            url: '/pages/user/main'
-                                        })
+                                        if (this.url) {
+                                            wx.redirectTo({
+                                                url: "/" + this.url
+                                            })
+                                        } else {
+                                            wx.redirectTo({
+                                                url: '/pages/user/main'
+                                            })
+                                        }
+
                                     }, 1500)
                                 }
                             })

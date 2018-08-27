@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="btn-right">
-                <button :class="statusClass" @click="submit">{{statusTxt}}</button>
+                <button :class="statusClass" :disabled="statusDisabled" @click="submit">{{statusTxt}}</button>
             </div>
         </div>
         <!--弹出分享部分-->
@@ -138,7 +138,8 @@
 </template>
 
 <script>
-    import wxParse from 'mpvue-wxparse'
+    import wxParse from 'mpvue-wxparse';
+    import { getUrl } from '../../utils';
     export default{
         components: {
             wxParse
@@ -349,15 +350,37 @@
             },
 //            报名
             submit() {
+                //                如果未登陆跳转到登陆页面
+                var token = this.$storage.get('user_token');
+                if (!token) {
+                    var url = getUrl();
+                    wx.showModal({
+                        content: '请先登录',
+                        success: res => {
+                            if (res.confirm) {
+                                wx.navigateTo({
+                                    url: '/pages/register/main?url=' + url
+                                })
+                            }
+                        }
+                    })
+                    return
+                }
+
+//                线上活动
                 if (this.detail.fee_type == 'CHARGING') {
                     if (this.loginDetail.order) {
-                        let payment_id = this.loginDetail.order.payment_id;
+//                        let payment_id = this.loginDetail.order.payment_id;
                         let pay_status = this.loginDetail.order.pay_status;
-                        let index = this.detail.payments.findIndex(function (val) {
+                        /*let index = this.detail.payments.findIndex(function (val) {
                             return val.id == payment_id;
-                        });
+                        });*/
+//                        订单支付状态
                         if (pay_status == 0) {
 //                            跳转到线上支付
+                            wx.navigateTo({
+                                url: '/pages/pay/main?order_no=' + this.loginDetail.order.order_no
+                            })
 
                         } else {
                             // 弹出票种选择
@@ -368,6 +391,7 @@
                         this.changeTicket()
                     }
                 } else {
+//                    线下预约活动跳转到填写尺码页面
                     wx.navigateTo({
                         url: '/pages/enroll/main?id=' + this.id
                     })
@@ -387,7 +411,7 @@
                     showCancel: false
                 })
             },
-//            提交电子票
+//            提交电子票不同活动类型跳转到不同页面
             submitTicket() {
                 if (!this.selectPayment) {
                     wx.showModal({
@@ -436,6 +460,7 @@
                                 });
                             }
                         } else {
+//                            直接跳转到报名成功页面
                             wx.redirectTo({
                                 url: '/pages/success/main?id=' + this.id
                             });
@@ -569,6 +594,30 @@
                                 break;
                         }
                         break;
+                }
+            },
+            statusDisabled() {
+                var token = this.$storage.get('user_token')
+                const s1 = this.detail.status,
+                    s2 = this.loginDetail.member_status;
+                if (token) {
+                    if (s1 == 1) {
+                        switch (s2) {
+                            default:
+                                return true;
+                            case 0:
+                            case 3:
+                                return false;
+                        }
+                    } else {
+                        return true;
+                    }
+                } else {
+                    if (s1 == 1) {
+                        return false;
+                    } else {
+                        return true;
+                    }
                 }
             }
         }

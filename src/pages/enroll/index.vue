@@ -16,7 +16,7 @@
                 <div class="titles">
                     报名人信息
                 </div>
-                <div class="edit">
+                <div class="edit" @click="edit">
                     编辑
                 </div>
             </div>
@@ -76,6 +76,7 @@
 </template>
 
 <script>
+    import { getUrl } from '../../utils'
     export default{
         data(){
             return {
@@ -87,7 +88,7 @@
                 time: ''
             }
         },
-        mounted(){
+        onShow(){
             this.id = this.$root.$mp.query.id
             this.getLoginDetail(this.id);
 //            将旧数据清空
@@ -180,6 +181,13 @@
                         showCancel: false,
                     })
                     wx.hideLoading();
+                })
+            },
+//            填写个人资料
+            edit() {
+                var url = getUrl();
+                wx.navigateTo({
+                    url: '/pages/usersetting/main?url=' + url
                 })
             }
         }

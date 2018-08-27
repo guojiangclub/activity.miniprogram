@@ -7,22 +7,22 @@
         background: #F3F3F3;
     }
     .bgred {
-        background: #EA4448;
+        background: #EA4448 !important;
     }
     .bggreen {
-        background: #62aa12;
+        background: #62aa12 !important;
     }
     .bgblue {
-        background: #4990e2;
+        background: #4990e2 !important;
     }
     .bgorange {
-        background: #fe7f15;
+        background: #fe7f15 !important;
     }
     .bggrey {
-        background: #959595;
+        background: #959595 !important;
     }
     .bgblack {
-        background: #000000;
+        background: #000000 !important;
     }
     @import "../static/1px.wxss";
     @import "../static/font.wxss";

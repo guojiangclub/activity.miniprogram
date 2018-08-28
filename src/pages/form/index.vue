@@ -319,6 +319,7 @@
         }
         span{
             &.box{
+
                 position: relative;
                 display: inline-block;
                 box-sizing: border-box;

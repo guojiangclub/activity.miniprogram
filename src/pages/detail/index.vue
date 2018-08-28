@@ -60,11 +60,11 @@
         </div>
         <div class="fixed-btn">
             <div class="btn-left">
-                <div class="item-btn" @click="jumpHome" :class="retColor.home?'activebtn':''">
+                <div class="item-btn" @click="jumpHome">
                     <div class="iconfont icon-home"></div>
                     <div class="txt">首页</div>
                 </div>
-                <div class="item-btn" @click="collect" :class="retColor.collect?'activebtn':''">
+                <div class="item-btn" @click="collect(id)" :class="loginDetail.liked?'activebtn':''">
                     <div class="iconfont icon-Group86"></div>
                     <div class="txt">收藏</div>
                 </div>
@@ -85,7 +85,7 @@
             <button class="shaer-item" open-type="share">
                 分享给好友
             </button>
-            <div class="shaer-item mx-1px-top" @click="jumpImg(id)">
+            <div class="shaer-item mx-1px-top" @click="jumpImg(id,'pages/detail/main')">
                 分享到朋友圈
             </div>
             <div class="shaer-item clear" @click="changeShare">
@@ -207,15 +207,21 @@
 //            console.log(e.id);
             this.id = e.id;
         },*/
+        onShareAppMessage() {
+            return {
+                title: this.detail.name,
+                path: '/pages/shopDetail/main?id=' + this.id
+            }
+        },
         methods: {
             // 弹出图片
             /*changeImg() {
                    this.share_img = !this.share_img
             },*/
             // 弹出分享
-            jumpImg(id){
+            jumpImg(id,path){
                 wx.navigateTo({
-                    url:'/pages/shareImg/main?id='+id
+                    url:'/pages/shareImg/main?id='+id+'&path='+path
                 })
                 this.show_share = !this.show_share
 
@@ -231,8 +237,56 @@
                 this.show_ticket = !this.show_ticket;
             },
             //点击收藏
-            collect(){
-                this.retColor.collect = ! this.retColor.collect;
+            collect(id){
+               /* this.retColor.collect = ! this.retColor.collect;*/
+                var token = this.$storage.get('user_token');
+                wx.showLoading({
+                    title: '加载中',
+                    mask:true
+                })
+                if(token){
+                    this.$http
+                        .post(this.$config.GLOBAL.baseUrl + 'api/activity/like/'+id,{},{
+                            headers:{
+                                Authorization:token
+                            }
+                        })
+                        .then(res=>{
+                            res=res.data;
+                            if(res.status){
+                                var liked = res.data.liked;
+                                if(liked==1){
+                                    this.getLoginDetail(id)
+                                }
+                                if(liked==0){
+                                    this.getLoginDetail(id)
+                                }
+                                wx.hideLoading();
+                            } else{
+                                wx.showModal({
+                                    content: res.message || "失败",
+                                    showCancel: false
+                                })
+                            }
+                        },err=>{
+                            wx.showModal({
+                                content:"请求失败",
+                                showCancel: false
+                            })
+                        })
+                } else {
+                    var url = getUrl();
+                    wx.showModal({
+                        content: '请先登录',
+                        success: res => {
+                            if (res.confirm) {
+                                wx.navigateTo({
+                                    url: '/pages/register/main?url=' + url
+                                })
+                            }
+                        }
+                    })
+                }
             },
             //回到首页
             jumpHome(){

@@ -74,6 +74,7 @@
 </template>
 
 <script>
+    import pingpp from 'pingpp-js';
     export default{
         data(){
             return{
@@ -123,8 +124,156 @@
                         })
                     })
             },
+            getOPenID() {
+                return new Promise((resolve, reject) => {
+                    wx.login({
+                        success: res => {
+                            this.$http
+                                .get(this.$config.GLOBAL.baseUrl + 'api/wx_lite/open_id', {
+                                    code: res.code
+                                }).then(res => {
+                                    res = res.data;
+                                    resolve(res.data.openid)
+                            }, err => {
+                                    reject('获取openid失败');
+                            })
+                        },
+                        fail: () => {
+                            wx.showModal({
+                                content: "获取openid失败",
+                                showCancel: false
+                            })
+                        }
+                    })
+                })
+            },
             pay() {
+                wx.showLoading({
+                    title: '正在支付',
+                    mask: true
+                })
 
+                var token = this.$storage.get('user_token');
+
+                this.getOPenID().then(res => {
+
+                    var data = {
+                        openid: res,
+                        order_no: this.order_no
+                    };
+
+                    this.$http
+                        .post(this.$config.GLOBAL.baseUrl + 'api',{
+                            data: data
+                        }, {
+                            header: {
+                                Authorization: token
+                            }
+                        })
+                        .then(res => {
+                            res = res.data;
+                            if (res.status) {
+
+                            } else {
+
+                            }
+                        }, err => {
+
+                        })
+                }).catch(() => {
+                    wx.hideLoading();
+                    wx.showModal({
+                        content: '支付失败',
+                        showCancel: false
+                    })
+                })
+            },
+            pingCharge(success, charge) {
+                if (success) {
+                    pingpp.createPayment(charge, (res, err) => {
+                        if (res == 'success') {
+//                            支付成功
+                            wx.hideLoading();
+                            wx.redirectTo({
+                                url: '/pages/success/main?id=' + ''
+                            })
+                        } else if (res == 'fail') {
+//                            支付失败
+                            wx.hideLoading();
+                            wx.redirectTo({
+                                url: '/pages/enrolmentDetail/main?id=' + ''
+                            })
+                        } else if (res == 'cancel') {
+//                            取消支付
+                            wx.hideLoading();
+                            wx.redirectTo({
+                                url: '/pages/enrolmentDetail/main?id=' + ''
+                            })
+                        }
+                    })
+                } else {
+                    wx.hideLoading();
+                    wx.showModal({
+                        content: '请求支付失败，请重试！',
+                        showCancel: false
+                    })
+                }
+            },
+            charge(success, charge) {
+                if (success) {
+                    if (charge.pay_scene == 'test') {
+                        wx.hideLoading();
+                        wx.showModal({
+                            content: '不支持模拟支付',
+                            showCancel: false
+                        });
+
+                    } else {
+                        wx.requestPayment({
+                            "timeStamp": charge.wechat.timeStamp,
+                            "nonceStr": charge.wechat.nonceStr,
+                            "package": charge.wechat.package,
+                            "signType": charge.wechat.signType,
+                            "paySign": charge.wechat.paySign,
+                            success: res => {
+                                if (res.errMsg == 'requestPayment:ok') {
+                                    // 支付成功
+                                    wx.hideLoading();
+                                    wx.redirectTo({
+                                        url: '/pages/success/main?id=' + ''
+                                    })
+
+                                } else {
+                                    wx.showModal({
+                                        content: '调用支付失败！',
+                                        showCancel: false
+                                    })
+                                }
+                            },
+                            fail: err => {
+                                wx.hideLoading();
+                                if (err.errMsg == 'requestPayment:fail cancel') {
+//                                    取消支付
+                                    wx.redirectTo({
+                                        url: '/pages/enrolmentDetail/main?id=' + ''
+                                    })
+                                } else {
+                                    wx.showModal({
+                                        content: '调用支付失败！',
+                                        showCancel: false
+                                    })
+                                }
+                            }
+                        })
+
+                    }
+                } else {
+                    wx.hideLoading();
+                    wx.showModal({
+                        content: charge || '请求支付失败，请重试！',
+                        showCancel: false
+                    })
+                }
             },
             jump(path) {
                 wx.redirectTo({

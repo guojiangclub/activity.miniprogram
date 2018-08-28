@@ -311,8 +311,7 @@ export default {
           this.$http
               .get(this.$config.GLOBAL.baseUrl + 'api/activity/list/'+id,{
                   page:page,
-                  category_id:category_id,
-                  limit:5
+                  category_id:category_id
               })
               .then(res =>{
                   res = res.data;

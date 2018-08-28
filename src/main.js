@@ -164,10 +164,8 @@ export default {
             'pages/rewards/main',
             'pages/user/main',
             'pages/usersetting/main',
-            'pages/shareImg/main'
-
-
-
+            'pages/shareImg/main',
+            'pages/form/main'
         ],
         window: {
             backgroundTextStyle: 'light',

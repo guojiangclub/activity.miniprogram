@@ -48,7 +48,7 @@
 </template>
 
 <script>
-
+    import { getUrl } from '../../utils';
 export default {
   data () {
     return {
@@ -85,7 +85,8 @@ export default {
         activityData:[],
         init:false,
         time:'',
-        info: getApp().textStatus
+        info: getApp().textStatus,
+        token:''
     }
   },
     //小程序触底事件
@@ -114,9 +115,24 @@ export default {
   methods:{
       //跳到我的活动去
       jumpMine(){
-          wx.navigateTo({
-              url:'/pages/myActivity/main'
-          })
+          var token = this.$storage.get('user_token');
+          if(token){
+              wx.navigateTo({
+                  url:'/pages/myActivity/main'
+              })
+          } else {
+              var url = getUrl();
+              wx.showModal({
+                  content: '请先登录',
+                  success: res => {
+                      if (res.confirm) {
+                          wx.navigateTo({
+                              url: '/pages/register/main?url=' + url
+                          })
+                      }
+                  }
+              })
+          }
       },
       //跳转到详情页
       jumpDetail(id){
@@ -358,7 +374,9 @@ export default {
     mounted(){
       this.getChooseCity();
       this.getChooseCategory();
-      this.askActivity("all",1,"all",true)
+      this.askActivity("all",1,"all",true);
+      var token = this.$storage.get('user_token');
+      this.token = token;
 
        /* console.log(getApp().textStatus);*/
     }

@@ -1,8 +1,18 @@
 <template>
     <div id="form">
         <div class="input_item" v-if="item.status==1" v-for="(item, idx) in list">
-            <p v-if="item.type!='range' && item.name!='id_card' && item.type!='statement' && item.name != 'other_certificate'"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
-            <p v-if="item.type=='range'"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}}:{{showGoalTime[item.name]}} <span v-if="item.is_necessary==0">(选填)</span></p>
+            <!--title-->
+            <p v-if="item.type!='range' && item.name!='id_card' && item.type!='statement' && item.name != 'other_certificate'">
+                <span v-if="item.is_necessary==1" style="color: red">*</span>
+                {{item.title}}
+                <span v-if="item.is_necessary==0">(选填)</span>
+            </p>
+            <!--title-->
+            <p v-if="item.type=='range'">
+                <span v-if="item.is_necessary==1" style="color: red">*</span>
+                {{item.title}}:{{showGoalTime[item.name]}}
+                <span v-if="item.is_necessary==0">(选填)</span>
+            </p>
             <!--单独的身份证类型-->
             <p v-if="(item.type!='range' && item.name == 'id_card' && user.certificate_type == 'id_card' && item.type!='statement') || (item.type!='range' && item.name == 'id_card' && user.certificate_type == '' && item.type!='statement')"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
             <input class="hhaha" type="text" :name="item.name" v-if="(item.type == 'text' && item.name == 'id_card' && user.certificate_type == 'id_card') || (item.type == 'text' && item.name == 'id_card' && user.certificate_type == '')" v-model="user[item.name]">
@@ -11,7 +21,10 @@
             <p v-if="(item.type!='range' && item.name == 'other_certificate' && user.certificate_type == 'other_certificate' && item.type!='statement') || (item.type!='range' && item.name == 'other_certificate' && user.certificate_type == '' && item.type!='statement')"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
             <input class="hhaha" type="text" :name="item.name" v-if="(item.type == 'text' && item.name == 'other_certificate' && user.certificate_type == 'other_certificate') || (item.type == 'text' && item.name == 'other_certificate' && user.certificate_type == '')" v-model="user[item.name]">
 
+            <!--文本输入框-->
             <input type="text" :name="item.name" v-if="item.type=='text'&& item.name!='province' && item.name!='id_card' && item.name!='other_certificate'"  v-model="user[item.name]">
+
+            <!--图片上传-->
             <div class="img" v-if="item.type=='file'">
                 <div class="img_item" v-if="user[item.name].length" v-for="(val,index) in user[item.name]" @click="deleteX(item.name,index)">
                     <img :src="val" alt="">
@@ -20,20 +33,33 @@
                     <input :id="item.name" type="file" :name="item.name" accept="image/*" class="img_file" @change="fileChange(item.name)">
                 </p>
             </div>
+            <!--下拉框-->
             <span class="box" @click="showPicker(item.name)" v-if="item.type=='select'">{{user[item.name]}}</span>
+
+            <!--多文本输入框-->
             <textarea  v-if="item.type=='textarea'" v-model="user[item.name]"></textarea>
+
+            <!--滑动条-->
             <!--<slide-time v-if="item.type=='range'" :minTime="ActivityStartTime" :maxTime="ActivityEndTime" @select-time="passTime(item.name,$event)" style="margin-bottom: 15px"></slide-time>-->
+
+            <!--地址-->
             <span class="box" v-if="item.name=='province'" @click="show_city">{{user[item.name]}}</span>
+
+            <!--单选按钮-->
             <div class="input_radio" v-if="item.type=='radio'">
                 <radio-group v-model="user[item.value || item.name]" :vertical=false>
                     <radio :label="i.value || i.name" v-for="i in item.options" :key="index">{{i.name}}</radio>
                 </radio-group>
             </div>
+
+            <!--多选按钮-->
             <div class="input_radio" v-if="item.type=='checkbox'">
                 <checkbox-group v-model="user[item.name]" :vertical=false>
                     <checkbox :label="i.name" v-for="i in item.options" :key="index">{{i.name}}</checkbox>
                 </checkbox-group>
             </div>
+
+            <!--免责声明-->
             <div class="input_radio mx-1px-top" style="padding-top: 10px;margin-top: 10px" v-if="item.type=='statement'">
                 <CheckBox v-model="user[item.name]" class="statement" :label="item.title"></CheckBox>
                 <a @click="lookDetail" style="color: cornflowerblue;text-decoration: underline">点击查看声明详情</a>

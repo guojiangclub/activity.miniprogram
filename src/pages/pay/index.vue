@@ -1,75 +1,77 @@
 <template>
     <div id="pay">
-        <div class="active-box">
-            <div class="item">
-                <div class="info-left">
-                    <image :src="info.activity.img" mode="aspectFill"></image>
-                </div>
-                <div class="info-rigth">
-                    <div class="name">{{info.activity.title}}</div>
-                    <div class="time"><span class="iconfont icon-carryout"></span> {{time}}</div>
-                    <div class="address"><span class="iconfont icon-Group113"></span> {{info.activity.address}}</div>
-                    <div class="money">
-                        <span class="text" v-if="info.payment.type == 0">{{info.payment.point}}积分</span>
-                        <span class="text" v-if="info.payment.type == 1">￥{{info.payment.price}}</span>
-                        <span class="text" v-if="info.payment.type == 2">￥{{info.payment.price}}+{{info.payment.point}}积分</span>
-                        <span class="text" v-if="info.payment.type == 4">￥{{info.payment.price}}</span>
+        <block v-if="init">
+            <div class="active-box">
+                <div class="item">
+                    <div class="info-left">
+                        <image :src="info.activity.img" mode="aspectFill"></image>
+                    </div>
+                    <div class="info-rigth">
+                        <div class="name">{{info.activity.title}}</div>
+                        <div class="time"><span class="iconfont icon-carryout"></span> {{time}}</div>
+                        <div class="address"><span class="iconfont icon-Group113"></span> {{info.activity.address}}</div>
+                        <div class="money">
+                            <span class="text" v-if="info.payment.type == 0">{{info.payment.point}}积分</span>
+                            <span class="text" v-if="info.payment.type == 1">￥{{info.payment.price}}</span>
+                            <span class="text" v-if="info.payment.type == 2">￥{{info.payment.price}}+{{info.payment.point}}积分</span>
+                            <span class="text" v-if="info.payment.type == 4">￥{{info.payment.price}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="point-box" v-if="info.payment.type == 0 || info.payment.type == 2">
-            <div class="point mx-1px-bottom">
-                <div class="name">
-                    积分
+            <div class="point-box" v-if="info.payment.type == 0 || info.payment.type == 2">
+                <div class="point mx-1px-bottom">
+                    <div class="name">
+                        积分
+                    </div>
+                    <div class="value">
+                        可用{{info.point}}
+                    </div>
                 </div>
-                <div class="value">
-                    可用{{info.point}}
-                </div>
-            </div>
-            <div class="user-point">
-                {{info.payment.point}} 积分
-            </div>
-        </div>
-
-        <div class="point-box">
-            <div class="point mx-1px-bottom">
-                <div class="name">
-                    支付方式
-                </div>
-            </div>
-            <div class="user-point">
-                <radio-group class="radio-group">
-                    <label class="radio">
-                        <text>微信支付</text>
-                        <radio checked="true" />
-                    </label>
-                </radio-group>
-            </div>
-        </div>
-
-        <div class="pay-info">
-            <div class="item" v-if="info.payment.type == 0 || info.payment.type == 2">
-                <div class="name">
-                    积分支付
-                </div>
-                <div>
-                    {{info.payment.point}}积分
-                </div>
-            </div>
-            <div class="item" v-if="info.payment.type != 0">
-                <div class="name">
-                    金额支付
-                </div>
-                <div>
-                    ￥{{info.payment.price}}
+                <div class="user-point">
+                    {{info.payment.point}} 积分
                 </div>
             </div>
 
-            <div class="bottom" @click="pay">
-                立即支付
+            <div class="point-box">
+                <div class="point mx-1px-bottom">
+                    <div class="name">
+                        支付方式
+                    </div>
+                </div>
+                <div class="user-point">
+                    <radio-group class="radio-group">
+                        <label class="radio">
+                            <text>微信支付</text>
+                            <radio checked="true" />
+                        </label>
+                    </radio-group>
+                </div>
             </div>
-        </div>
+
+            <div class="pay-info">
+                <div class="item" v-if="info.payment.type == 0 || info.payment.type == 2">
+                    <div class="name">
+                        积分支付
+                    </div>
+                    <div>
+                        {{info.payment.point}}积分
+                    </div>
+                </div>
+                <div class="item" v-if="info.payment.type != 0">
+                    <div class="name">
+                        金额支付
+                    </div>
+                    <div>
+                        ￥{{info.payment.price}}
+                    </div>
+                </div>
+
+                <div class="bottom" @click="pay">
+                    立即支付
+                </div>
+            </div>
+        </block>
     </div>
 </template>
 
@@ -88,7 +90,8 @@
                     point: ''
                 },
                 time: '',
-                order_no: ''
+                order_no: '',
+                init: false
             }
         },
         mounted(){
@@ -110,7 +113,8 @@
                         if (res.status) {
                             this.info = res.data;
 
-                            this.time = getApp().timefiter(res.data.activity.starts_at, res.data.activity.ends_at)
+                            this.time = getApp().timefiter(res.data.activity.starts_at, res.data.activity.ends_at);
+                            this.init = true;
                         } else {
                             wx.showModal({
                                 content: res.message || "请求失败",
@@ -154,31 +158,34 @@
                 })
 
                 var token = this.$storage.get('user_token');
-
+                console.log(token);
                 this.getOPenID().then(res => {
 
                     var data = {
                         openid: res,
-                        order_no: this.order_no
+                        order_no: this.order_no,
+                        channel: 'wx_lite'
                     };
 
                     this.$http
-                        .post(this.$config.GLOBAL.baseUrl + 'api',{
-                            data: data
-                        }, {
-                            header: {
+                        .post(this.$config.GLOBAL.baseUrl + 'api/activity/mini/create/charge',data, {
+                            headers: {
                                 Authorization: token
                             }
                         })
                         .then(res => {
                             res = res.data;
                             if (res.status) {
-
+                                if (res.data.name == 'pingxx') {
+                                    this.pingCharge(true, res.data.charge)
+                                } else {
+                                    this.charge(true, res.data.charge)
+                                }
                             } else {
-
+                                this.charge(false, res.message)
                             }
                         }, err => {
-
+                            this.charge(false)
                         })
                 }).catch(() => {
                     wx.hideLoading();
@@ -194,20 +201,22 @@
                         if (res == 'success') {
 //                            支付成功
                             wx.hideLoading();
+                            console.log(this.info.activity.id);
                             wx.redirectTo({
-                                url: '/pages/success/main?id=' + ''
+                                url: '/pages/success/main?order_no=' + this.order_no
                             })
+
                         } else if (res == 'fail') {
 //                            支付失败
                             wx.hideLoading();
                             wx.redirectTo({
-                                url: '/pages/enrolmentDetail/main?id=' + ''
+                                url: '/pages/enrolmentDetail/main?id=' + this.info.activity.id
                             })
                         } else if (res == 'cancel') {
 //                            取消支付
                             wx.hideLoading();
                             wx.redirectTo({
-                                url: '/pages/enrolmentDetail/main?id=' + ''
+                                url: '/pages/enrolmentDetail/main?id=' + this.info.activity.id
                             })
                         }
                     })
@@ -240,7 +249,7 @@
                                     // 支付成功
                                     wx.hideLoading();
                                     wx.redirectTo({
-                                        url: '/pages/success/main?id=' + ''
+                                        url: '/pages/success/main?order_no=' + this.order_no
                                     })
 
                                 } else {
@@ -255,7 +264,7 @@
                                 if (err.errMsg == 'requestPayment:fail cancel') {
 //                                    取消支付
                                     wx.redirectTo({
-                                        url: '/pages/enrolmentDetail/main?id=' + ''
+                                        url: '/pages/enrolmentDetail/main?id=' + this.info.activity.id
                                     })
                                 } else {
                                     wx.showModal({

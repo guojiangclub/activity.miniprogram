@@ -1,53 +1,56 @@
 <template>
     <div id="success">
-        <div class="wrap mx-1px-bottom">
-            <div class="title">
-                预约成功
-            </div>
-            <div class="desc">
-                您已成功预约该活动，请尽快联系教练进行线下支付。
-            </div>
-        </div>
-        <div class="wrap active-info">
-            <div class="info-title">
-                {{sign.activity.title}}
-            </div>
-            <div class="info-item">
-                <div class="name">
-                    时间:
+        <block v-if="init">
+            <div class="wrap mx-1px-bottom">
+                <div class="title">
+                    <span v-if="sign.activity.fee_type == 'OFFLINE_CHARGES'">预约成功</span>
+                    <span v-else>报名成功</span>
                 </div>
-                <div class="text">
-                    {{time}}
+                <div class="desc" v-if="sign.activity.fee_type == 'OFFLINE_CHARGES'">
+                    您已成功预约该活动，请尽快联系教练进行线下支付。
                 </div>
             </div>
-            <div class="info-item">
-                <div class="name">
-                    地址:
+            <div class="wrap active-info">
+                <div class="info-title">
+                    {{sign.activity.title}}
                 </div>
-                <div class="text">
-                    {{sign.activity.address}}
+                <div class="info-item">
+                    <div class="name">
+                        时间:
+                    </div>
+                    <div class="text">
+                        {{time}}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <div class="name">
+                        地址:
+                    </div>
+                    <div class="text">
+                        {{sign.activity.address}}
+                    </div>
+                </div>
+                <div class="info-item" v-if="sign.activity.coach">
+                    <div class="name">
+                        教练:
+                    </div>
+                    <div class="text">
+                        {{sign.activity.coach.nick_name}}
+                    </div>
+                </div>
+                <div class="info-item" v-if="sign.activity.coach">
+                    <div class="name">
+                        手机号:
+                    </div>
+                    <div class="text">
+                        {{sign.activity.coach.mobile}}
+                    </div>
                 </div>
             </div>
-            <div class="info-item" v-if="sign.activity.coach">
-                <div class="name">
-                    教练:
-                </div>
-                <div class="text">
-                    {{sign.activity.coach.nick_name}}
-                </div>
+            <div class="buttom" @click="jump('/pages/myActivity/main')">
+                查看我的报名
             </div>
-            <div class="info-item" v-if="sign.activity.coach">
-                <div class="name">
-                    手机号:
-                </div>
-                <div class="text">
-                    {{sign.activity.coach.mobile}}
-                </div>
-            </div>
-        </div>
-        <div class="buttom" @click="jump('/pages/myActivity/main')">
-            查看我的报名
-        </div>
+        </block>
     </div>
 </template>
 
@@ -60,19 +63,23 @@
                         coach: {}
                     },
                 },
-                time: ''
+                time: '',
+                init: false,
+                order_no: ''
             }
         },
         mounted(){
-            this.id = this.$root.$mp.query.id
-            this.getLoginDetail(this.id);
+            this.order_no = this.$root.$mp.query.order_no;
+            this.getLoginDetail(this.order_no);
         },
         methods: {
-//            获取报名信息
-            getLoginDetail(id) {
+//           验证支付状态
+            getLoginDetail(order_no) {
                 var token = this.$storage.get('user_token')
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/checkout/' + id, {}, {
+                    .post(this.$config.GLOBAL.baseUrl + 'api/activity/order/paid', {
+                        order_no: order_no
+                    }, {
                         headers: {
                             Authorization: token
                         }
@@ -82,7 +89,8 @@
                         if (res.status) {
                             this.sign = res.data;
 
-                            this.time = getApp().timefiter(res.data.activity.starts_at, res.data.activity.ends_at)
+                            this.time = getApp().timefiter(res.data.activity.starts_at, res.data.activity.ends_at);
+                            this.init = true;
                         } else {
                             wx.showModal({
                                 content: res.message || "请求失败",

@@ -516,7 +516,7 @@
                         } else {
 //                            直接跳转到报名成功页面
                             wx.redirectTo({
-                                url: '/pages/success/main?id=' + this.id
+                                url: '/pages/success/main?order_no=' + res.data.order_no
                             });
                         }
 

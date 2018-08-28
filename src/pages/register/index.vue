@@ -77,7 +77,6 @@
                     res = res.data;
                     if (res.data && res.data.open_id) {
                         this.open_id = res.data.open_id
-                        return
                     }
 
                     // 如果接口返回token就直接登录，如果没有则弹出授权

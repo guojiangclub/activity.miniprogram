@@ -59,7 +59,7 @@
                 <button class="bgWhite" @click="cancelConfirm" v-if="isCancel">取消报名</button>
                 <button class="bgRed"   v-if="isSign">扫码签到</button>
             </div>
-            <div class="item-rigth" v-if="enrolData.status==1 && state.member_status==0 && state.order && state.order.pay_status==0">
+            <div class="item-rigth" v-if="enrolData.status==1 && state.member_status==0 && state.order && state.order.pay_status==0" @click="jumpPay(state.order.order_no)">
                 <div class="money">
                     <span class="text subtitle" v-if="enrolData.fee_type != 'OFFLINE_CHARGES' && enrolData.fee_type != 'CHARGING'">{{enrolData.subtitle}}</span>
                     <span class="text" v-if="enrolData.payments && enrolData.payments.type == 0">{{enrolData.payments.point}}积分</span>
@@ -67,7 +67,7 @@
                     <span class="text" v-if="enrolData.payments && enrolData.payments.type == 2"><span>￥</span>{{enrolData.payments.price}}+{{enrolData.payments.point}}积分</span>
                     <span class="text" v-if="enrolData.payments && enrolData.payments.type == 4"><span>￥</span>{{enrolData.payments.price}}</span>
                 </div>
-                <div class="go-pay" @click="jumpPay(state.order.order_no)">去付款</div>
+                <div class="go-pay">去付款</div>
             </div>
         </div>
     </div>
@@ -186,6 +186,18 @@
                     res = res.data;
                     if(res.status){
                         this.message = res.message;
+                        wx.showModal({
+                            title:this.message,
+                            content:"您已成功取消了“"+this.enrolData.title+"”的报名",
+                            showCancel: false,
+                                success: res => {
+                                if (res.confirm || (!res.cancel && !res.confirm)) {
+                            this.getMineEnrol(this.myId);
+                            this.getCheck(this.myId);
+                        }
+                    }
+
+                        })
                     } else {
                         wx.showModal({
                             content: res.message || "请求失败",
@@ -193,10 +205,7 @@
                         })
                     }
                     wx.hideLoading();
-                    wx.showModal({
-                        title:this.message,
-                        content:"您已成功取消了“"+this.enrolData.title+"”的报名"
-                    })
+
                 },err=>{
                     wx.showModal({
                         content: '请求失败，请重试',

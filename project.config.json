@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 15,
+			"current": 1,
 			"list": [
 				{
 					"id": -1,
@@ -41,7 +41,7 @@
 					"id": 1,
 					"name": "活动详情",
 					"pathName": "pages/detail/main",
-					"query": "id=47"
+					"query": "id=58"
 				},
 				{
 					"id": -1,
@@ -65,13 +65,13 @@
 					"id": 5,
 					"name": "线下活动成功",
 					"pathName": "pages/success/main",
-					"query": "order_no=AC2018082871430803540"
+					"query": "id=51"
 				},
 				{
 					"id": 6,
 					"name": "支付页面",
 					"pathName": "pages/pay/main",
-					"query": "order_no=AC2018082871430803540"
+					"query": "order_no=AC2018082781729920331"
 				},
 				{
 					"id": 7,
@@ -119,13 +119,7 @@
 					"id": 14,
 					"name": "表单页面",
 					"pathName": "pages/form/main",
-					"query": "id=46"
-				},
-				{
-					"id": -1,
-					"name": "报名详情",
-					"pathName": "pages/enrolmentDetail/main",
-					"query": "id=56"
+					"query": "id=58"
 				}
 			]
 		}

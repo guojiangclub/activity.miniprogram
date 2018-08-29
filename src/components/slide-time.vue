@@ -1,10 +1,14 @@
+<!--
 <template>
-    <!--<transition name="vlc-ani-slide-left">-->
-    <div class="vlc-slide" ref="parentBox">
+    &lt;!&ndash;<transition name="vlc-ani-slide-left">&ndash;&gt;
+   &lt;!&ndash; <div class="vlc-slide" ref="parentBox">
         <div class="activeBox" ref="activeBox"></div>
-        <div id="ball" class="slide-ball" ref="slide"></div>
+        <div id="ball" class="slide-ball" @touchstart="start"></div>
+    </div>&ndash;&gt;
+    <div id="slide">
+
     </div>
-    <!--</transition>-->
+    &lt;!&ndash;</transition>&ndash;&gt;
 </template>
 <style rel="stylesheet/less" lang="less">
     .vlc-slide{
@@ -56,4 +60,4 @@
 
         },
     }
-</script>
+</script>-->

@@ -35,8 +35,12 @@
                     </p>
                 </div>
                 <!--下拉框-->
-                <span class="box" @click="showPicker(item.name)" v-if="item.type=='select'">{{user[item.name]}}</span>
-
+                <!--从底部弹起的滚动选择器-->
+                <picker v-if="item.type=='select'" value='0' range-key="name" :range='item.options' @change="pickerStatus($event, item.name, idx)">
+                    <span class="box" v-if="item.type=='select'">
+                        {{user[item.name]}}
+                    </span>
+                </picker>
                 <!--多文本输入框-->
                 <textarea  v-if="item.type=='textarea'" v-model="user[item.name]"></textarea>
 
@@ -48,21 +52,27 @@
 
                 <!--单选按钮-->
                 <div class="input_radio" v-if="item.type=='radio'">
-                    <radio-group v-model="user[item.value || item.name]" :vertical=false>
-                        <radio color="#fff" :label="i.value || i.name" v-for="i in item.options" :key="index">{{i.name}}</radio>
+                    <radio-group @change="changeRadio($event, item.name)">
+                        <radio  :value="i.value || i.name" color="#fff" :label="i.value || i.name" v-for="i in item.options" :key="index">{{i.name}}</radio>
                     </radio-group>
                 </div>
 
                 <!--多选按钮-->
                 <div class="input_radio" v-if="item.type=='checkbox'">
-                    <checkbox-group v-model="user[item.name]" :vertical=false>
-                        <checkbox color="#fff" :label="i.name" v-for="i in item.options" :key="index">{{i.name}}</checkbox>
+                    <checkbox-group @change="changeBox($event,item.name)">
+                        <checkbox :value="i.name" color="#fff" :label="i.name" v-for="i in item.options" :key="index">{{i.name}}</checkbox>
                     </checkbox-group>
                 </div>
 
                 <!--免责声明-->
                 <div class="input_radio mx-1px-top" style="padding-top: 10px;margin-top: 10px" v-if="item.type=='statement'">
-                    <checkbox color="#fff" v-model="user[item.name]" class="statement" :label="item.title"></checkbox>
+                   <div class="inline">
+                       <checkbox-group style="display: inline-block" @change="changeCheck($event,item.name)">
+                           <checkbox color="#fff" :value="item.name" class="statement" :label="item.title">
+
+                           </checkbox>
+                       </checkbox-group>
+                   </div>
                     <div class="look" @click="lookDetail" style="text-decoration: underline">点击查看声明详情</div>
 
                 </div>
@@ -78,12 +88,23 @@
                         我知道了
                     </div>
                 </div>
-                <slide-time v-if="item.type=='range'" :minTime="ActivityStartTime" :maxTime="ActivityEndTime" @select-time="passTime(item.name,$event)"></slide-time>
+               <!-- <slide-time v-if="item.type=='range'" :minTime="ActivityStartTime" :maxTime="ActivityEndTime" @select-time="passTime(item.name,$event)"></slide-time>-->
+                <div class="slide-time"  v-if="item.type=='range'" >
+                    <div class="title mx-1px-bottom">滑动条 <span>:{{timeObj.key}}</span></div>
+                    <div class="slide-bar" style="position: relative">
+                        <movable-area style="height: 2px;width:100%;background:#DDDDDD;border-radius: 2px">
+                            <movable-view direction="horizontal" style="height: 22px; width: 22px; background-color: #FFFFFF;border-radius: 50%;border:2px solid #EA4448; top: 50%;margin-top: -12px;z-index:1" @change="change" animation:false>
+                            </movable-view>
+                        </movable-area>
+                        <div style="position: absolute; top:48%; background:#EA4448;height: 2px;" :style="'width:'+x+'px'">
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="bottom-bar">
-            <div class="money">￥300</div>
-            <div class="pay">去付款</div>
+        <div class="bottom-bar" @click="submitStep">
+            <div class="pay" >下一步</div>
         </div>
     </div>
 
@@ -169,21 +190,181 @@
         data () {
             return {
                 id: '',
-                list: [],
+                list: [
+                ],
                 validate: new Validates(),
                 user: {},
                 picker: {},
                 showCity: false,
                 isRequired: {},
                 statement: false,
-                ActivityStartTime: "1h",
-                ActivityEndTime: "2h",
+                x:'',
+                areaWidth:'',
+                finish_max_hours:0,
+                finish_max_minutes:0,
+                finish_min_hours:0,
+                finish_min_minutes:0,
+                percent:0,
+                timeObj:{},
             }
         },
         methods: {
+            //下一步提交表单信息
+            submitStep(){
+                console.log(this.user);
+                return;
+                let keyList = Object.keys(this.user);
+                var that = this;
+                var message = "";
+                /*var paymentId = this.selectPayment;*/
+                var activityId = this.id;
+                for (var i = 0; i < keyList.length; i++) {
+                    if (this.validate.validateObj[keyList[i]].status == 1 && this.validate.validateObj[keyList[i]].necessary == 1) {
+                        message = this.validate.checkRulues(this,{
+                            name: keyList[i],
+                            val: that.user[keyList[i]],
+                            title: that.validate.validateObj[keyList[i]].title,
+                            type: that.validate.validateObj[keyList[i]].type
+                        });
+                    }
+                    else if (this.validate.validateObj[keyList[i]].status == 1 && this.validate.validateObj[keyList[i]].necessary == 0 && keyList[i] == "id_card" && this.user[keyList[i]] != "") {
+                        message = this.validate.checkRulues(this,{
+                            name: keyList[i],
+                            val: that.user[keyList[i]],
+                            title: that.validate.validateObj[keyList[i]].title,
+                            type: that.validate.validateObj[keyList[i]].type
+                        });
+                    }
+                    if (message) {
+                        break;
+                    }
+                }
+                if(message){
+                    wx.showModal({
+                        content:message,
+                        showCancel: false
+                    })
+                    return;
+                }
+                /*var submitData={
+                    activity_id: activityId,
+                    payment_id:81,
+                    actvityForm: this.user,
+                }*/
+                this.submitPay(this.id,81,this.user);
+            },
+            //请求核对接口
+            submitPay(activity_id,payment_id,activityForm){
+                var token = this.$storage.get('user_token');
+                this.$http
+                    .post(this.$config.GLOBAL.baseUrl+'api/activity/checkout/'+activity_id,{
+                        payment_id:payment_id || '',
+                        activityForm:activityForm || {}
+                    },{
+                        headers:{
+                            Authorization:token
+                        }
+                    })
+                    .then(res=>{
+                        res = res.data;
+                        if(res.status){
+                            switch (res.data.pay_status){
+                                case 0:
+                                    if (res.data.activity.fee_type == "CHARGING") {
+                                        /*this.$router.push({name: "activity_pay", params: {id: res.data.order_no}, query: {price: res.data.activity.payments[payment_index].price}});*/
+                                        wx.redirectTo({
+                                            url:'/pages/pay/main?order_no='+res.data.order_no
+                                        })
+                                    }
+                                    break;
+                                case 1:
+                                    /*this.$router.push({name: "register_postSuccess", query: {activityId: this.myID}});*/
+                                    wx.redirectTo({
+                                        url:'/pages/success/main?id='+this.id
+                                    })
+                                    break;
+                            }
+                        } else {
+                            wx.showModal({
+                                content: res.message || "报名失败",
+                                showCancel: false
+                            })
+                        }
+                    },err=>{
+                        wx.showModal({
+                            content:"请求失败",
+                            showCancel: false
+                        })
+                    })
+            },
+            pickerStatus(e, name, index){
+                this.user[name] = this.list[index].options[e.target.value].name
+            },
+            //请求活动详情 时间跟价钱的接口
+            getDetail(id){
+                this.$http
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/' + id).then(res => {
+                    res = res.data;
+                    if (res.status) {
+                        var detail = res.data;
+                        this.finish_min_minutes = detail.finish_min_minutes;
+                        this.finish_min_hours = detail.finish_min_hours;
+                        this.finish_max_minutes = detail.finish_max_minutes;
+                        this.finish_max_hours = detail.finish_max_hours;
+                       /* this.article = res.data.content;
+                        this.describe = res.data.coach.describe;
+                        this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
+                        this.ac_status = getApp().ac_status(this.detail.status);*/
+                    } else {
+                        wx.showModal({
+                            content: res.message || "请求失败",
+                            showCancel: false
+                        })
+                    }
+                }, err => {
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                })
+            },
+            //获取slidebar 的宽度
+            getDomInfo(name) {
+                var query = wx.createSelectorQuery();
+                var barWidth;
+                query.select(name).boundingClientRect(res => {
+                    barWidth = res.width;
+                    this.areaWidth = barWidth - 30;
+                }).exec();
+            },
+
+            //设置时间
+            setTime(){
+                var maxTime = this.finish_max_hours*60+this.finish_max_minutes;
+                var minTime = this.finish_min_hours*60+this.finish_min_minutes;
+                var distanceTime = maxTime - minTime;
+                var percent = Math.floor(distanceTime/this.areaWidth*this.x);
+                this.percent = percent;
+                percent+=minTime;
+                var obj = {};
+                var hour = parseInt(percent/60);
+                var minute = percent%60;
+                obj.key = hour+'小时'+minute+'分钟';
+                obj.val = hour+'-'+minute;
+                this.timeObj = obj;
+                this.$set(this.user, 'range', obj.val)
+            },
+            //滑动条
+            change(e){
+                this.x = e.x;
+                if (e.x==0){
+                    this.x = e.x
+                } else if(e.x>0){
+                    this.x = e.x+22
+                }
+                this.setTime();
+            },
             showPicker(key){
-                debugger
-                console.log(1);
                 this.picker[key] = true;
             },
             show_city(){
@@ -208,7 +389,13 @@
                         res = res.data;
                         if (res.status) {
                             this.list = this.adapter(res.data);
-                            this.isRequired = this.adapter(res.data);
+                            this.list.forEach(val=>{
+                                if (val.type=='range' && val.status == 1){
+                                    setTimeout( res=> {
+                                        this.getDomInfo('.slide-bar');
+                                    },1000)
+                                }
+                            })
                         } else {
                             wx.showModal({
                                 content:res.message || "请求失败",
@@ -224,6 +411,18 @@
                         wx.hideLoading()
                     })
             },
+            //单选按钮
+            changeRadio(e, name){
+                this.$set(this.user, name, e.target.value)
+            },
+            //多选按钮
+            changeBox(e,name){
+                this.$set(this.user, name, e.target.value)
+            },
+            //处理免责声明
+            changeCheck(e,name){
+                this.$set(this.user, name, e.target.value)
+            },
 //            处理数据
             adapter(data) {
                 if (!data) {
@@ -231,7 +430,6 @@
                 }
                 let arrList = [];
                 let caseValidate = this.validate;
-                console.log(this.validate);
                 data.forEach(item => {
                     if (item.type == "checkbox" || item.type == "file") {
                         if (item.value) {
@@ -258,19 +456,22 @@
                         }
                     });
                     if (item.type == "select") {
-                        this.$set(this.picker, item.name, false);
-                        var obj = {};
+//                        this.$set(this.picker, item.name, false);
+                        /*var obj = {};
                         obj.target = item.name;
                         obj.list = [];
                         item.options.forEach((val) => {
                             obj.list.push({
-                                value: val.name,
-                                code: val.name
+                                id: val.name,
+                                name: val.name
                             })
                         });
                         item.options = [];
                         item.options.push(obj);
+
+                        console.log(item);*/
                     }
+
                     arrList.push(item)
                 });
                 return arrList
@@ -308,13 +509,13 @@
             },
             //查看声明详情
             lookDetail(){
-                console.log(1);
                 this.statement = !this.statement;
             },
         },
         mounted(){
             this.id = this.$root.$mp.query.id;
             this.getFormList(this.id);
+            this.getDetail(this.id);
 
         }
     }
@@ -468,7 +669,14 @@
             padding: 10px 15px;
             color: #000000;
             font-size: 16px;
+            .inline{
+                display: inline-block;
+                checkbox-group{
+                    display: inline-block;
+                }
+            }
             .look{
+                display: inline-block;
                 color: @globalColor;
             }
             checkbox{
@@ -568,5 +776,18 @@
     }
     .top-content{
         margin-bottom: 80px;
+    }
+    //滑动条
+    .slide-time{
+        background-color: #FFFFFF;
+        .title{
+            font-size: 16px;
+            color: #4A4A4A;
+            line-height: 20px;
+            padding: 12px 15px;
+        }
+        .slide-bar{
+            padding:20px 15px;
+        }
     }
 </style>

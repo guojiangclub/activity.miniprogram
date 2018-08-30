@@ -38,7 +38,7 @@
                     <div class="info-tit">活动领队</div>
                     <div class="info-detail">{{enrolData.coach.nick_name}}</div>
                 </div>
-                <div class="info mx-1px-bottom" v-if="enrolData.coach.mobile">
+                <div class="info mx-1px-bottom" v-if="enrolData.coach.mobile" @click="makeCall(enrolData.coach.mobile)">
                     <div class="info-tit">领队电话</div>
                     <div class="info-detail blue">{{enrolData.coach.mobile}}</div>
                 </div>
@@ -99,6 +99,12 @@
             this.getCheck(id);
         },
         methods:{
+            //拨打电话
+            makeCall(phoneNumber){
+                wx.makePhoneCall({
+                    phoneNumber:phoneNumber
+                })
+            },
 //            跳到支付页面
             jumpPay(order_no){
                 wx.navigateTo({

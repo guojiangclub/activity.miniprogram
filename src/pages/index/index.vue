@@ -523,7 +523,7 @@ export default {
   }
   .tab-content{
     margin-top:65px;
-    margin-bottom: 80px;
+    padding-bottom: 80px;
     .no-more {
       text-align:center;
       font-size: 14px;

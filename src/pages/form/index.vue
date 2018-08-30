@@ -8,19 +8,14 @@
                     {{item.title}}
                     <span v-if="item.is_necessary==0">(选填)</span>
                 </p>
-                <!--title-->
-                <!-- <p v-if="item.type=='range'">
-                     <span v-if="item.is_necessary==1" style="color: red">*</span>
-                     {{item.title}}:{{showGoalTime[item.name]}}
-                     <span v-if="item.is_necessary==0">(选填)</span>
-                 </p>-->
+
                 <!--单独的身份证类型-->
-                <p class='title mx-1px-bottom' v-if="(item.type!='range' && item.name == 'id_card' && user.certificate_type == 'id_card' && item.type!='statement') || (item.type!='range' && item.name == 'id_card' && user.certificate_type == '' && item.type!='statement')"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
-                <input class="hhaha" type="text" :name="item.name" v-if="(item.type == 'text' && item.name == 'id_card' && user.certificate_type == 'id_card') || (item.type == 'text' && item.name == 'id_card' && user.certificate_type == '')" v-model="user[item.name]">
+                <p class='title mx-1px-bottom' v-if="(item.type!='range' && item.name == 'id_card' && user.certificate_type == 'id_card' && item.type!='statement') || (item.type!='range' && item.name == 'id_card' && !user.certificate_type && item.type!='statement')"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
+                <input class="hhaha" type="text" :name="item.name" v-if="(item.type == 'text' && item.name == 'id_card' && user.certificate_type == 'id_card') || (item.type == 'text' && item.name == 'id_card' && !user.certificate_type)" v-model="user[item.name]">
 
                 <!--单独的其他证件-->
-                <p  class='title mx-1px-bottom' v-if="(item.type!='range' && item.name == 'other_certificate' && user.certificate_type == 'other_certificate' && item.type!='statement') || (item.type!='range' && item.name == 'other_certificate' && user.certificate_type == '' && item.type!='statement')"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
-                <input class="hhaha" type="text" :name="item.name" v-if="(item.type == 'text' && item.name == 'other_certificate' && user.certificate_type == 'other_certificate') || (item.type == 'text' && item.name == 'other_certificate' && user.certificate_type == '')" v-model="user[item.name]">
+                <p  class='title mx-1px-bottom' v-if="(item.type!='range' && item.name == 'other_certificate' && user.certificate_type == 'other_certificate' && item.type!='statement') || (item.type!='range' && item.name == 'other_certificate' && !user.certificate_type && item.type!='statement')"><span v-if="item.is_necessary==1" style="color: red">*</span> {{item.title}} <span v-if="item.is_necessary==0">(选填)</span></p>
+                <input class="hhaha" type="text" :name="item.name" v-if="(item.type == 'text' && item.name == 'other_certificate' && user.certificate_type == 'other_certificate') || (item.type == 'text' && item.name == 'other_certificate' && !user.certificate_type)" v-model="user[item.name]">
 
                 <!--文本输入框-->
                 <input type="text" :name="item.name" v-if="item.type=='text'&& item.name!='province' && item.name!='id_card' && item.name!='other_certificate'"  v-model="user[item.name]">
@@ -36,7 +31,7 @@
                 </div>
                 <!--下拉框-->
                 <!--从底部弹起的滚动选择器-->
-                <picker v-if="item.type=='select'" value='0' range-key="name" :range='item.options' @change="pickerStatus($event, item.name, idx)">
+                <picker style="height: 38px" v-if="item.type=='select'" value='0' range-key="name" :range='item.options' @change="pickerStatus($event, item.name, idx)">
                     <span class="box" v-if="item.type=='select'">
                         {{user[item.name]}}
                     </span>
@@ -45,7 +40,20 @@
                 <textarea  v-if="item.type=='textarea'" v-model="user[item.name]"></textarea>
 
                 <!--滑动条-->
-                <!--<slide-time v-if="item.type=='range'" :minTime="ActivityStartTime" :maxTime="ActivityEndTime" @select-time="passTime(item.name,$event)" style="margin-bottom: 15px"></slide-time>-->
+                <div class="slide-time"  v-if="item.type=='range'" >
+                    <div class="title mx-1px-bottom">
+                        <span v-if="item.is_necessary==1" style="color: red">*</span>
+                        {{item.title}} <span>:{{timeObj.key}}</span></div>
+                    <div class="slide-bar" style="position: relative">
+                        <movable-area style="height: 2px;width:100%;background:#DDDDDD;border-radius: 2px">
+                            <movable-view direction="horizontal" style="height: 22px; width: 22px; background-color: #FFFFFF;border-radius: 50%;border:2px solid #EA4448; top: 50%;margin-top: -12px;z-index:1" @change="change($event, item.name)" animation:false>
+                            </movable-view>
+                        </movable-area>
+                        <div style="position: absolute; top:48%; background:#EA4448;height: 2px;" :style="'width:'+x+'px'">
+
+                        </div>
+                    </div>
+                </div>
 
                 <!--地址-->
                 <span class="box" v-if="item.name=='province'" @click="show_city">{{user[item.name]}}</span>
@@ -89,18 +97,7 @@
                     </div>
                 </div>
                <!-- <slide-time v-if="item.type=='range'" :minTime="ActivityStartTime" :maxTime="ActivityEndTime" @select-time="passTime(item.name,$event)"></slide-time>-->
-                <div class="slide-time"  v-if="item.type=='range'" >
-                    <div class="title mx-1px-bottom">滑动条 <span>:{{timeObj.key}}</span></div>
-                    <div class="slide-bar" style="position: relative">
-                        <movable-area style="height: 2px;width:100%;background:#DDDDDD;border-radius: 2px">
-                            <movable-view direction="horizontal" style="height: 22px; width: 22px; background-color: #FFFFFF;border-radius: 50%;border:2px solid #EA4448; top: 50%;margin-top: -12px;z-index:1" @change="change" animation:false>
-                            </movable-view>
-                        </movable-area>
-                        <div style="position: absolute; top:48%; background:#EA4448;height: 2px;" :style="'width:'+x+'px'">
 
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <div class="bottom-bar" @click="submitStep">
@@ -127,13 +124,13 @@
         checkRulues(that,obj) {
             var message = "";
             var val = obj.val;
-            if ((obj.name == "id_card" && that.user.certificate_type == 'id_card') || (obj.name == "id_card" && that.user.certificate_type == '')) {
+            if ((obj.name == "id_card" && that.user.certificate_type == 'id_card') || (obj.name == "id_card" && !that.user.certificate_type)) {
                 if (!this['text'](val)) {
                     message = `${obj.title}不能为空`;
                 } else if (!this[obj.name](val)) {
                     message = `您输入的${obj.title}不符合规范`;
                 }
-            } else if ((obj.name == 'other_certificate' && that.user.certificate_type == 'other_certificate') || (obj.name == 'other_certificate' && that.user.certificate_type == '')) {
+            } else if ((obj.name == 'other_certificate' && that.user.certificate_type == 'other_certificate') || (obj.name == 'other_certificate' && !that.user.certificate_type)) {
                 if (!this['text'](val)) {
                     message = `${obj.title}不能为空`;
                 }
@@ -208,16 +205,23 @@
                 timeObj:{},
             }
         },
+        mounted(){
+            this.id = this.$root.$mp.query.id;
+            this.payment_id = this.$root.$mp.query.payment_id;
+            this.timeObj = {};
+            this.x = "";
+            this.percent = 0;
+            this.statement = false;
+            this.getFormList(this.id);
+            this.getDetail(this.id);
+
+        },
         methods: {
             //下一步提交表单信息
             submitStep(){
-                console.log(this.user);
-                return;
                 let keyList = Object.keys(this.user);
                 var that = this;
                 var message = "";
-                /*var paymentId = this.selectPayment;*/
-                var activityId = this.id;
                 for (var i = 0; i < keyList.length; i++) {
                     if (this.validate.validateObj[keyList[i]].status == 1 && this.validate.validateObj[keyList[i]].necessary == 1) {
                         message = this.validate.checkRulues(this,{
@@ -251,7 +255,7 @@
                     payment_id:81,
                     actvityForm: this.user,
                 }*/
-                this.submitPay(this.id,81,this.user);
+                this.submitPay(this.id,this.payment_id,this.user);
             },
             //请求核对接口
             submitPay(activity_id,payment_id,activityForm){
@@ -280,7 +284,7 @@
                                 case 1:
                                     /*this.$router.push({name: "register_postSuccess", query: {activityId: this.myID}});*/
                                     wx.redirectTo({
-                                        url:'/pages/success/main?id='+this.id
+                                        url:'/pages/success/main?order_no='+res.data.order_no
                                     })
                                     break;
                             }
@@ -339,7 +343,7 @@
             },
 
             //设置时间
-            setTime(){
+            setTime(name){
                 var maxTime = this.finish_max_hours*60+this.finish_max_minutes;
                 var minTime = this.finish_min_hours*60+this.finish_min_minutes;
                 var distanceTime = maxTime - minTime;
@@ -352,17 +356,18 @@
                 obj.key = hour+'小时'+minute+'分钟';
                 obj.val = hour+'-'+minute;
                 this.timeObj = obj;
-                this.$set(this.user, 'range', obj.val)
+                console.log(name);
+                this.$set(this.user, name, obj.val)
             },
             //滑动条
-            change(e){
+            change(e,name){
                 this.x = e.x;
                 if (e.x==0){
                     this.x = e.x
                 } else if(e.x>0){
                     this.x = e.x+22
                 }
-                this.setTime();
+                this.setTime(name);
             },
             showPicker(key){
                 this.picker[key] = true;
@@ -438,7 +443,7 @@
                             this.$set(this.user, item.name, []);
                         }
                     } else if (item.type == 'range') {
-//                        this.$set(this.showGoalTime, item.name, '');
+                        this.$set(this.user, item.name, '');
                     } else if (item.type == 'statement') {
                         this.$set(this.user, item.name, false);
                     } else if (item.type == 'radio' && item.name == 'certificate_type' && item.status == 1) {
@@ -511,12 +516,6 @@
             lookDetail(){
                 this.statement = !this.statement;
             },
-        },
-        mounted(){
-            this.id = this.$root.$mp.query.id;
-            this.getFormList(this.id);
-            this.getDetail(this.id);
-
         }
     }
 </script>
@@ -734,10 +733,10 @@
                 }
             }
             .statement_content_body{
-                padding-left: 10px;
+                box-sizing: border-box;
+                padding:0 10px 100px 10px;
                 margin-bottom: 20px;
                 height: 100%;
-                padding-bottom: 100px;
                 overflow: auto;
             }
             .statement_content_footer{
@@ -754,6 +753,7 @@
         }
     }
     .bottom-bar{
+        z-index: 3;
         position: fixed;
         width: 100%;
         left: 0;
@@ -775,16 +775,18 @@
         }
     }
     .top-content{
-        margin-bottom: 80px;
+        padding-bottom:80px;
     }
     //滑动条
     .slide-time{
         background-color: #FFFFFF;
+
         .title{
             font-size: 16px;
             color: #4A4A4A;
             line-height: 20px;
             padding: 12px 15px;
+
         }
         .slide-bar{
             padding:20px 15px;

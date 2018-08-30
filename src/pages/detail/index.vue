@@ -74,7 +74,7 @@
                 </div>
             </div>
             <div class="btn-right">
-                <button :class="statusClass" :disabled="statusDisabled" @click="submit">{{statusTxt}}</button>
+                <button :class="statusClass" :disabled="statusdisabled" @click="submit">{{statusTxt}}</button>
             </div>
         </div>
         <!--弹出分享部分-->
@@ -177,11 +177,11 @@
                 show_ticket: false,
                 selectPayment: '',
                 paymentIndex: '',
-                sliderOffset:''
+                sliderOffset:'',
+                statusdisabled:''
             }
         },
         mounted(){
-            this.id = this.$root.$mp.query.id;
             wx.getSystemInfo({
                 success: res =>{
                     /*this.width = res.windowWidth /this.tabList.length*2,*/
@@ -195,8 +195,10 @@
             };
             this.article = '';
             this.describe = '';
-
-
+            this.activeIndex = 0;
+        },
+        onShow() {
+            this.id = this.$root.$mp.query.id;
             var token = this.$storage.get('user_token');
             if (token) {
                 this.getLoginDetail(this.id);
@@ -210,7 +212,7 @@
         onShareAppMessage() {
             return {
                 title: this.detail.name,
-                path: '/pages/shopDetail/main?id=' + this.id
+                path: '/pages/detail/main?id=' + this.id
             }
         },
         methods: {
@@ -421,9 +423,12 @@
                     return
                 }
 
+                console.log(1);
 //                线上活动
                 if (this.detail.fee_type == 'CHARGING') {
+                    console.log(2);
                     if (this.loginDetail.order) {
+                        console.log(3);
 //                        let payment_id = this.loginDetail.order.payment_id;
                         let pay_status = this.loginDetail.order.pay_status;
                         /*let index = this.detail.payments.findIndex(function (val) {
@@ -453,8 +458,7 @@
             },
 //            选择电子票
             selectTickets(item) {
-                if (!item.is_limit || item.limit > 0) {
-                    this.selectPayment = item.id;
+                if (!item.is_limit || item.limit > 0) {this.selectPayment = item.id;
                     this.paymentIndex = this.detail.payments.findIndex((val) => {
                         return val.id == this.selectPayment;
                     });
@@ -475,7 +479,12 @@
                 } else {
                     // 需要填写表单的活动
                     if (this.detail.has_form) {
+
                         // 跳转到填写表单页面
+                        wx.navigateTo({
+                            url:'/pages/form/main?id='+this.id+'&payment_id='+this.selectPayment
+                        })
+                        this.changeTicket();
                     } else {
 //                        不需要填写表单的活动
                         var data = {
@@ -489,6 +498,7 @@
                         });
 
                         this.submitInfo(data);
+                        this.changeTicket();
                     }
                 }
             },
@@ -658,19 +668,26 @@
                     if (s1 == 1) {
                         switch (s2) {
                             default:
-                                return true;
+                                /*return true;*/
+                                this.statusdisabled = true;
+                                break;
                             case 0:
                             case 3:
-                                return false;
+                                /*return false;*/
+                                this.statusdisabled = false;
+                                break;
                         }
                     } else {
-                        return true;
+                       /* return true;*/
+                        this.statusdisabled = true;
                     }
                 } else {
                     if (s1 == 1) {
-                        return false;
+                        /*return false;*/
+                        this.statusdisabled = false;
                     } else {
-                        return true;
+                       /* return true;*/
+                        this.statusdisabled = true;
                     }
                 }
             }
@@ -773,7 +790,7 @@
             }
         }
         .activity-tab {
-            margin-bottom:100px;
+            padding-bottom:100px;
             .tab-header {
                 position: relative;
                 background-color: #FFFFFF;

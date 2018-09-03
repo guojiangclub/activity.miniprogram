@@ -161,11 +161,11 @@
                         if (res.status) {
                             if (res.data.activity.fee_type == "CHARGING") {
                                 wx.redirectTo({
-                                    url: '/pages/pay/main?id=' + res.data.order_no
+                                    url: '/pages/pay/main?order_no=' + res.data.order_no
                                 });
                             } else if (res.data.activity.fee_type == "OFFLINE_CHARGES") {
                                 wx.redirectTo({
-                                    url: '/pages/success/main?id=' + this.id
+                                    url: '/pages/success/main?order_no=' + res.data.order_no
                                 });
                             }
                         } else {

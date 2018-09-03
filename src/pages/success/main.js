@@ -6,6 +6,6 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '预约成功'
+        navigationBarTitleText: '成功'
     }
 }

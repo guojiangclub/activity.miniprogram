@@ -5,7 +5,7 @@
                 <span class="txt">活动状态：</span>
                 <span class="btn" :class="{'fade':enrolData.status==3 || enrolData.member_status==3}">{{register_txt}}</span>
             </div>
-            <div class="item mx-1px-bottom">
+            <div class="item mx-1px-bottom" @click="jumpDetail(enrolData.id)">
                 <div class="info-left">
                     <image :src="enrolData.img_list" mode="aspectFill"></image>
                 </div>
@@ -57,7 +57,7 @@
         <div class="bottomBar">
             <div class="item-left">
                 <button class="bgWhite" @click="cancelConfirm" v-if="isCancel">取消报名</button>
-                <button class="bgRed"   v-if="isSign">扫码签到</button>
+                <button class="bgRed"   v-if="isSign" @click="showInfo">扫码签到</button>
             </div>
             <div class="item-rigth" v-if="enrolData.status==1 && state.member_status==0 && state.order && state.order.pay_status==0" @click="jumpPay(state.order.order_no)">
                 <div class="money">
@@ -109,6 +109,17 @@
             jumpPay(order_no){
                 wx.navigateTo({
                     url:'/pages/pay/main?order_no='+order_no
+                })
+            },
+            showInfo() {
+              wx.showModal({
+                  content: '请使用微信扫码进行签到',
+                  showCancel: false
+              })
+            },
+            jumpDetail(id) {
+                wx.navigateTo({
+                    url:'/pages/detail/main?id='+id
                 })
             },
             //请求去付款的的按钮的接口

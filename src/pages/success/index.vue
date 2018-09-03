@@ -70,6 +70,13 @@
         },
         mounted(){
             this.order_no = this.$root.$mp.query.order_no;
+
+            this.sign = {
+                activity: {
+                    coach: {}
+                }
+            };
+
             this.getLoginDetail(this.order_no);
         },
         methods: {

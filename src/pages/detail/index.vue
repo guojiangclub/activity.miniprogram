@@ -181,7 +181,15 @@
                 statusdisabled:''
             }
         },
-        mounted(){
+        onShow() {
+            this.id = this.$root.$mp.query.id;
+            var token = this.$storage.get('user_token');
+            if (token) {
+                this.getLoginDetail(this.id);
+            }
+            this.getDetail(this.id);
+        },
+        onLoad(e){
             wx.getSystemInfo({
                 success: res =>{
                     /*this.width = res.windowWidth /this.tabList.length*2,*/
@@ -197,21 +205,9 @@
             this.describe = '';
             this.activeIndex = 0;
         },
-        onShow() {
-            this.id = this.$root.$mp.query.id;
-            var token = this.$storage.get('user_token');
-            if (token) {
-                this.getLoginDetail(this.id);
-            }
-            this.getDetail(this.id);
-        },
-       /* onLoad(e){
-//            console.log(e.id);
-            this.id = e.id;
-        },*/
         onShareAppMessage() {
             return {
-                title: this.detail.name,
+                title: this.detail.title,
                 path: '/pages/detail/main?id=' + this.id
             }
         },

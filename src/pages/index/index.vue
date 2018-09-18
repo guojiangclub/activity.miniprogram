@@ -7,12 +7,12 @@
       </div>-->
       <div class="tab">
         <div class="tab-title">
-          <div class="city" v-for="(item,index) in tabTitleList" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'px-b':'']">
+          <div class="city" v-for="(item,index) in tabTitleList" :key="index" @click="toggle(index)" :class="[item.active ? 'tabactive':'',index==0 ? 'px-b':'']">
             <span class="name">{{item.title}}</span>
             <span class="iconfont icon-Group16"></span>
             <!--<scroll-view scroll-y @scrolltolower="lower">-->
             <div class="type-content">
-              <div :class="" v-for="(k,i) in item.content" @click="change(i,index)" :class="[k.active ? 'active' :'']">{{k.title}}</div>
+              <div :class="" v-for="(k,i) in item.content" :key="i" @click="change(i,index)" :class="[k.active ? 'active' :'']">{{k.title}}</div>
             </div>
             <!--</scroll-view>-->
           </div>
@@ -22,7 +22,7 @@
     </div>
     <div class="tab-content">
       <div class="no-more" v-if="activityData.length==0&&init">没有更多了</div>
-      <div class="item mx-1px-bottom" v-for="(t,j) in activityData" @click="jumpDetail(t.id)">
+      <div class="item mx-1px-bottom" v-for="(t,j) in activityData" :key="j" @click="jumpDetail(t.id)">
         <div class="info-left">
           <image :src="t.img_list" mode="aspectFill"></image>
         </div>

@@ -36,7 +36,7 @@
                 <div class="tab-title">
                     <!--<div class="item active">活动详情</div>
                     <div class="item">活动领队</div>-->
-                    <div class="item" v-for="(i,k) in tabList" :class="activeIndex == k ? 'active':''">
+                    <div class="item" v-for="(i,k) in tabList" :key="k" :class="activeIndex == k ? 'active':''">
                         <span  @click="changeTab($event,k)">{{i.title}}</span>
                     </div>
                     <div class="navar-slider" :style="{transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>

@@ -2,7 +2,7 @@
     <div id="myactivity">
         <div class="navbar">
             <div class="vlc-slideBar-wrapper vlc-slideBar-flex normal" style="width: auto">
-                <div class="vlc-slideBar-child" v-for="(item,index) in tabList" style="text-align: center; height: 30px; line-height: 30px;" @click="changeTab($event,index)">
+                <div class="vlc-slideBar-child" v-for="(item,index) in tabList" :key="index" style="text-align: center; height: 30px; line-height: 30px;" @click="changeTab($event,index)">
                     <span :class="activeIndex == index ? 'active':''">{{item.name}}</span>
                 </div>
             </div>
@@ -11,7 +11,7 @@
         <div class="content">
             <div class="bo-m">
                 <div class="noMore" v-if="dataList.length == 0&& init">暂无数据</div>
-                <div  v-for="(t,key) in dataList"  class="mar-bottom" @click="jumpEnrol(t.id)">
+                <div  v-for="(t,key) in dataList" :key="key" class="mar-bottom" @click="jumpEnrol(t.id)">
                     <div class="item mx-1px-bottom">
                         <div class="info-left">
                             <image :src="t.img_list" mode="aspectFill"></image>

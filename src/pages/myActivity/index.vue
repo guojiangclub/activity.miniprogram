@@ -11,7 +11,7 @@
         <div class="content">
             <div class="bo-m">
                 <div class="noMore" v-if="dataList.length == 0&& init">暂无数据</div>
-                <div  v-for="(t,key) in dataList"  class="mar-bottom" @click="jumpEnrol(t.id)" v-show="activeIndex!=2 && t.usertxt!='已取消'">
+                <div  v-for="(t,key) in dataList"  class="mar-bottom" @click="jumpEnrol(t.id)">
                     <div class="item mx-1px-bottom">
                         <div class="info-left">
                             <image :src="t.img_list" mode="aspectFill"></image>

@@ -8,7 +8,7 @@ export default {
     title: 'DMP © 移动商城',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'http://admin.dev.tnf.ibrand.cc/' : 'https://ibrand-admin.beta.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://ibrand-admin.beta.ibrand.cc/' : 'https://www.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

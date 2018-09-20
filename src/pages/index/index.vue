@@ -172,10 +172,10 @@ export default {
       },*/
      //  请求城市的数据
       getChooseCity(){
-          wx.showLoading({
+         /* wx.showLoading({
               title:"加载中",
               mask:true
-          });
+          });*/
           this.$http
               .get(this.$config.GLOBAL.baseUrl + 'api/city',{
                   limit:50
@@ -225,21 +225,19 @@ export default {
                       })
 
                   }
-                  wx.hideLoading()
               },err =>{
                   wx.showModal({
                       content: '请求失败，请重试',
                       showCancel: false,
                   })
-                  wx.hideLoading()
               })
       },
       //请求活动类型数据
       getChooseCategory(){
-          wx.showLoading({
+          /*wx.showLoading({
               title:"加载中",
               mask:true
-          });
+          });*/
         this.$http
             .get(this.$config.GLOBAL.baseUrl +'api/category',{})
             .then(res =>{
@@ -264,13 +262,11 @@ export default {
                         showCancel:false
                     })
                 }
-                wx.hideLoading();
             },err =>{
                 wx.showModal({
                     content: '请求失败，请重试',
                     showCancel: false,
                 })
-                wx.hideLoading()
           })
       },
 

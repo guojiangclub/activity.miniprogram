@@ -41,8 +41,12 @@
         </div>
       </div>
     </div>
-    <div class="my-activity" @click="jumpMine">
-      <button type="warn">我的活动</button>
+    <div class="my-activity" @click="jumpMine(1)">
+      我的活动
+    </div>
+    <div class="tabbar">
+      <div class="mx-1px-right active">活动列表</div>
+      <div @click="jumpMine(2)">个人中心</div>
     </div>
   </div>
 </template>
@@ -114,12 +118,18 @@ export default {
     //城市加载更多
   methods:{
       //跳到我的活动去
-      jumpMine(){
+      jumpMine(type){
           var token = this.$storage.get('user_token');
           if(token){
-              wx.navigateTo({
-                  url:'/pages/myActivity/main'
-              })
+             if(type == 1){
+                 wx.navigateTo({
+                     url:'/pages/myActivity/main'
+                 })
+             } else {
+                 wx.reLaunch({
+                     url:'/pages/user/main'
+                 })
+             }
           } else {
               var url = getUrl();
               wx.showModal({
@@ -596,11 +606,46 @@ export default {
   }
     .my-activity{
       position: fixed;
+      width:95px;
+      height:44px;
+      line-height: 44px;
+      border-radius: 2px;
+      background-color:#EA4448 ;
+      color: #FFFFFF;
+      box-shadow:0px 4px 8px 0px rgba(0,0,0,0.3);
+      bottom: 18%;
+      right: 5%;
+      font-size: 16px;
+      text-align: center;
+    }
+    .tabbar{
+      display: flex;
+      position: fixed;
       bottom: 0;
       width: 100%;
-      button{
+      padding:22px 0 12px 0;
+      color: #909090;
+      font-size: 16px;
+      background-color: #FFFFFF;
+      text-align: center;
+      align-items: center;
+      &::before{
+        content: '';
+        position: absolute;
+        top:0;
+        left: 0;
+        right: 0;
+        height: 10px;
+        background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(0,0,0,0.13) 100%);
+      }
+      div{
+        flex: 1;
         border-radius: 0px;
         font-size:16px;
+        line-height: 25px;
+      }
+      .active{
+        color:#FF2741;
       }
     }
 }

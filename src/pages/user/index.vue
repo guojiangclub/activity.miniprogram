@@ -39,16 +39,21 @@
                     </div>
                 </div>
             </div>
-            <div class="leader">
-                <div class="title" @click="jumpPath('/pages/myLeader/main')">
+            <div class="leader" v-if="info.coach">
+                <div class="title" @click="jumpIndex('list')">
                     <div class="txt">我带队的活动</div>
                     <div class="iconfont icon-Group104"></div>
                 </div>
             </div>
         </div>
+        <div class="tabbar">
+            <div class="mx-1px-right" @click="jumpIndex('index')">活动列表</div>
+            <div class="active">个人中心</div>
+        </div>
     </div>
 </template>
 <script>
+    import { getUrl } from '../../utils';
     export default{
         data(){
             return{
@@ -64,11 +69,54 @@
            }
         },
         methods:{
+            //跳到首页
+            jumpIndex(type){
+                var token = this.$storage.get('user_token');
+                if(token){
+                    if(type=='index'){
+                        wx.reLaunch({
+                            url:'/pages/index/main'
+                        })
+                    } else {
+                        wx.navigateTo({
+                            url:'/pages/myLeader/main'
+                        })
+                    }
+
+                } else {
+                    var url = getUrl();
+                    wx.showModal({
+                        content: '请先登录',
+                        success: res => {
+                            if (res.confirm) {
+                                wx.navigateTo({
+                                    url: '/pages/register/main?url=' + url
+                                })
+                            }
+                        }
+                    })
+                }
+            },
             //跳到我的活动
             jump(type){
-                wx.navigateTo({
-                    url:'/pages/myActivity/main?type='+type
-                })
+                var token = this.$storage.get('user_token');
+                if(token){
+                    wx.navigateTo({
+                        url:'/pages/myActivity/main?type='+type
+                    })
+                } else {
+                    var url = getUrl();
+                    wx.showModal({
+                        content: '请先登录',
+                        success: res => {
+                            if (res.confirm) {
+                                wx.navigateTo({
+                                    url: '/pages/register/main?url=' + url
+                                })
+                            }
+                        }
+                    })
+                }
             },
             jumpPath(url){
                 wx.navigateTo({
@@ -194,6 +242,36 @@
                         color: #000000;
                     }
                 }
+            }
+        }
+        .tabbar{
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            padding:22px 0 12px 0;
+            color: #909090;
+            font-size: 16px;
+            background-color: #FFFFFF;
+            text-align: center;
+            align-items: center;
+            &::before{
+                content: '';
+                position: absolute;
+                top:0;
+                left: 0;
+                right: 0;
+                height: 10px;
+                background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(0,0,0,0.13) 100%);
+            }
+            div{
+                flex: 1;
+                border-radius: 0px;
+                font-size:16px;
+                line-height: 25px;
+            }
+            .active{
+                color:#FF2741;
             }
         }
     }

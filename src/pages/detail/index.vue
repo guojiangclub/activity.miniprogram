@@ -289,7 +289,7 @@
             //回到首页
             jumpHome(){
                 this.retColor.home = ! this.retColor.home;
-                wx.navigateTo({
+                wx.reLaunch({
                     url:'/pages/index/main'
                 })
             },

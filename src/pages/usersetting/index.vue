@@ -27,21 +27,21 @@
                 <div class="code">
                     <div class="detail">上衣尺寸</div>
                     <picker :value=jackIndex :range=jacket  @change="change($event,2)">
-                        <input type="text" placeholder="请输入上衣尺寸" :value=jacket[jackIndex] />
+                        <input type="text" placeholder="请输入上衣尺寸" disabled :value=jacket[jackIndex] />
                         <view class="iconfont icon-Group98 under"></view>
                     </picker>
                 </div>
                 <div class="code">
                     <div class="detail">裤子尺寸</div>
                     <picker :value=pantsIndex :range=pants  @change="change($event,3)">
-                        <input type="text" placeholder="请输入裤子尺寸" :value=pants[pantsIndex] />
+                        <input type="text" placeholder="请输入裤子尺寸" disabled :value=pants[pantsIndex] />
                         <view class="iconfont icon-Group98 under"></view>
                     </picker>
                 </div>
                 <div class="code">
                     <div class="detail">鞋子尺寸</div>
                     <picker :value=shoesIndex :range=shoes  @change="change($event,4)">
-                        <input type="text" placeholder="请输入鞋子尺寸" :value=shoes[shoesIndex] />
+                        <input type="text" placeholder="请输入鞋子尺寸" disabled :value=shoes[shoesIndex] />
                         <view class="iconfont icon-Group98 under"></view>
                     </picker>
                 </div>
@@ -185,24 +185,27 @@
                              })
                              if(sexIndex== -1) sexIndex = '';
 
-                            // 上衣尺寸
-                             var jack = info.size.upper;
-                             var jackIndex = this.jacket.findIndex(val=>{
-                                 return val = jack;
-                             })
-                            if (jackIndex == -1) jackIndex='';
-                             //下衣尺寸
-                            var pants = info.size.lower;
-                            var pantsIndex = this.pants.findIndex(val=>{
-                                return val = pants;
-                            })
-                            if (pantsIndex == -1) pantsIndex = '';
-                            //鞋子尺寸
-                            var shoes = info.size.shoes;
-                            var shoesIndex = this.shoes.findIndex(val=>{
-                                return val = shoes;
-                            })
-                            if (shoesIndex == -1) shoesIndex = '';
+                             if (info.size) {
+                                 // 上衣尺寸
+                                 var jack = info.size.upper;
+                                 var jackIndex = this.jacket.findIndex(val=>{
+                                     return val = jack;
+                                 })
+                                 if (jackIndex == -1) jackIndex='';
+                                 //下衣尺寸
+                                 var pants = info.size.lower;
+                                 var pantsIndex = this.pants.findIndex(val=>{
+                                     return val = pants;
+                                 })
+                                 if (pantsIndex == -1) pantsIndex = '';
+                                 //鞋子尺寸
+                                 var shoes = info.size.shoes;
+                                 var shoesIndex = this.shoes.findIndex(val=>{
+                                     return val = shoes;
+                                 })
+                                 if (shoesIndex == -1) shoesIndex = '';
+                             }
+
                             //修改数据
                             this.detail = res.data;
                             this.selectedIndex = sexIndex;

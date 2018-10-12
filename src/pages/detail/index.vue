@@ -183,6 +183,14 @@
         },
         onShow() {
             this.id = this.$root.$mp.query.id;
+            var scene = this.$root.$mp.query.scene;
+            if (scene) {
+                var scene = decodeURIComponent(this.$root.$mp.query.scene);
+                var sceneArr = scene.split('_');
+                if (sceneArr.length > 0) {
+                    this.id = sceneArr[0];
+                }
+            }
             var token = this.$storage.get('user_token');
             if (token) {
                 this.getLoginDetail(this.id);
@@ -204,6 +212,7 @@
             this.article = '';
             this.describe = '';
             this.activeIndex = 0;
+            this.show_share = false;
         },
         onShareAppMessage() {
             return {

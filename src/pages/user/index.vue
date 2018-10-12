@@ -14,6 +14,11 @@
                 <div class="nick-name">{{info.nick_name}}</div>
             </div>
         </div>
+        <!--<button class="binding__phone binding__user" open-type="getUserInfo" @getuserinfo="bindUserInfo">
+            <i class="iconfont icon-warning"></i>
+            <view class="phone-text">请完善个人信息</view>
+            &lt;!&ndash;<i class="iconfont icon-Chevron"></i>&ndash;&gt;
+        </button>-->
         <div class="content">
             <div class="sign-up">
                 <div class="title" @click="jump(0)">
@@ -154,7 +159,30 @@
                         })
                         wx.hideLoading()
                     })
-            }
+            },
+            bindUserInfo(e) {
+                if (e.mp.detail.encryptedData) {
+                    wx.login({
+                        success: res => {
+                            e.mp.detail.code = res.code;
+                            this.updateUserInfo(e.mp.detail)
+                        }
+                    })
+                }
+            },
+            updateUserInfo(data) {
+                var token = this.$storage.get('user_token');
+                this.$http
+                    .get(this.$config.GLOBAL.baseUrl + 'market/user/bindUserInfo', data, {
+                        headers:{
+                            Authorization:token
+                        }
+                    })
+                    .then(res => {
+                        res = res.data;
+
+                    })
+            },
         }
     }
 </script>
@@ -196,6 +224,38 @@
                     font-size: 25px;
                     color: #FFFFFF;
                     line-height: 80px;
+                }
+            }
+        }
+        //绑定手机号
+        .binding__phone{
+            padding: 10px 15px;
+            background: #FBF6DC;
+            color: #FC6A00;
+            font-size: 14px;
+            margin-bottom: 5px;
+            display:flex;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+
+            .phone-text{
+                flex: 1;
+                margin-left: 5px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            &.binding__user{
+                text-align: left;
+                border-radius: 0;
+                line-height: normal;
+
+                &:after {
+                    border: none;
                 }
             }
         }

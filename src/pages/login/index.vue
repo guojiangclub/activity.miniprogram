@@ -53,10 +53,13 @@
         },
         mounted(){
             var url = this.$root.$mp.query.url;
+            var open_id = this.$root.$mp.query.open_id
             if (url) {
                 this.url = decodeURIComponent(url);
+            };
+            if (open_id) {
+                this.open_id = open_id;
             }
-            ;
             var token = this.$storage.get('user_token');
             this.token = token;
 
@@ -64,8 +67,6 @@
                 wx.redirectTo({
                     url: '/pages/index/main'
                 })
-            } else {
-
             }
         },
         methods: {
@@ -163,15 +164,6 @@
                 this.quickLogin();
             },
             quickLogin() {
-                var infoData = {
-                    open_id: '',
-                    union_id: ''
-                };
-                var idInfo = this.$storage.get('user_login_idInfo');
-                if (idInfo) {
-                    infoData.open_id = idInfo.open_id;
-                    infoData.union_id = idInfo.union_id;
-                }
                 var that = this;
                 var data = {
                     grant_type: 'sms_token',
@@ -179,8 +171,7 @@
                     mobile: that.tellphone,
                     code: that.identifyingcode,
                     open_type: 'miniprogram',
-                    open_id: infoData.open_id,
-                    union_id: infoData.union_id,
+                    open_id: that.open_id,
                 }
 
                 this.$http

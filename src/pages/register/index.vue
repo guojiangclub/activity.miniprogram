@@ -109,10 +109,23 @@
                             })
                         }
                     } else {
-                        // 弹出授权
-                        this.getUserAuthorize();
+
+                        if (!res.status) {
+                            wx.hideLoading();
+                            wx.showModal({
+                                content: res.message || '请求失败，请重试',
+                                showCancel: false,
+                                success: res => {
+                                    if (res.confirm || (!res.cancel && !res.confirm)) {
+                                        this.wxLogin();
+                                    }
+                                }
+                            })
+                        }
                     }
+                    wx.hideLoading();
                 }, err => {
+                    wx.hideLoading();
                     wx.showModal({
                         content: '请求失败，请重试',
                         showCancel: false,
@@ -125,134 +138,17 @@
                 })
 
             },
-//            获取用户授权
-            getUserAuthorize() {
-                wx.getSetting({
-                    success: res => {
-                        // 如果之前没有授权
-                        if (!res.authSetting['scope.userInfo']) {
-                            // 重新请求用户授权
-                            wx.authorize({
-                                scope: 'scope.userInfo',
-                                success: res => {
-                                    this.getUserInfo();
-                                },
-                                // 用户拒绝授权
-                                fail: ret => {
-                                    wx.hideLoading();
-                                    wx.showModal({
-                                        content: '需要授权才能登录',
-                                        showCancel: false,
-                                        success: res => {
-                                            if (res.confirm || (!res.cancel && !res.confirm)) {
-                                                wx.openSetting({
-                                                    success: res => {
-                                                        if (res.authSetting['scope.userInfo']) {
-                                                            this.getUserInfo();
-                                                        }
-                                                    }
-                                                })
-                                            }
-                                        }
-                                    })
-                                }
-                            })
-                        } else {
-                            this.getUserInfo();
-                        }
-                    }
-                })
-            },
-            // 封装获取用户信息
-            getUserInfo() {
-                wx.login({
-                    success: res => {
-                        wx.getUserInfo({
-                            lang: 'zh_CN',
-                            withCredentials: true,
-                            success: res => {
-                                this.login(res);
-                                this.userInfo = res
-                                this.$storage.set('login_user_info', res.userInfo)
-                            }
-                        })
-                    }
-                })
-            },
-            // 封装登录
-            login(data) {
-                this.$http
-                    .post(this.$config.GLOBAL.baseUrl + 'api/oauth/MiniProgramUnionIdLogin', {
-                        iv: data.iv,
-                        encryptedData: data.encryptedData,
-                        open_id: this.open_id,
-                        userInfo: data.userInfo,
-                        open_type: 'miniprogram',
-                    }).then(res => {
-                    res = res.data;
-                    wx.hideLoading();
-
-                    // 如果接口返回token就直接登录
-                    if (res.access_token) {
-                        var access_token = res.token_type + ' ' + res.access_token;
-                        var expires_in = res.expires_in || 315360000;
-                        this.$storage.set("user_token", access_token, expires_in);
-                        if (this.url) {
-                            var path = [
-                                'pages/entity/store/store',
-                                'pages/index/index/index',
-                                'pages/index/classification/classification',
-                                'pages/store/tabCart/tabCart',
-                                'pages/user/personal/personal'
-                            ];
-                            var pathIndex = path.indexOf(this.url);
-                            if (pathIndex == -1) {
-                                wx.redirectTo({
-                                    url: "/" + this.url
-                                })
-                            } else {
-                                wx.switchTab({
-                                    url: "/" + this.url
-                                })
-                            }
-                        } else {
-                            wx.redirectTo({
-                                url: '/pages/index/main'
-                            })
-                        }
-                    } else {
-                        var data = {
-                            open_id: res.data.open_id,
-                            union_id: res.data.union_id
-                        }
-                        this.$storage.set('user_login_idInfo', data);
-                        this.open_id = res.data.open_id;
-                        this.union_id = res.data.union_id
-                    }
-
-
-                    if (!res.status && !res.access_token) {
-                        wx.showModal({
-                            content: res.message || '请求失败，请重试',
-                            showCancel: false,
-                            success: res => {
-                                if (res.confirm || (!res.cancel && !res.confirm)) {
-                                    this.login(this.data.userInfo);
-                                }
-                            }
-                        })
-                    }
-                }, err => {
-                    wx.showModal({
-                        content: res.message || '请求失败，请重试',
-                        showCancel: false,
-                        success: res => {
-                            if (res.confirm || (!res.cancel && !res.confirm)) {
-                                this.login(this.data.userInfo);
-                            }
-                        }
+            jumpLogin(){
+                if (this.url) {
+                    wx.navigateTo({
+                        url: '/pages/login/main?url=' + encodeURIComponent(this.url) + '&open_id=' + this.open_id
                     })
-                })
+                } else {
+                    wx.navigateTo({
+                        url: '/pages/login/main?open_id=' + this.open_id
+                    })
+                }
+
             },
 //            获取手机号
             getPhoneNumber(e) {
@@ -263,11 +159,6 @@
                             if (res.code) {
                                 this.code = res.code;
                                 this.phone(e)
-                                /*this.setData({
-                                 code: res.code
-                                 }, res => {
-                                 this.phone(e);
-                                 })*/
                             } else {
                                 wx.showModal({
                                     content: " 获取code失败",
@@ -289,9 +180,7 @@
                         code: this.code,
                         encryptedData: e.mp.detail.encryptedData,
                         iv: e.mp.detail.iv,
-                        open_id: this.open_id,
-                        union_id: this.union_id,
-                        userInfo: this.userInfo.userInfo,
+                        open_id: this.open_id
                     }).then(res => {
                     res = res.data;
                     if (res.access_token) {

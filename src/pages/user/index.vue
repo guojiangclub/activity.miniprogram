@@ -14,11 +14,11 @@
                 <div class="nick-name">{{info.nick_name}}</div>
             </div>
         </div>
-        <!--<button class="binding__phone binding__user" open-type="getUserInfo" @getuserinfo="bindUserInfo">
+        <button class="binding__phone binding__user" open-type="getUserInfo" @getuserinfo="bindUserInfo" v-if="token && !info.nick_name && !info.avatar && init">
             <i class="iconfont icon-warning"></i>
             <view class="phone-text">请完善个人信息</view>
-            &lt;!&ndash;<i class="iconfont icon-Chevron"></i>&ndash;&gt;
-        </button>-->
+            <!--<i class="iconfont icon-Chevron"></i>-->
+        </button>
         <div class="content">
             <div class="sign-up">
                 <div class="title" @click="jump(0)">
@@ -63,7 +63,9 @@
         data(){
             return{
                 info:{},
-                token:''
+                token:'',
+                init: false,
+                code: ''
             }
         },
         mounted(){
@@ -72,6 +74,19 @@
            if(token){
                this.getMe();
            }
+        },
+        onShow() {
+            if (this.code) {
+                wx.checkSession({
+                    success: res => {
+                        if (res.errMsg != 'checkSession:ok') {
+                            this.getCode();
+                        }
+                    }
+                })
+            } else {
+                this.getCode();
+            }
         },
         methods:{
             //跳到首页
@@ -145,6 +160,7 @@
                         res=res.data;
                         if (res.status){
                             this.info = res.data;
+                            this.init = true;
                         } else {
                             wx.showModal({
                                 content:res.message || "请求失败",
@@ -160,27 +176,52 @@
                         wx.hideLoading()
                     })
             },
+            getCode() {
+                wx.login({
+                    success: res => {
+                        if (res.code) {
+                            this.code = res.code;
+                        }
+                    }
+                })
+            },
             bindUserInfo(e) {
                 if (e.mp.detail.encryptedData) {
-                    wx.login({
-                        success: res => {
-                            e.mp.detail.code = res.code;
-                            this.updateUserInfo(e.mp.detail)
-                        }
-                    })
+                    e.mp.detail.code = this.code;
+                    this.updateUserInfo(e.mp.detail)
                 }
             },
             updateUserInfo(data) {
+                wx.showLoading({
+                    title: '更新中',
+                    mask: true
+                })
                 var token = this.$storage.get('user_token');
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'market/user/bindUserInfo', data, {
+                    .get(this.$config.GLOBAL.baseUrl + 'api/user/bindUserMiniInfo', data, {
                         headers:{
                             Authorization:token
                         }
                     })
                     .then(res => {
                         res = res.data;
-
+                        if (res.status) {
+                            this.getMe();
+                        } else {
+                            wx.showModal({
+                                content: res.message || '请求失败',
+                                showCancel: false
+                            })
+                            this.getCode();
+                        }
+                        wx.hideLoading();
+                    }, err => {
+                        wx.showModal({
+                            content: '请求失败',
+                            showCancel: false
+                        })
+                        this.getCode();
+                        wx.hideLoading();
                     })
             },
         }

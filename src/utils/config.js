@@ -17,7 +17,7 @@ export default {
     title: '万有邻里',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'http://admin.dev.tnf.ibrand.cc/' : 'https://admin.wanyoujishi.com/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'http://eddy.dev.tnf.ibrand.cc/' : 'https://admin.wanyoujishi.com/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

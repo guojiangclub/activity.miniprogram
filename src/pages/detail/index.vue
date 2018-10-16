@@ -247,11 +247,13 @@
             collect(id){
                /* this.retColor.collect = ! this.retColor.collect;*/
                 var token = this.$storage.get('user_token');
-                wx.showLoading({
-                    title: '加载中',
-                    mask:true
-                })
+
                 if(token){
+                    wx.showLoading({
+                        title: '加载中',
+                        mask:true
+                    })
+
                     this.$http
                         .post(this.$config.GLOBAL.baseUrl + 'api/activity/like/'+id,{},{
                             headers:{

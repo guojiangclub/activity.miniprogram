@@ -14,7 +14,7 @@
                 <div class="nick-name">{{info.nick_name}}</div>
             </div>
         </div>
-        <button class="binding__phone binding__user" open-type="getUserInfo" @getuserinfo="bindUserInfo" v-if="token && !info.nick_name && !info.avatar && init">
+        <button class="binding__phone binding__user" open-type="getUserInfo" @getuserinfo="bindUserInfo" v-if="token && !info.user_info_fill && init">
             <i class="iconfont icon-warning"></i>
             <view class="phone-text">请完善个人信息</view>
             <!--<i class="iconfont icon-Chevron"></i>-->
@@ -194,6 +194,7 @@
             bindUserInfo(e) {
                 if (e.mp.detail.encryptedData) {
                     e.mp.detail.code = this.code;
+                    e.mp.detail.app_type = 'activity';
                     this.updateUserInfo(e.mp.detail)
                 }
             },

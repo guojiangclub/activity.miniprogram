@@ -72,7 +72,8 @@
                 this.$http
                     .post(this.$config.GLOBAL.baseUrl + 'api/oauth/MiniProgramLogin', {
                         code: code,
-                        open_type: 'miniprogram'
+                        open_type: 'miniprogram',
+                        app_type: 'activity'
                     }).then(res => {
                     res = res.data;
                     if (res.data && res.data.open_id) {
@@ -180,7 +181,8 @@
                         code: this.code,
                         encryptedData: e.mp.detail.encryptedData,
                         iv: e.mp.detail.iv,
-                        open_id: this.open_id
+                        open_id: this.open_id,
+                        app_type: 'activity'
                     }).then(res => {
                     res = res.data;
                     if (res.access_token) {

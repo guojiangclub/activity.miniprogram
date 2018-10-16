@@ -1,7 +1,7 @@
 <template>
     <div id="user">
         <div class="banner">
-            <div class="set" @click="jumpPath('/pages/usersetting/main')">
+            <div class="set" @click="jumpIndex('setting')">
                 <image src="http://ovef29y3v.bkt.clouddn.com/seting.png"></image>
             </div>
             <div class="avatar" v-if="!token" @click="jumpPath('/pages/register/main')">
@@ -52,7 +52,7 @@
             </div>
         </div>
         <div class="tabbar">
-            <div class="mx-1px-right" @click="jumpIndex('index')">活动列表</div>
+            <div class="mx-1px-right" @click="jumpList">活动列表</div>
             <div class="active">个人中心</div>
         </div>
     </div>
@@ -89,17 +89,23 @@
             }
         },
         methods:{
-            //跳到首页
+            // 跳到首页
+            jumpList(){
+                wx.reLaunch({
+                    url:'/pages/index/main'
+                })
+            },
+            //跳到我带队的活动
             jumpIndex(type){
                 var token = this.$storage.get('user_token');
                 if(token){
-                    if(type=='index'){
-                        wx.reLaunch({
-                            url:'/pages/index/main'
+                    if(type == 'list'){
+                        wx.navigateTo({
+                            url:'/pages/myLeader/main'
                         })
                     } else {
                         wx.navigateTo({
-                            url:'/pages/myLeader/main'
+                            url:'/pages/usersetting/main'
                         })
                     }
 

@@ -4,7 +4,7 @@
             <div class="wrap mx-1px-bottom">
                 <div class="title">
                     <span v-if="sign.activity.fee_type == 'OFFLINE_CHARGES'">预约成功</span>
-                    <span v-else>报名成功</span>
+                    <span v-else>{{text}}</span>
                 </div>
                 <div class="desc" v-if="sign.activity.fee_type == 'OFFLINE_CHARGES'">
                     您已成功预约该活动，请尽快联系教练进行线下支付。
@@ -65,7 +65,8 @@
                 },
                 time: '',
                 init: false,
-                order_no: ''
+                order_no: '',
+                text: '报名成功'
             }
         },
         mounted(){
@@ -76,8 +77,12 @@
                     coach: {}
                 }
             };
-
-            this.getLoginDetail(this.order_no);
+            wx.showLoading({
+                title: '验证中'
+            });
+           setTimeout(() => {
+               this.getLoginDetail(this.order_no);
+           }, 500)
         },
         methods: {
 //           验证支付状态
@@ -95,20 +100,25 @@
                         res = res.data;
                         if (res.status) {
                             this.sign = res.data;
-
                             this.time = getApp().timefiter(res.data.activity.starts_at, res.data.activity.ends_at);
                             this.init = true;
+
+                            if (!res.data.pay_status) {
+                                this.text = '支付失败'
+                            }
                         } else {
                             wx.showModal({
                                 content: res.message || "请求失败",
                                 showCancel: false
                             })
                         }
+                        wx.hideLoading()
                     }, err => {
                         wx.showModal({
                             content: '请求失败，请重试',
                             showCancel: false,
                         })
+                        wx.hideLoading()
                     })
             },
             jump(path) {

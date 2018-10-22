@@ -377,14 +377,19 @@ export default {
               })
       }
   },
+    // 分享
+    onShareAppMessage() {
+        return {
+            title: '活动',
+            path: '/pages/index/main'
+        }
+    },
     mounted(){
       this.getChooseCity();
       this.getChooseCategory();
       this.askActivity("all",1,"all",true);
       var token = this.$storage.get('user_token');
       this.token = token;
-
-       /* console.log(getApp().textStatus);*/
     }
 }
 </script>

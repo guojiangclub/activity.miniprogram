@@ -134,10 +134,16 @@
                         success: res => {
                             this.$http
                                 .get(this.$config.GLOBAL.baseUrl + 'api/wx_lite/open_id', {
-                                    code: res.code
+                                    code: res.code,
+                                    type: 'activity'
                                 }).then(res => {
                                     res = res.data;
-                                    resolve(res.data.openid)
+                                    if (res.status) {
+                                        resolve(res.data.openid)
+                                    } else {
+                                        reject(res.messages);
+                                    }
+
                             }, err => {
                                     reject('获取openid失败');
                             })

@@ -86,7 +86,7 @@
                 分享给好友
             </button>
             <div class="shaer-item mx-1px-top" @click="jumpImg(id,'pages/detail/main')">
-                分享到朋友圈
+                保存图片
             </div>
             <div class="shaer-item clear" @click="changeShare">
                 取消
@@ -312,23 +312,35 @@
             },*/
             //请求活动详情页活动的数据
             getDetail(id){
+                wx.showLoading({
+                    title: '加载中',
+                    mask: true
+                })
                 this.$http
                     .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/' + id).then(res => {
                     res = res.data;
                     console.log(res);
                     if (res.status) {
+
                         this.detail = res.data;
                         this.article = res.data.content;
                         this.describe = res.data.coach.describe;
                         this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
                         this.ac_status = getApp().ac_status(this.detail.status);
+
+
+                        this.statusClassF();
+                        this.statusTxtsF();
+                        this.statusDisabled();
                     } else {
                         wx.showModal({
                             content: res.message || "请求失败",
                             showCancel: false
                         })
                     }
+                    wx.hideLoading();
                 }, err => {
+                    wx.hideLoading();
                     wx.showModal({
                         content: '请求失败，请重试',
                         showCancel: false,
@@ -348,6 +360,10 @@
                     res = res.data;
                     if (res.status) {
                         this.loginDetail = res.data;
+
+                        this.statusClassF();
+                        this.statusTxtsF();
+                        this.statusDisabled();
                     } else {
                         wx.showModal({
                             content: res.message || "请求失败",
@@ -551,9 +567,10 @@
                     })
                     wx.hideLoading();
                 })
-            }
-        },
-        computed: {
+            },
+
+
+
             statusClassF() {
                 const s1 = this.detail.status,
                     s2 = this.loginDetail.member_status;
@@ -651,6 +668,7 @@
                         switch (s2) {
                             default:
                                 this.statusTxt =  '报名已截止';
+                                break;
                             case 1:
                                 this.statusTxt =  '活动已报名';
                                 break;
@@ -660,6 +678,7 @@
                         switch (s2) {
                             default:
                                 this.statusTxt =  '活动已满额';
+                                break;
                             case 1:
                                 this.statusTxt =  '活动已报名';
                                 break;
@@ -685,7 +704,7 @@
                                 break;
                         }
                     } else {
-                       /* return true;*/
+                        /* return true;*/
                         this.statusdisabled = true;
                     }
                 } else {
@@ -693,12 +712,15 @@
                         /*return false;*/
                         this.statusdisabled = false;
                     } else {
-                       /* return true;*/
+                        /* return true;*/
                         this.statusdisabled = true;
                     }
                 }
             }
-        }
+        },
+        /*computed: {
+
+        }*/
     }
 </script>
 
@@ -914,6 +936,9 @@
                 }
                 button::after{
                     border: none;
+                }
+                button[disabled] {
+                    background: #cbcbcb;
                 }
             }
         }

@@ -64,7 +64,10 @@
                                 image: '../../../assets/image/error.png'
                             })
                         }
-                    }
+                    },
+                fail: (err) => {
+                    console.log(err);
+                }
                 })
             },
 //            利用获取到的code登录

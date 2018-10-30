@@ -11,13 +11,19 @@ export default {
     // https://wx.qlogo.cn/mmhead/Q3auHgzwzM4X8VfglpKKTygW0D4OmsSHB9LGiczHHdYRhIzKPZtBs2A/0   狼爪logo
     // https://wx.qlogo.cn/mmhead/Q3auHgzwzM4Hr59sxBlnH4jfKMQJYACQOzibNe0xticCaP7RnuFlrvXQ/0  运运清货
     // https://wx.qlogo.cn/mmhead/Q3auHgzwzM6AJcJTnABAibZjGruHrHHmibmmj5Qd5e5HCFIYlMr1ofZw/0  万有logo
+    // https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0 UTO活动
+
+
+
+    // https://uto-admin.ibrand.cc/
+
   BRAND: {
-    name: '万有邻里',
-    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6AJcJTnABAibZjGruHrHHmibmmj5Qd5e5HCFIYlMr1ofZw/0',
-    title: '万有邻里',
+    name: '助力首百',
+    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0',
+    title: '助力首百',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://eddy-admin-dev.ibrand.cc/' : 'https://admin.wanyoujishi.com/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://uto-admin.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

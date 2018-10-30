@@ -148,7 +148,10 @@
                                     reject('获取openid失败');
                             })
                         },
-                        fail: () => {
+                        fail: (err) => {
+
+                            console.log(err);
+                            wx.hideLoading();
                             wx.showModal({
                                 content: "获取openid失败",
                                 showCancel: false
@@ -182,11 +185,15 @@
                         .then(res => {
                             res = res.data;
                             if (res.status) {
-                                if (res.data.name == 'pingxx') {
+
+                                // 不需要判断支付方式
+                                /*if (res.data.name == 'pingxx') {
                                     this.pingCharge(true, res.data.charge)
                                 } else {
                                     this.charge(true, res.data.charge)
-                                }
+                                }*/
+
+                                this.charge(true, res.data.charge)
                             } else {
                                 this.charge(false, res.message)
                             }
@@ -245,11 +252,11 @@
 
                     } else {
                         wx.requestPayment({
-                            "timeStamp": charge.wechat.timeStamp,
-                            "nonceStr": charge.wechat.nonceStr,
-                            "package": charge.wechat.package,
-                            "signType": charge.wechat.signType,
-                            "paySign": charge.wechat.paySign,
+                            "timeStamp": charge.timeStamp,
+                            "nonceStr": charge.nonceStr,
+                            "package": charge.package,
+                            "signType": charge.signType,
+                            "paySign": charge.paySign,
                             success: res => {
                                 if (res.errMsg == 'requestPayment:ok') {
                                     // 支付成功

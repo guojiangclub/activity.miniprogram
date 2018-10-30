@@ -4,7 +4,7 @@
             <img mode="widthFix" :src="img.url" alt="">
         </div>
         <div class="btn-box" v-if="img.url">
-            <div class="btn" @click="downImg">保存分享到朋友圈</div>
+            <div class="btn" @click="downImg">保存图片</div>
         </div>
     </div>
 </template>

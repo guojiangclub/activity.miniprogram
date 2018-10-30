@@ -6,6 +6,6 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '分享到朋友圈'
+        navigationBarTitleText: '分享'
     }
 }

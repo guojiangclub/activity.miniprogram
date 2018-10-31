@@ -180,7 +180,7 @@ export default {
             backgroundColor: '#F3F3F3'
         },
         navigateToMiniProgramAppIdList: [
-            'wx7cc4a6760c8c8ba6',
+            'wx38e537a9de6d096a',
             'wx8eed5123f76a1cf2'
         ]
         /*tabBar: {

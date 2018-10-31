@@ -19,12 +19,12 @@ export default {
     // https://admin-dev.ibrand.cc/
 
   BRAND: {
-    name: '助力首百',
-    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0',
-    title: '助力首百',
+    name: '万有邻里',
+    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6AJcJTnABAibZjGruHrHHmibmmj5Qd5e5HCFIYlMr1ofZw/0',
+    title: '万有邻里',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://admin.wanyoujishi.com/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

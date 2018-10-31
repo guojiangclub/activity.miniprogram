@@ -122,12 +122,12 @@
         <div class="section-serve">
             <div class="title mx-1px-bottom">我的服务</div>
             <div class="server-box mx-1px-bottom">
-                <navigator target="miniProgram" hover-class="none" app-id="wx8eed5123f76a1cf2" class="item">
+                <navigator target="miniProgram" hover-class="none" app-id="wx38e537a9de6d096a" class="item">
                     <div class="iconfont icon-wanyoujingxuan info mall"></div>
                     <div>万有会员</div>
                 </navigator>
 
-                <navigator target="miniProgram" hover-class="none"  app-id="wx7cc4a6760c8c8ba6" class="item">
+                <navigator target="miniProgram" hover-class="none"  app-id="wx8eed5123f76a1cf2" class="item">
                     <div class="iconfont icon-wanyoulinli info team"></div>
                     <div>万有严选</div>
                 </navigator>

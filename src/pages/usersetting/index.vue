@@ -25,6 +25,19 @@
                     </picker>
                 </div>
                 <div class="code">
+                    <div class="detail">QQ</div>
+                    <input type="text" placeholder="请输入QQ号码" @input="changeQQ" :value="qq"/>
+                </div>
+                <div class="code">
+                    <div class="detail">手机号码</div>
+                    <input type="text"   disabled :value="mobile"/>
+                    <span @click="changeMobile">更换号码</span>
+                </div>
+                <div class="code">
+                    <div class="detail">邮箱</div>
+                    <input type="text" placeholder="请输入邮箱" @input="changeEmail" :value="email"/>
+                </div>
+                <div class="code">
                     <div class="detail">上衣尺寸</div>
                     <picker :value=jackIndex :range=jacket  @change="change($event,2)">
                         <input type="text" placeholder="请输入上衣尺寸" disabled :value=jacket[jackIndex] />
@@ -52,6 +65,7 @@
         </div>
 </template>
 <script>
+    import { getUrl,is } from '../../utils';
     export default{
         data(){
             return{
@@ -83,7 +97,10 @@
                 jackIndex:'',
                 pantsIndex:'',
                 shoesIndex:'',
-                url: ''
+                url: '',
+                qq:'',
+                mobile:'',
+                email:''
 
 
             }
@@ -118,6 +135,20 @@
             this.end = time;
         },
         methods:{
+            //手机号
+            changeMobile(){
+                wx.navigateTo({
+                    url:'/pages/bindPhone/main'
+                })
+            },
+            //邮箱
+            changeEmail(e){
+                this.email = e.target.value
+            },
+            //qq
+            changeQQ(e){
+                this.qq = e.target.value
+            },
             //更换头像
             changeImage(){
                 wx.chooseImage({
@@ -213,6 +244,9 @@
                             this.pantsIndex = pantsIndex;
                             this.shoesIndex = shoesIndex;
                             this.birthdaydate = info.birthday;
+                            this.qq = info.qq;
+                            this.mobile = info.mobile;
+                            this.email = info.email;
                         } else {
                             wx.showModal({
                                 content:res.message || "请求失败",
@@ -234,6 +268,8 @@
                 var message=null;
                 if(!this.detail.nick_name){
                     message="请填写用户昵称";
+                } else if(this.email !="" && !is.email(this.email)){
+                    message="请填写正确的邮箱";
                 }
                 if(message){
                     wx.showModal({
@@ -248,6 +284,9 @@
                         sex:this.list[this.selectedIndex],
                         avatar:this.detail.avatar,
                         birthday:this.birthdaydate,
+                        qq:this.qq,
+                        mobile:this.mobile,
+                        email:this.email,
                         size:{
                             lower:this.pants[this.pantsIndex],
                             shoes:this.shoes[this.shoesIndex],

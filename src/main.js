@@ -165,7 +165,8 @@ export default {
             'pages/user/main',
             'pages/usersetting/main',
             'pages/shareImg/main',
-            'pages/form/main'
+            'pages/form/main',
+            'pages/bindPhone/main'
         ],
         window: {
             backgroundTextStyle: 'light',
@@ -174,6 +175,10 @@ export default {
             navigationBarTextStyle: 'black',
             backgroundColor: '#F3F3F3'
         },
+        navigateToMiniProgramAppIdList: [
+            'wx7cc4a6760c8c8ba6',
+            'wx8eed5123f76a1cf2'
+        ]
         /*tabBar: {
             backgroundColor: '#fff',
             color: '#9B9B9B',

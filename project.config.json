@@ -128,9 +128,10 @@
 					"query": "order_no=AC2018102935100403061"
 				},
 				{
-					"id": -1,
-					"name": "登录2",
-					"pathName": "pages/login/main"
+					"id": 16,
+					"name": "j积分",
+					"pathName": "pages/myPoint/main",
+					"query": ""
 				}
 			]
 		}

@@ -169,7 +169,8 @@ export default {
             'pages/bindPhone/main',
             'pages/myCoupon/main',
             'pages/couponOver/main',
-            'pages/couponDetail/main'
+            'pages/couponDetail/main',
+            'pages/myPoint/main'
         ],
         window: {
             backgroundTextStyle: 'light',

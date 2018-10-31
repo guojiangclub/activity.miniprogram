@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 15,
+			"current": 16,
 			"list": [
 				{
 					"id": -1,
@@ -126,6 +126,11 @@
 					"name": "支付成功",
 					"pathName": "pages/success/main",
 					"query": "order_no=AC2018102935100403061"
+				},
+				{
+					"id": -1,
+					"name": "登录2",
+					"pathName": "pages/login/main"
 				}
 			]
 		}

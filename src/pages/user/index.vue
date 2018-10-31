@@ -98,8 +98,8 @@
             </div>
         </div>
         <div class="info-detail">
-            <div class="item">
-                <div class="number"><span>{{marketInfo.favorite}}</span></div>
+            <div class="item" @click="jumpPath()">
+                <div class="number"><span>{{marketInfo.favorite || 0}}</span></div>
                 <div>收藏</div>
             </div>
             <!--<div class="item">
@@ -110,12 +110,12 @@
                 <div class="number"><span>0</span></div>
                 <div>余额</div>
             </div>-->
-            <div class="item">
-                <div class="number"><span>{{marketInfo.point}}</span></div>
+            <div class="item" @click="jumpPath('/pages/myPoint/main')">
+                <div class="number"><span>{{marketInfo.point || 0}}</span></div>
                 <div>积分</div>
             </div>
-            <div class="item">
-                <div class="number"><span>{{marketInfo.coupon}}</span></div>
+            <div class="item" @click="jumpPath('/pages/myCoupon/main')">
+                <div class="number"><span>{{marketInfo.coupon || 0}}</span></div>
                 <div>优惠券</div>
             </div>
         </div>
@@ -131,25 +131,6 @@
                     <div class="iconfont icon-wanyoulinli info team"></div>
                     <div>万有严选</div>
                 </navigator>
-                <!--<div class="item" bindtap="jumpTravel">
-                    <div class="iconfont icon-mifenquan info mi"></div>
-                    <div>我的圈子</div>
-                </div>-->
-               <!-- <div class="item">
-                    <div class="iconfont icon-wodedingdan info order"></div>
-                    <div>我的订单</div>
-                </div>-->
-
-                <!--<div class="item">-->
-                <!--<div class="iconfont icon--lianxikefu info custom"></div>-->
-                <!--<div>联系客服</div>-->
-                <!--</div>-->
-
-
-                <!--<div class="item">-->
-                <!--<div class="iconfont icon-wodetuandui info team"></div>-->
-                <!--<div>我的带队</div>-->
-                <!--</div>-->
             </div>
         </div>
         <div class="tabbar">
@@ -194,7 +175,9 @@
         methods:{
             //请求收藏 积分 优惠券信息
             getMarket(){
-                this.$http.get(this.$config.GLOBAL.baseUrl+'api/users/market/ucenter',{},{
+                this.$http.get(this.$config.GLOBAL.baseUrl+'api/users/market/ucenter',{
+                    type:'activity'
+                },{
                     headers:{
                         Authorization: this.token
                     }
@@ -221,6 +204,21 @@
                     url:'/pages/index/main'
                 })
             },
+            jumpPath(path) {
+                if(!path) {
+                    return
+                }
+                var token = this.$storage.get('user_token');
+                if (!token) {
+                    this.jumpLogin();
+                    return
+                }
+
+                wx.navigateTo({
+                    url: path
+                })
+            },
+
             jumpLogin() {
                 console.log(1);
                 var token = this.$storage.get('user_token');
@@ -279,11 +277,6 @@
                         }
                     })
                 }
-            },
-            jumpPath(url){
-                wx.navigateTo({
-                    url:url
-                })
             },
             //请求我的数据
             getMe(){

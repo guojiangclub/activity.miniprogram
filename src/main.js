@@ -166,7 +166,10 @@ export default {
             'pages/usersetting/main',
             'pages/shareImg/main',
             'pages/form/main',
-            'pages/bindPhone/main'
+            'pages/bindPhone/main',
+            'pages/myCoupon/main',
+            'pages/couponOver/main',
+            'pages/couponDetail/main'
         ],
         window: {
             backgroundTextStyle: 'light',

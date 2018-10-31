@@ -55,7 +55,7 @@
             </div>&ndash;&gt;
         </div>-->
         <div class="bottomBar">
-            <div class="item-left">
+            <div class="item-left" v-if="isCancel || isSign">
                 <button class="bgWhite" @click="cancelConfirm" v-if="isCancel">取消报名</button>
                 <button class="bgRed"   v-if="isSign" @click="showInfo">扫码签到</button>
             </div>

@@ -16,6 +16,7 @@ export default {
 
 
     // https://uto-admin.ibrand.cc/
+    // https://admin-dev.ibrand.cc/
 
   BRAND: {
     name: '助力首百',
@@ -23,7 +24,7 @@ export default {
     title: '助力首百',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://uto-admin.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://ibrand-admin.beta.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

@@ -204,6 +204,11 @@ export default {
                               let title = val.name;
                               let id = val.id;
                               let active = false;
+                              that.tabTitleList[0].content = [{
+                                  title:"所有城市",
+                                  active:true,
+                                  id:'all'
+                              }];
                               that.tabTitleList[0].content.push({
                                   title,
                                   id,
@@ -260,6 +265,11 @@ export default {
                         let title = val.name;
                         let id = val.id;
                         let active = false;
+                        that.tabTitleList[1].content = [{
+                            title:"所有城市",
+                            active:true,
+                            id:'all'
+                        }];
                         that.tabTitleList[1].content.push({
                             title,
                             id,

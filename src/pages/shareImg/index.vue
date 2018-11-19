@@ -28,38 +28,38 @@
                 if (!token) {
 
                 } else {
-                    wx.showLoading({
-                        title: "图片生成中",
-                        mask: true
-                    });
-                    this.$http.post(this.$config.GLOBAL.baseUrl + 'api/activity/share', {
-                        activity_id: id,
-                        page: path
-                    }, {
-                        headers: {
-                            Authorization: token
-                        }
-                    })
-                        .then(res => {
-                            res = res.data;
-                            if (res.status) {
-                                this.img = res.data;
-                            } else {
-                                wx.showModal({
-                                    content: res.message || '生成图片失败',
-                                    showCancel: false
-                                })
-                            }
-                            wx.hideLoading();
-                        }, err => {
-                            wx.showModal({
-                                content: '生成图片失败',
-                                showCancel: false
-                            })
-                            wx.hideLoading();
-                        })
+
                 }
 
+                wx.showLoading({
+                    title: "图片生成中",
+                    mask: true
+                });
+                this.$http.post(this.$config.GLOBAL.baseUrl + 'api/activity/share', {
+                    activity_id: id,
+                    page: path
+                }, {
+                    headers: {
+                        Authorization: token
+                    }
+                }).then(res => {
+                    res = res.data;
+                if (res.status) {
+                    this.img = res.data;
+                } else {
+                    wx.showModal({
+                        content: res.message || '生成图片失败',
+                        showCancel: false
+                    })
+                }
+                wx.hideLoading();
+            }, err => {
+                    wx.showModal({
+                        content: '生成图片失败',
+                        showCancel: false
+                    })
+                    wx.hideLoading();
+                })
             },
             // 下载图片
             downImg() {

@@ -16,6 +16,7 @@
     "mpvue": "^1.0.11",
     "mpvue-wxparse": "^0.6.5",
     "pingpp-js": "^2.2.6",
+    "qs-mpvue-wxparse": "^1.0.0",
     "vuex": "^3.0.1"
   },
   "devDependencies": {

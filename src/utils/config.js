@@ -19,12 +19,12 @@ export default {
     // https://admin-dev.ibrand.cc/
 
   BRAND: {
-    name: '万有邻里',
-    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6AJcJTnABAibZjGruHrHHmibmmj5Qd5e5HCFIYlMr1ofZw/0',
-    title: '万有邻里',
+    name: 'LandRiver',
+    logo: 'https://land-river-admin.ibrand.cc/storage/DvNvj2N2mkg2fvY4Cx5LJLLYLMTmdhV1J3qfd593.png',
+    title: 'LandRiver',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://admin.wanyoujishi.com/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://land-river-admin.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

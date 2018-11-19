@@ -1,148 +1,154 @@
 <template>
     <div id="detailIndex">
-        <div class="activity-content">
-            <image :src="detail.img" mode="widthFix"></image>
-            <div class="introduce">
-                <div class="name">
-                    {{ detail.title }}
-                </div>
-                <div class="money mx-1px-bottom">
-                    <span class="txt subtitle" v-if="detail.fee_type != 'OFFLINE_CHARGES' && detail.fee_type != 'CHARGING'">{{ detail.subtitle}}</span>
-                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 0">{{detail.payments[0].point}}积分</span>
-                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 1"> <span>￥</span>{{detail.payments[0].price}}</span>
-                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 2"> <span>￥</span>{{detail.payments[0].price}}+{{detail.payments[0].point}}积分</span>
-                    <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 4"> <span>￥</span>{{detail.payments[0].price}}</span>
-                    <span class="btn" :class="ac_status">{{info[detail.status]}}</span>
-                </div>
-                <div class="concrete">
-                    <div class="date padd mx-1px-bottom">
-                        <span class="iconfont icon-carryout"></span>
-                        <span class="text">{{time}}</span>
-                    </div>
-                    <div class="addr padd mx-1px-bottom" @click="jumpMap">
-                        <span class="iconfont icon-Group113"></span>
-                        <span class="text">{{detail.address}}</span>
-                        <span class="iconfont icon-Group104"></span>
-                    </div>
-                    <div class="num padd">
-                        <span class="iconfont icon-Group64"></span>
-                        <span class="text">已报名 {{ detail.member_count }}人</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="activity-tab">
-            <div class="tab-header">
-                <div class="tab-title">
-                    <!--<div class="item active">活动详情</div>
-                    <div class="item">活动领队</div>-->
-                    <div class="item" v-for="(i,k) in tabList" :key="k" :class="activeIndex == k ? 'active':''">
-                        <span  @click="changeTab($event,k)">{{i.title}}</span>
-                    </div>
-                    <div class="navar-slider" :style="{transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>
-                </div>
-            </div>
-            <div class="content" v-if="activeIndex == 0" v-show="detail.content">
-                <wxParse :content="article" @preview="preview" @navigate="navigate"></wxParse>
-            </div>
-            <div class="content" v-if="activeIndex == 1">
-                <div class="coach-intro" v-show="detail.coach">
-                    <div class="avatar">
-                        <image :src="detail.coach.avatar"></image>
-                    </div>
-                    <div class='coach-name'>{{detail.coach.nick_name}}</div>
-                    <div class="coach-nick">{{detail.coach.title}}</div>
-                </div>
-                <div class="coach-txt" v-show="detail.coach">
-                    <wxParse :content="describe"></wxParse>
-                </div>
-            </div>
-        </div>
-        <div class="fixed-btn">
-            <div class="btn-left">
-                <div class="item-btn" @click="jumpHome">
-                    <div class="iconfont icon-home"></div>
-                    <div class="txt">首页</div>
-                </div>
-                <div class="item-btn" @click="collect(id)" :class="loginDetail.liked?'activebtn':''">
-                    <div class="iconfont icon-Group86"></div>
-                    <div class="txt">收藏</div>
-                </div>
-                <div class="item-btn" @click="changeShare">
-                    <div class="iconfont icon-Group67"></div>
-                    <div class="txt">分享</div>
-                </div>
-            </div>
-            <div class="btn-right">
-                <button :class="statusClass" :disabled="statusdisabled" @click="submit">{{statusTxt}}</button>
-            </div>
-        </div>
-        <!--弹出分享部分-->
-        <div class="maks" :class="show_share ? 'cur':''">
 
-        </div>
-        <div class="share-box" :class="show_share ? 'cur':''">
-            <button class="shaer-item" open-type="share">
-                分享给好友
-            </button>
-            <div class="shaer-item mx-1px-top" @click="jumpImg(id,'pages/detail/main')">
-                保存图片
+        <block>
+            <div class="activity-content">
+                <image :src="detail.img" mode="widthFix"></image>
+                <div class="introduce">
+                    <div class="name">
+                        {{ detail.title }}
+                    </div>
+                    <div class="money mx-1px-bottom">
+                        <span class="txt subtitle" v-if="detail.fee_type != 'OFFLINE_CHARGES' && detail.fee_type != 'CHARGING'">{{ detail.subtitle}}</span>
+                        <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 0">{{detail.payments[0].point}}积分</span>
+                        <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 1"> <span>￥</span>{{detail.payments[0].price}}</span>
+                        <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 2"> <span>￥</span>{{detail.payments[0].price}}+{{detail.payments[0].point}}积分</span>
+                        <span class="txt" v-if="detail.payments[0] &&detail.payments[0].type == 4"> <span>￥</span>{{detail.payments[0].price}}</span>
+                        <span class="btn" :class="ac_status">{{info[detail.status]}}</span>
+                    </div>
+                    <div class="concrete">
+                        <div class="date padd mx-1px-bottom">
+                            <span class="iconfont icon-carryout"></span>
+                            <span class="text">{{time}}</span>
+                        </div>
+                        <div class="addr padd mx-1px-bottom" @click="jumpMap">
+                            <span class="iconfont icon-Group113"></span>
+                            <span class="text">{{detail.address}}</span>
+                            <span class="iconfont icon-Group104"></span>
+                        </div>
+                        <div class="num padd">
+                            <span class="iconfont icon-Group64"></span>
+                            <span class="text">已报名 {{ detail.member_count }}人</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="shaer-item clear" @click="changeShare">
-                取消
+            <div class="activity-tab">
+                <div class="tab-header">
+                    <div class="tab-title">
+                        <!--<div class="item active">活动详情</div>
+                        <div class="item">活动领队</div>-->
+                        <div class="item" v-for="(i,k) in tabList" :key="k" :class="activeIndex == k ? 'active':''">
+                            <span  @click="changeTab($event,k)">{{i.title}}</span>
+                        </div>
+                        <div class="navar-slider" :style="{transform: 'translateX' + '(' + sliderOffset + 'px' + ')'}"></div>
+                    </div>
+                </div>
+                <div class="content" v-show="activeIndex == 0">
+                    <wxparser :rich-text="detail.content"></wxparser>
+                    <!--<wxParse :content="detail.content" @preview="preview" @navigate="navigate"></wxParse>-->
+                </div>
+                <div class="content" v-show="activeIndex == 1">
+                    <div class="coach-intro" v-show="detail.coach">
+                        <div class="avatar">
+                            <image :src="detail.coach.avatar"></image>
+                        </div>
+                        <div class='coach-name'>{{detail.coach.nick_name}}</div>
+                        <div class="coach-nick">{{detail.coach.title}}</div>
+                    </div>
+                    <div class="coach-txt" v-show="detail.coach">
+                        <wxparser :rich-text="describe"></wxparser>
+                        <!--<wxParse :content="describe"></wxParse>-->
+                    </div>
+                </div>
             </div>
-        </div>
+            <div class="fixed-btn">
+                <div class="btn-left">
+                    <div class="item-btn" @click="jumpHome">
+                        <div class="iconfont icon-home"></div>
+                        <div class="txt">首页</div>
+                    </div>
+                    <div class="item-btn" @click="collect(id)" :class="loginDetail.liked?'activebtn':''">
+                        <div class="iconfont icon-Group86"></div>
+                        <div class="txt">收藏</div>
+                    </div>
+                    <div class="item-btn" @click="changeShare">
+                        <div class="iconfont icon-Group67"></div>
+                        <div class="txt">分享</div>
+                    </div>
+                </div>
+                <div class="btn-right">
+                    <button :class="statusClass" :disabled="statusdisabled" @click="submit">{{statusTxt}}</button>
+                </div>
+            </div>
+            <!--弹出分享部分-->
+            <div class="maks" :class="show_share ? 'cur':''">
 
-        <!--分享到朋友圈弹出-->
-        <!--<view class="share-img-box" :class="share_img ? 'cur' : ''" >
-            <view class="imgs-box">
-                <view class="img">
-                    <image mode="widthFix" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1533781747&di=4c8242fb96e43f3ca7561074b1e6f980&src=http://pic10.photophoto.cn/20090112/0034034441685806_b.jpg"></image>
-                </view>
-                <view class="text">
-                    保存图片后，可分享到朋友圈
-                </view>
-                <view class="save" @click="downImg">
+            </div>
+            <div class="share-box" :class="show_share ? 'cur':''">
+                <button class="shaer-item" open-type="share">
+                    分享给好友
+                </button>
+                <div class="shaer-item mx-1px-top" @click="jumpImg(id,'pages/detail/main')">
                     保存图片
-                </view>
-                <i class="iconfont icon-Group100" @click="changeImg"></i>
-            </view>
-        </view>-->
-
-
-        <!--选择票种弹出-->
-        <div class="maks" :class="show_ticket ? 'cur':''">
-
-        </div>
-        <div class="ticket-box" :class="show_ticket ? 'cur':''">
-            <div class="shaer-item title mx-1px-bottom">
-                <span class="iconfont icon-Group100" @click="changeTicket"></span>
-                <span>请选择票种</span>
-            </div>
-            <div class="shaer-item mx-1px-bottom" :class="{ active:item.id==selectPayment }" v-for="item in detail.payments" @click="selectTickets(item)">
-               <div class="ticket-name">
-                   {{item.title}}
-               </div>
-                <div class="ticket-value">
-                    <span v-if="item.type == 0">{{item.point}}积分</span>
-                    <span v-if="item.type == 1">￥{{item.price}}</span>
-                    <span v-if="item.type == 2">￥{{item.price}} + {{item.point}}积分</span>
+                </div>
+                <div class="shaer-item clear" @click="changeShare">
+                    取消
                 </div>
             </div>
 
-            <div class="bottom" @click="submitTicket">
-                确定
+            <!--分享到朋友圈弹出-->
+            <!--<view class="share-img-box" :class="share_img ? 'cur' : ''" >
+                <view class="imgs-box">
+                    <view class="img">
+                        <image mode="widthFix" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1533781747&di=4c8242fb96e43f3ca7561074b1e6f980&src=http://pic10.photophoto.cn/20090112/0034034441685806_b.jpg"></image>
+                    </view>
+                    <view class="text">
+                        保存图片后，可分享到朋友圈
+                    </view>
+                    <view class="save" @click="downImg">
+                        保存图片
+                    </view>
+                    <i class="iconfont icon-Group100" @click="changeImg"></i>
+                </view>
+            </view>-->
+
+
+            <!--选择票种弹出-->
+            <div class="maks" :class="show_ticket ? 'cur':''">
+
             </div>
-        </div>
+            <div class="ticket-box" :class="show_ticket ? 'cur':''">
+                <div class="shaer-item title mx-1px-bottom">
+                    <span class="iconfont icon-Group100" @click="changeTicket"></span>
+                    <span>请选择票种</span>
+                </div>
+                <div class="shaer-item mx-1px-bottom" :class="{ active:item.id==selectPayment }" v-for="item in detail.payments" @click="selectTickets(item)">
+                    <div class="ticket-name">
+                        {{item.title}}
+                    </div>
+                    <div class="ticket-value">
+                        <span v-if="item.type == 0">{{item.point}}积分</span>
+                        <span v-if="item.type == 1">￥{{item.price}}</span>
+                        <span v-if="item.type == 2">￥{{item.price}} + {{item.point}}积分</span>
+                    </div>
+                </div>
+
+                <div class="bottom" @click="submitTicket">
+                    确定
+                </div>
+            </div>
+        </block>
+
     </div>
 </template>
 
 <script>
-    import wxParse from 'mpvue-wxparse';
+    // import wxParse from 'mpvue-wxparse';
     import { getUrl } from '../../utils';
     export default{
         components: {
-            wxParse
+            // wxParse
         },
         data(){
             return {
@@ -178,10 +184,12 @@
                 selectPayment: '',
                 paymentIndex: '',
                 sliderOffset:'',
-                statusdisabled:''
+                statusdisabled:'',
             }
         },
         onShow() {
+
+            console.log(111);
             this.id = this.$root.$mp.query.id;
             var scene = this.$root.$mp.query.scene;
             if (scene) {
@@ -209,10 +217,12 @@
                 payments: [],
                 coach:{}
             };
+            this.loginDetail = {};
             this.article = '';
             this.describe = '';
             this.activeIndex = 0;
             this.show_share = false;
+            this.show_ticket = false;
         },
         onShareAppMessage() {
             return {
@@ -237,6 +247,7 @@
                    this.show_share = !this.show_share;
             },
             changeTab(e,index){
+                if (this.activeIndex == index) return
                 this.activeIndex = index;
                 this.sliderOffset =  e.currentTarget.offsetLeft;
             },
@@ -304,29 +315,29 @@
                     url:'/pages/index/main'
                 })
             },
-              /* preview(src, e){
-
-            },
-            navigate(href, e){
-
-            },*/
             //请求活动详情页活动的数据
             getDetail(id){
                 wx.showLoading({
-                    title: '加载中',
+                    title: '加载中,请耐心等待',
                     mask: true
                 })
+                console.log(new Date().toLocaleTimeString());
                 this.$http
                     .get(this.$config.GLOBAL.baseUrl + 'api/activity/show/' + id).then(res => {
                     res = res.data;
                     console.log(res);
                     if (res.status) {
 
+
+                       /* if (res.data && res.data.content) {
+                            delete res.data.content;
+                        }*/
+
                         this.detail = res.data;
-                        this.article = res.data.content;
                         this.describe = res.data.coach.describe;
                         this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
                         this.ac_status = getApp().ac_status(this.detail.status);
+                        // this.article = res.data.content;
 
 
                         this.statusClassF();
@@ -338,7 +349,13 @@
                             showCancel: false
                         })
                     }
-                    wx.hideLoading();
+                   setTimeout(() => {
+                       console.log(new Date().toLocaleTimeString());
+
+                       // this.article = res.data.content;
+                       wx.hideLoading();
+                   }, 500)
+                    // wx.hideLoading();
                 }, err => {
                     wx.hideLoading();
                     wx.showModal({
@@ -359,6 +376,9 @@
                     .then(res => {
                     res = res.data;
                     if (res.status) {
+                        if (res.data && res.data.activity && res.data.activity.content) {
+                            delete res.data.activity.content;
+                        }
                         this.loginDetail = res.data;
 
                         this.statusClassF();
@@ -724,7 +744,7 @@
     }
 </script>
 
-<style rel="stylesheet/less" lang="less">
+<style rel="stylesheet/less" lang="less" type="text/less">
     @import "../../../static/global.less";
 
     page {

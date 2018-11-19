@@ -96,20 +96,27 @@
                     <div class="txt">已取消</div>
                 </div>
             </div>
+
         </div>
-        <div class="info-detail">
+        <div class="leader" v-if="info.coach">
+            <div class="title" @click="jumpIndex('list')">
+                <div class="txt">我带队的活动</div>
+                <div class="iconfont icon-Group104"></div>
+            </div>
+        </div>
+       <!-- <div class="info-detail">
             <div class="item" @click="jumpPath()">
                 <div class="number"><span>{{marketInfo.favorite || 0}}</span></div>
                 <div>收藏</div>
             </div>
-            <!--<div class="item">
+            &lt;!&ndash;<div class="item">
                 <div class="number"><span>0</span></div>
                 <div>地址</div>
             </div>
             <div class="item">
                 <div class="number"><span>0</span></div>
                 <div>余额</div>
-            </div>-->
+            </div>&ndash;&gt;
             <div class="item" @click="jumpPath('/pages/myPoint/main')">
                 <div class="number"><span>{{marketInfo.point || 0}}</span></div>
                 <div>积分</div>
@@ -118,8 +125,8 @@
                 <div class="number"><span>{{marketInfo.coupon || 0}}</span></div>
                 <div>优惠券</div>
             </div>
-        </div>
-        <div class="section-serve">
+        </div>-->
+        <!--<div class="section-serve">
             <div class="title mx-1px-bottom">我的服务</div>
             <div class="server-box mx-1px-bottom">
                 <navigator target="miniProgram" hover-class="none" app-id="wx38e537a9de6d096a" class="item">
@@ -132,7 +139,7 @@
                     <div>万有严选</div>
                 </navigator>
             </div>
-        </div>
+        </div>-->
         <div class="tabbar">
             <div class="mx-1px-right" @click="jumpList">活动列表</div>
             <div class="active">个人中心</div>
@@ -156,7 +163,7 @@
             this.token = token;
            if(token){
                this.getMe();
-               this.getMarket();
+               // this.getMarket();
            }
         },
         onShow() {
@@ -363,7 +370,7 @@
         }
     }
 </script>
-<style rel="stylesheet/less" lang="less">
+<style rel="stylesheet/less" lang="less" type="text/less">
     @import "../../../static/global.less";
     #user{
 
@@ -490,6 +497,27 @@
 
                 &:after {
                     border: none;
+                }
+            }
+        }
+        .leader{
+            background-color: #FFFFFF;
+            margin-top: 10px;
+
+            .title{
+                padding: 0 12px;
+                height: 40px;
+                line-height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                .txt{
+                    font-size: 16px;
+                    color: #000000;
+                }
+                .iconfont{
+                    color: #9B9B9B;
+                    font-size: 14px;
                 }
             }
         }

@@ -19,12 +19,12 @@ export default {
     // https://admin-dev.ibrand.cc/
 
   BRAND: {
-    name: 'LandRiver',
-    logo: 'https://land-river-admin.ibrand.cc/storage/DvNvj2N2mkg2fvY4Cx5LJLLYLMTmdhV1J3qfd593.png',
-    title: 'LandRiver',
+    name: 'UTO助力首百',
+    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0',
+    title: 'UTO助力首百',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://land-river-admin.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

@@ -2,7 +2,7 @@
     <div id="detailIndex">
 
         <block>
-            <div class="activity-content">
+            <!--<div class="activity-content">
                 <image :src="detail.img" mode="widthFix"></image>
                 <div class="introduce">
                     <div class="name">
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
             <div class="activity-tab">
                 <div class="tab-header">
                     <div class="tab-title">
@@ -59,6 +59,73 @@
                     <div class="coach-txt" v-show="detail.coach">
                         <wxparser :rich-text="describe"></wxparser>
                         <!--<wxParse :content="describe"></wxParse>-->
+                    </div>
+                </div>
+                <div class="content goods-box" v-show="activeIndex == 2">
+                   <!--<div class="goods-tips">
+                       徒步鞋徒步袜，快干裤，短袖，皮肤风衣或软壳
+                   </div>-->
+                    <div class="goods-list" v-if="meta && meta.goods">
+                        <div class="goods-item" v-for="item in meta.goods">
+                            <div class="goods">
+                                <div class="left">
+                                    <image :src="item.goods.img"></image>
+                                    <div class="required" v-if="item.goods.required == 1">
+                                        必选装备
+                                    </div>
+                                </div>
+                                <div class="right">
+                                    <div>
+                                        <div class="name">
+                                            {{item.goods.name}}
+                                        </div>
+                                        <div class="price">
+                                            <div class="new">
+                                                <span>￥</span>{{item.goods.sell_price}}
+                                            </div>
+                                            <div class="old">
+                                                ￥{{item.goods.market_price}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="btn-box">
+                                        <div class="gift">
+                                            活动价 {{item.goods.rate}}折
+                                        </div>
+                                        <div class="btn required" v-if="item.goods.required == 1" @click="showSelect(index, item.goods.id)">
+                                            必选装备
+                                        </div>
+                                        <div class="btn"v-if="item.goods.required == 0 && !item.goods.isCheck" @click="showSelect(index, item.goods.id)">
+                                            添加装备
+                                        </div>
+                                        <div class="btn active"v-if="item.goods.required == 0 && item.goods.isCheck" @click="removeGoods(index)">
+                                            移除装备
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="select-info mx-1px-top" @click="showSelect(index, item.goods.id)">
+                               <div class="text">
+                                   <span v-if="goodsInfo[index]">
+                                       <block v-if="goodsInfo[index].attributes.color">
+                                            {{goodsInfo[index].attributes.color}},
+                                       </block>
+                                       <block v-if="goodsInfo[index].attributes.size">
+                                            {{goodsInfo[index].attributes.size}},
+                                       </block>
+                                     {{goodsInfo[index].qty}}件
+                                   </span>
+                                   <span v-else>
+                                       请选择尺码
+                                   </span>
+
+                               </div>
+                                <div class="iconfont icon-Group104">
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -97,23 +164,6 @@
                 </div>
             </div>
 
-            <!--分享到朋友圈弹出-->
-            <!--<view class="share-img-box" :class="share_img ? 'cur' : ''" >
-                <view class="imgs-box">
-                    <view class="img">
-                        <image mode="widthFix" src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1533781747&di=4c8242fb96e43f3ca7561074b1e6f980&src=http://pic10.photophoto.cn/20090112/0034034441685806_b.jpg"></image>
-                    </view>
-                    <view class="text">
-                        保存图片后，可分享到朋友圈
-                    </view>
-                    <view class="save" @click="downImg">
-                        保存图片
-                    </view>
-                    <i class="iconfont icon-Group100" @click="changeImg"></i>
-                </view>
-            </view>-->
-
-
             <!--选择票种弹出-->
             <div class="maks" :class="show_ticket ? 'cur':''">
 
@@ -136,6 +186,70 @@
 
                 <div class="bottom" @click="submitTicket">
                     确定
+                </div>
+            </div>
+
+
+            <div class="maks" :class="show_select ? 'cur':''" @click="closeSelect">
+
+            </div>
+            <!--sku弹出-->
+            <div class="sku-box" :class="show_select ? 'active':''">
+                <div class="select_goods_container">
+                    <!--关闭按钮-->
+                    <div class="select_goods_cloese" @click="show_select = false"></div>
+                    <div class="select_goods_header">
+
+                        <div class="img_box">
+                            <img v-if="select_product && select_product.img" :src="select_product.img">
+                            <!--<img v-else :src="photos[0].img" alt="">-->
+                        </div>
+
+
+                        <div class="price_item">
+                        <span v-if="select_product">
+                            <span>{{select_product.price}}</span>
+                        </span>
+                            <span v-else>￥未定</span>
+                            <span>库存{{store_count}}</span>
+                        </div>
+                    </div>
+
+                    <div class="select_spec">
+                        <div class="spec_line" v-for="(spec, idx) in specs" :key="idx-f">
+                            <div class="spec_title">{{spec.label}}</div>
+                            <div class="spec_value">
+                                <div class="spec_block"
+                                     :class="{active: item.active &&　!item.disabled, disabled: item.disabled && !item.active, no_store:item.active && item.disabled}"
+                                     v-for="item in spec.values" @click="selectSpec(item)" :key="index-s">
+                                  <span v-if="(item.alias || item.value) && item.spec_img !== undefined">
+                                    {{item.alias || item.value}}
+                                </span>
+                                    <span v-if="!item.spec_img && !item.color">{{item.alias || item.value}}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="spec_line">
+                            <div class="num_title">数量</div>
+                            <div class="num_value">
+                                <span @click="changeCount(0)">-</span>
+                                <span class="none_border">
+                                <input @input="modifyCount()" v-model="select_count">
+                            </span>
+                                <span @click="changeCount(1)">+</span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="button" :class="{disabled: disallow_cart}" @click="confirm">
+                            确定
+                            <submit-button v-ref:button @submit="confirm" :status="disallow_cart ? 'disabled' : 'normal'">
+
+                            </submit-button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </block>
@@ -185,6 +299,18 @@
                 paymentIndex: '',
                 sliderOffset:'',
                 statusdisabled:'',
+                meta: {},
+
+                // sku相关
+                show_select: false,
+                specs: [],
+                skuTable: {},
+                store_count: 0,  // 当前sku库存数量
+                select_count: 1, // 选择的数量
+                select_product: {},     // 选中商品
+                currentIndex: 0,   // 当前选择商品的index
+                goodsInfo: [],  // 选中的商品信息
+                clearsData: false,  // 没用的,用来更新视图
             }
         },
         onShow() {
@@ -209,7 +335,7 @@
             wx.getSystemInfo({
                 success: res =>{
                     /*this.width = res.windowWidth /this.tabList.length*2,*/
-                    this.sliderOffset = res.windowWidth / this.tabList.length/2.8
+                    this.sliderOffset = res.windowWidth / this.tabList.length/ 3.8
                 }
             });
 //            将旧数据清空
@@ -217,12 +343,23 @@
                 payments: [],
                 coach:{}
             };
+            this.tabList = [
+                {
+                    title:"活动详情",
+                },{
+                    title:"活动领队"
+                }
+            ]
+            this.meta = {};
             this.loginDetail = {};
             this.article = '';
             this.describe = '';
-            this.activeIndex = 0;
+            this.activeIndex = 2;
             this.show_share = false;
             this.show_ticket = false;
+
+
+            // this.getGoods(176);
         },
         onShareAppMessage() {
             return {
@@ -334,6 +471,11 @@
                         }*/
 
                         this.detail = res.data;
+                        this.meta = res.meta;
+                        if (res.meta && res.meta.goods && res.meta.goods.length) {
+                            this.tabList.push({ title:"装备推荐"});
+                            this.$storage.set('detailGoods', res.meta.goods);
+                        }
                         this.describe = res.data.coach.describe;
                         this.time = getApp().timefiter(res.data.starts_at,res.data.ends_at);
                         this.ac_status = getApp().ac_status(this.detail.status);
@@ -350,7 +492,7 @@
                         })
                     }
                    setTimeout(() => {
-                       console.log(new Date().toLocaleTimeString());
+                       // console.log(new Date().toLocaleTimeString());
 
                        // this.article = res.data.content;
                        wx.hideLoading();
@@ -465,18 +607,24 @@
                     })
                     return
                 }
+                let isReady = true;
 
-                console.log(1);
+                if (this.meta && this.meta.goods) {
+                    this.meta.goods.forEach(item => {
+                        if (item.goods.required && !item.goods.isCheck) {
+                           wx.showModal({
+                               content: '有必选装备未选择',
+                               showCancel: false
+                           })
+                            isReady = false
+                        }
+                    })
+                }
+                if (!isReady) return;
 //                线上活动
                 if (this.detail.fee_type == 'CHARGING') {
-                    console.log(2);
                     if (this.loginDetail.order) {
-                        console.log(3);
-//                        let payment_id = this.loginDetail.order.payment_id;
                         let pay_status = this.loginDetail.order.pay_status;
-                        /*let index = this.detail.payments.findIndex(function (val) {
-                            return val.id == payment_id;
-                        });*/
 //                        订单支付状态
                         if (pay_status == 0) {
 //                            跳转到线上支付
@@ -493,10 +641,13 @@
                         this.changeTicket()
                     }
                 } else {
+                    // 当为线下活动的直接取第一种支付方式
+                    this.selectPayment = this.detail.payments[0].id
+                    this.submitActive();
 //                    线下预约活动跳转到填写尺码页面
-                    wx.navigateTo({
+                   /* wx.navigateTo({
                         url: '/pages/enroll/main?id=' + this.id
-                    })
+                    })*/
                 }
             },
 //            选择电子票
@@ -520,7 +671,10 @@
                         showCancel: false
                     })
                 } else {
-                    // 需要填写表单的活动
+
+                    this.submitActive();
+                    this.changeTicket();
+                   /* // 需要填写表单的活动
                     if (this.detail.has_form) {
 
                         // 跳转到填写表单页面
@@ -542,7 +696,7 @@
 
                         this.submitInfo(data);
                         this.changeTicket();
-                    }
+                    }*/
                 }
             },
 //            报名
@@ -736,8 +890,342 @@
                         this.statusdisabled = true;
                     }
                 }
+            },
+
+
+            getGoods(index,id,key) {
+                var goods = this.$storage.get('detailGoods');
+                console.log(goods);
+                var res = goods[index];
+                if (id == this.select_product.activeId) return
+
+                this.specs = [];
+                this.skuTable = {};
+                this.select_count = 1;
+                this.select_product = {};
+
+                // 规格
+                if (res.specs && typeof key === 'undefined') {
+                    let specs = [];
+                    Object.keys(res.specs)
+                        .forEach((key, index) => {
+                            let value = res.specs[key];
+                            value.select = '';
+                            value.values = value.list
+                                .map(v => {
+                                    return Object.assign({
+                                        index: index,
+                                        active: false,
+                                        disabled: false
+                                    }, v);
+                                });
+                            delete value.list;
+                            specs.push(value);
+                        });
+                    this.specs = specs;
+                }
+                if (res.stores) {
+                    let data = {};
+                    Object.keys(res.stores)
+                        .forEach(key => {
+                            let value = res.stores[key];
+
+                            value.ids.forEach(id => {
+                                data[id] = data[id] || {count: 0, specs: {}};
+                                data[id].count += parseInt(value.store);
+                                value.ids.forEach(i => {
+                                    if (i === id) return;
+                                    data[id].specs[i] = {
+                                        count: parseInt(value.store)
+                                    };
+                                })
+                            });
+                        });
+                    var result = {data, table: res.stores};
+                    this.specStore(result, key);
+                }
+            },
+
+
+            // 关闭
+            closeSelect() {
+                this.show_select = !this.show_select;
+            },
+            clearss() {
+               this.clearsData = !this.clearsData;
+            },
+            // 弹出sku框
+            showSelect(index, id) {
+                this.getGoods(index, id);
+                this.currentIndex = index;
+                this.show_select = true;
+            },
+            // 移除装备
+            removeGoods(index) {
+                this.meta.goods[index].goods.isCheck = false;
+                this.goodsInfo[index] = null;
+                this.clearss();
+                // this.show_select = false;
+            },
+            // 点击
+            selectSpec(spec) {
+                if (!spec.active) {
+                    for (let item of this.specs[spec.index].values) {
+                        if (item.active) {
+                            item.active = false;
+                            break;
+                        }
+                    }
+                }
+                spec.active = !spec.active;
+                this.specs[spec.index].select = spec.active ? spec.id : '';
+                this.specStore(this.result,spec.index)
+
+            },
+
+            // 整理
+            specStore(result, key) {
+                this.result = result;
+
+                let query = this.$root.$mp.query;
+                let data = result.data;
+
+                if (key === undefined) {
+                    this.specs.forEach(spec => {
+                        for (let v of spec.values) {
+                            v.disabled = !data[v.id] || data[v.id].count == 0;
+                        }
+                    });
+
+                    this.skuTable = result.table;
+
+
+                    this.specs.forEach(spec => {
+                        let name = 'spec[' + spec.id + ']';
+                        if (query[name]) {
+                            let id = query[name];
+
+                            for (let v of spec.values) {
+                                if (v.id == id && !v.disabled && data[v.id] && data[v.id].count) {
+                                    v.active = true;
+                                    spec.select = v.id;
+
+                                    this.specStore(result, v.index);
+                                    console.log(v.index);
+                                    return;
+                                }
+                            }
+                        }
+
+                        if (!spec.select) {
+                            for (let v of spec.values) {
+                                if (!v.disabled && data[v.id] && data[v.id].count) {
+                                    v.active = true;
+                                    spec.select = v.id;
+
+                                    this.specStore(result, v.index);
+                                    console.log(v.index);
+
+                                    return;
+                                }
+                            }
+                        }
+                    });
+
+                    return;
+                }
+
+                let spec = this.specs[key];
+                if (spec.select) {
+                    this.store_count = data[spec.select].count;
+
+                    for (let i = 0; i < this.specs.length; i++) {
+                        if (i === key) continue;
+
+                        let s = this.specs[i];
+                        s.values.forEach(v => {
+                            v.disabled = !data[spec.select].specs[v.id].count;
+                        });
+
+                        if (s.select) {
+                            this.store_count = data[spec.select].specs[s.select].count;
+                        }
+                    }
+                } else {
+                    this.store_count = 0;
+
+                    for (let i = 0; i < this.specs.length; i++) {
+                        if (i === key) continue;
+
+                        let s = this.specs[i];
+                        s.values.forEach(v => {
+                            v.disabled = !data[v.id] || !data[v.id].count;
+                        });
+
+                        if (s.select) this.store_count = data[s.select].count;
+                    }
+                }
+                if (this.select_count > this.store_count) {
+                    this.select_count = this.store_count;
+                } else if (this.select_count === 0) {
+                    this.select_count = 1;
+                    if (this.store_count === 0) this.select_count = 0
+                }
+
+
+            },
+            // 数量加减
+            changeCount(add) {
+                var val = this.select_count + (add ? 1 : -1);
+                if (val > 0 && val <= this.store_count) {
+                    this.select_count = val;
+                } else {
+                    if (val) {
+                        wx.showToast({
+                            title: '超过最大库存',
+                            icon: 'none'
+                        })
+                    }
+
+                }
+            },
+
+            // 直接输入数量
+            modifyCount() {
+                var val = this.select_count;
+                if (!val) {
+                    val = 1;
+                } else if (!/^[1-9]\d*$/.test(val)) {
+                    val = val.replace(/[^\d].*$/, '');
+                    val = parseInt(val) || 1;
+                }
+
+                if (val < 0) {
+                    val = 1;
+                } else if (val > this.store_count) {
+                    val = parseInt(this.store_count);
+                }
+
+
+                this.select_count = val;
+            },
+
+            // 确认sku
+            confirm() {
+                if (this.disallow_cart) return;
+
+                let select_product = this.select_product;
+                let goodsInfo = this.meta.goods[this.currentIndex].goods;
+
+                let data = this.specs.length ? {
+                    id: select_product.id,
+                    name: goodsInfo.name,
+                    qty: this.select_count,
+                    store_count: this.store_count,
+                    price: select_product.price,
+                    market_price: goodsInfo.market_price,
+                    attributes: {
+                        img: select_product.img || goodsInfo.image,
+                        size: select_product.size,
+                        color: select_product.color,
+                        com_id: goodsInfo.id,
+                        sku: select_product.id
+                    }
+                } : {
+                    id: goodsInfo.id,
+                    name: goodsInfo.name,
+                    qty: this.select_count,
+                    store_count: this.store_count,
+                    price: goodsInfo.sell_price,
+                    market_price: goodsInfo.market_price,
+                    attributes: {
+                        img: goodsInfo.img ,
+                        com_id: goodsInfo.id
+                    }
+                }
+                this.meta.goods[this.currentIndex].goods.isCheck = true;
+                this.goodsInfo[this.currentIndex] = data;
+                this.closeSelect();
+
+                console.log(data);
+            },
+            submitActive() {
+                var token = this.$storage.get('user_token');
+                var info = [];
+                this.goodsInfo.forEach(item => {
+                    if (item && item.id) {
+                        info.push(item)
+                    }
+                })
+                wx.showLoading({
+                    title: '正在提交',
+                    mask: true
+                });
+                this.$http.post(this.$config.GLOBAL.baseUrl + 'api/activity/mini/order/checkout', {
+                    activity_id: this.id,
+                    goods: info.length ? info : '',
+                    payment_id: this.selectPayment || ''
+                }, {
+                    headers:{
+                        Authorization:token
+                    }
+                }).then(res => {
+                    console.log(res);
+                    wx.hideLoading();
+                }, err => {
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                    wx.hideLoading();
+                })
             }
         },
+        computed: {
+            disallow_cart() {
+                if (!this.specs.length) {
+                    return !this.store_count;
+                }
+
+                var ids = [], select_product = {};
+                for (let spec of this.specs) {
+                    if (!spec.select) {
+                        // this.price = 99;
+                        this.select_product = null;
+                        return true;
+                    }
+
+                    ids.push(spec.select);
+                    for (let v of spec.values) {
+                        if (v.id === spec.select) {
+                            switch (spec.label_key) {
+                                case 'color':
+                                    select_product.img = v.img;
+                                    select_product.color = v.alias || v.value;
+                                    break;
+                                default:
+                                    select_product.size = v.alias || v.value;
+                            }
+
+                            break;
+                        }
+                    }
+                }
+
+                if (this.skuTable) {
+                    ids = ids.sort((a, b) => a > b).join('-');
+                    select_product = Object.assign(select_product, this.skuTable[ids]);
+                }
+                select_product.activeId = this.meta.goods[this.currentIndex].goods.id;
+                // this.price = select_product.price;
+                this.select_product = select_product;
+
+
+                if (this.select_product.store == 0 ) return true
+
+                return false;
+            },
+        }
         /*computed: {
 
         }*/
@@ -913,6 +1401,122 @@
                     font-size: 14px;
                     line-height: 24px;
                     margin: 10px 0 15px;
+                }
+
+                &.goods-box {
+                    padding: 0;
+                    background: #F3F3F3;
+
+                    .goods-tips {
+                        background: #FFFFFF;
+                        padding: 20px 12px;
+                        font-size: 13px;
+                        color: #4A4A4A;
+                    }
+                    .goods-list {
+
+                        .goods-item {
+                            background: #FFFFFF;
+                            margin-top: 10px;
+                            .goods {
+                                display: flex;
+                                padding: 5px 15px;
+                                background: #FFFFFF;
+                                .left {
+                                    position: relative;
+                                    width: 95px;
+                                    height: 95px;
+
+                                    image {
+                                        width: 100%;
+                                        height: 100%;
+                                    }
+                                    .required {
+                                        position: absolute;
+                                        bottom: 0;
+                                        left: 0;
+                                        right: 0;
+                                        height: 22px;
+                                        line-height: 22px;
+                                        font-size: 12px;
+                                        color: #FFFFFF;
+                                        background: @globalColor;
+                                        text-align: center;
+                                        opacity: .8;
+                                    }
+                                }
+                                .right {
+                                    flex: 1;
+                                    overflow: hidden;
+                                    padding-left: 10px;
+                                    .name {
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
+                                    }
+                                    .price {
+                                        display: flex;
+                                        align-items: center;
+                                        .new {
+                                            color: @globalColor;
+                                            span {
+                                                font-size: 12px;
+                                            }
+                                        }
+                                        .old {
+                                            padding-top: 6px;
+                                            font-size: 12px;
+                                            color: #9B9B9B;
+                                            text-decoration: line-through;
+                                            margin-left: 5px;
+                                        }
+                                    }
+                                    .btn-box {
+                                        display: flex;
+                                        align-items: center;
+                                        font-size: 13px;
+                                        margin-top: 10px;
+                                        .gift {
+                                            color: @globalColor;
+                                            flex: 1;
+                                        }
+                                        .btn {
+                                            background: @globalColor;
+                                            color: #FFFFFF;
+                                            padding: 5px 20px;
+                                            border-radius: 50px;
+                                            border: 1px solid @globalColor;
+
+                                            &.required {
+                                                border: 1px solid #909090;
+                                                color: #909090;
+                                                background: #FFFFFF;
+                                            }
+                                            &.active {
+                                                background: #FFFFFF;
+                                                border: 1px solid @globalColor;
+                                                color: @globalColor;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            .select-info {
+                                font-size: 12px;
+                                padding: 10px 15px;
+                                display: flex;
+                                align-items: center;
+                                .text {
+                                    flex: 1;
+                                }
+                                .iconfont {
+                                    font-size:11px;
+                                    color:#9B9B9B;
+
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -1119,6 +1723,465 @@
             }
             &.cur{
                 height: 100%;
+            }
+        }
+
+
+        .sku-box {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom:0;
+            z-index: 99;
+            background: #FFFFFF;
+            transition:transform 350ms linear 0ms;
+            transform:translate3d(0px, 150%, 0px);
+            transform-origin:50% 50% 0px;
+            &.active {
+                transition:transform 350ms linear 0ms;
+                transform:translate3d(0px, 0px, 0px);
+                transform-origin:50% 50% 0px;
+            }
+            .select_goods_container {
+
+                position: relative;
+
+                .select_goods_cloese {
+
+                    position: absolute;
+                    top: 12px;
+                    right: 10px;
+                    width: 20px;
+                    height: 20px;
+                    background: transparent;
+                    z-index: 4;
+
+                }
+
+                .select_goods_cloese:before {
+                    position: absolute;
+                    top: 9px;
+                    left: -1px;
+                    content: '';
+                    width: 28px;
+                    height: 2px;
+                    background: #2e2e2e;
+                    transform: rotate(45deg);
+
+                }
+
+                .select_goods_cloese:after {
+                    top: 9px;
+                    left: -1px;
+                    position: absolute;
+                    content: '';
+                    width: 28px;
+                    height: 2px;
+                    background: #2e2e2e;
+                    transform: rotate(-45deg);
+
+                }
+
+                .select_goods_header {
+                    position: relative;
+                    height: 60px;
+
+                    .img_box {
+                        position: absolute;
+                        left: 10px;
+                        bottom: 10px;
+                        width: 78px;
+                        height: 78px;
+                        border: 1px solid #e5e5e5;
+                        background: #f9f9f9;
+
+                        img {
+                            object-fit: fill;
+                            width: 100%;
+                            height: 100%;
+                        }
+                    }
+
+                    .price_item {
+                        font-size: 18px;
+                        margin-left: 100px;
+                        height: 100%;
+                        display: -webkit-flex;
+                        flex-direction: column;
+                        justify-content: center;
+
+                        span {
+                            display: block;
+                            text-align: left;
+                        }
+
+                        span:nth-child(1) {
+                            font-weight: bold;
+                            color: #ee2b1d;
+                        }
+
+                        span:nth-child(2) {
+                            font-size: 14px;
+                            color: #6c6c6c;
+                            text-indent: 3px
+                        }
+                    }
+
+                }
+
+                .select_spec {
+                    font-size: 12px;
+                    padding: 12px 8px 50px 8px;
+
+                    .spec_line {
+                        display: flex;
+                        /*align-items: center;*/
+                        margin-bottom: 15px;
+
+                        .spec_title {
+                            padding-right: 11px;
+                            color: #c4c4c4;
+                            width: 40px;
+                            line-height: 35px;
+                        }
+
+                        .spec_value {
+                            flex: 1;
+                            font-size: 0;
+                            margin-top: -10px;
+                        }
+
+                        .spec_list {
+                            display: block;
+                            line-height: 35px;
+                            color: #959595;
+                            font-size: 15px;
+                        }
+
+                        .spec_block {
+                            display: inline-block;
+                            margin-top: 10px;
+                            margin-right: 10px;
+
+                            span {
+                                display: block;
+                                padding: 0 7px;
+                                height: 33px;
+                                line-height: 33px;
+                                min-width: 20px;
+                                border: 1px solid #DDDDDD;
+                                text-align: center;
+                                font-size: 12px;
+                                position: relative;
+                            }
+
+                            img {
+                                height: 100%;
+                                width: 100%;
+                            }
+
+                            .spec_icon {
+                                width: 33px;
+                                height: 33px;
+                                padding: 0;
+                            }
+
+                            &.active span {
+                                &:before {
+                                    content: '';
+                                    position: absolute;
+                                    border: 3px solid #ff0000;
+                                    top: -1px;
+                                    left: -1px;
+                                    right: -1px;
+                                    bottom: -1px;
+                                }
+                            }
+
+                            &.disabled span {
+                                border: none;
+                                margin: 1px;
+
+                                &:before {
+                                    content: '';
+                                    position: absolute;
+                                    background-color: #eee;
+                                    top: -1px;
+                                    left: -1px;
+                                    right: -1px;
+                                    bottom: -1px;
+                                    opacity: 0.6;
+                                }
+
+                                &:after {
+                                    content: '';
+                                    position: absolute;
+                                    border: 3px dashed #cfcfcf;
+                                    top: -1px;
+                                    left: -1px;
+                                    right: -1px;
+                                    bottom: -1px;
+                                }
+                            }
+                        }
+
+                        .num_title {
+                            padding-right: 11px;
+                            color: #c4c4c4;
+                            width: 40px;
+                            line-height: 30px;
+                        }
+
+                        .num_value {
+                            display: flex;
+                            flex: inherit;
+                            font-size: 0;
+
+                            span {
+                                display: block;
+                                border: 1px solid #e8e8e8;
+                                text-align: center;
+                                min-width: 28px;
+                                width: 28px;
+                                height: 28px;
+                                line-height: 28px;
+                                font-size: 12px;
+
+                                &.store {
+                                    width: auto;
+                                    border-color: #ffffff;
+                                    margin-left: 10px;
+                                }
+                            }
+
+                            input {
+                                display: block;
+                                border: none;
+                                height: 100%;
+                                width: 100%;
+                                text-align: center;
+                                outline: none;
+                            }
+
+                            .none_border {
+                                border-left: none;
+                                border-right: none;
+                            }
+                        }
+                    }
+
+                    .button {
+                        height: 50px;
+                        line-height: 50px;
+                        text-align: center;
+                        position: absolute;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        background: #E40013;
+                        color: #FFFFFF;
+
+                        &.disabled {
+                            background: #C2C2C2;
+                        }
+                    }
+                }
+
+            }
+
+            /*选取规格部分*/
+            .select_spec {
+                font-size: 12px;
+                padding: 12px 8px 50px 8px;
+                .remind {
+                    margin-bottom:8px;
+                    height:25px;
+                    color: #888;
+                    font-size:14px;
+                    strong {
+                        font-size: 18px;
+                    }
+
+                    a {
+                        color: #ff0000;
+                    }
+                }
+                .spec_line {
+                    display: flex;
+                    /*margin-bottom: 15px;*/
+                    /*align-items: center;*/
+
+                    .spec_title {
+                        padding-right: 11px;
+                        color: #c4c4c4;
+                        width: 30px;
+                        line-height: 35px;
+                    }
+
+                    .spec_value {
+                        flex: 1;
+                        font-size: 0;
+                        margin-top: -10px;
+                    }
+
+                    .spec_block {
+                        display: inline-block;
+                        margin-top: 10px;
+                        margin-right: 10px;
+
+                        span {
+                            display: block;
+                            padding: 0 7px;
+                            height: 33px;
+                            line-height: 33px;
+                            min-width: 20px;
+                            border: 1px solid #DDDDDD;
+                            text-align: center;
+                            font-size: 12px;
+                            position: relative;
+                        }
+
+                        img {
+                            height: 100%;
+                            width: 100%;
+                        }
+
+                        .spec_icon {
+                            width: 33px;
+                            height: 33px;
+                            padding: 0;
+                        }
+
+                        &.no_store span {
+                            border: none;
+                            margin: 1px;
+
+                            &:before {
+                                content: '';
+                                position: absolute;
+                                background-color: #eee;
+                                top: -1px;
+                                left: -1px;
+                                right: -1px;
+                                bottom: -1px;
+                                opacity: 0.6;
+                            }
+
+                            &:after {
+                                content: '';
+                                position: absolute;
+                                border: 3px dashed #ff0000;
+                                top: -1px;
+                                left: -1px;
+                                right: -1px;
+                                bottom: -1px;
+                            }
+                        }
+
+                        &.active span {
+                            &:before {
+                                content: '';
+                                position: absolute;
+                                border: 3px solid #ff0000;
+                                top: -1px;
+                                left: -1px;
+                                right: -1px;
+                                bottom: -1px;
+                            }
+                        }
+
+                        &.disabled span {
+                            border: none;
+                            margin: 1px;
+
+                            &:before {
+                                content: '';
+                                position: absolute;
+                                background-color: #eee;
+                                top: -1px;
+                                left: -1px;
+                                right: -1px;
+                                bottom: -1px;
+                                opacity: 0.6;
+                            }
+
+                            &:after {
+                                content: '';
+                                position: absolute;
+                                border: 3px dashed #cfcfcf;
+                                top: -1px;
+                                left: -1px;
+                                right: -1px;
+                                bottom: -1px;
+                            }
+                        }
+                    }
+
+                    .num_title {
+                        padding-right: 11px;
+                        color: #c4c4c4;
+                        width: 30px;
+                        line-height: 30px;
+                    }
+
+                    .num_value {
+                        display: flex;
+                        flex: inherit;
+                        font-size: 0;
+
+                        span {
+                            display: block;
+                            border: 1px solid #e8e8e8;
+                            text-align: center;
+                            min-width: 28px;
+                            width: 28px;
+                            height: 28px;
+                            line-height: 28px;
+                            font-size: 12px;
+
+                            &.store {
+                                width: auto;
+                                border-color: #ffffff;
+                                margin-left: 10px;
+                            }
+                        }
+
+                        input {
+                            display: block;
+                            border: none;
+                            height: 100%;
+                            width: 100%;
+                            text-align: center;
+                            outline: none;
+                        }
+
+                        .none_border {
+                            border-left: none;
+                            border-right: none;
+                        }
+                    }
+
+                    .purchase{
+                        color:#aaaaaa;
+                        margin-left: 10px;
+                    }
+                }
+
+                .button {
+                    height: 50px;
+                    line-height: 50px;
+                    text-align: center;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    background: #E40013;
+                    color: #FFFFFF;
+
+                    &.disabled {
+                        background: #C2C2C2;
+                    }
+                }
             }
         }
     }

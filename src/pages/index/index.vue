@@ -404,7 +404,7 @@ export default {
 }
 </script>
 
-<style rel="stylesheet/less" lang="less">
+<style rel="stylesheet/less" lang="less" type="text/less">
   @import "../../../static/global.less";
   page{
     background-color: #F3F3F3;

@@ -54,6 +54,50 @@
                 <span class="txt">¥295.80</span>
             </div>&ndash;&gt;
         </div>-->
+        <div class="block-item goods" v-if="enrolMeta.shopOrder">
+            <div class="title mx-1px-bottom">
+                <div>
+                    商品清单:
+                </div>
+            </div>
+            <div class="goods-item mx-1px-bottom" v-for="(item,index) in enrolMeta.shopOrder.items" v-if="enrolMeta.shopOrder.items.length == 1">
+                <div class="left">
+                    <image :src="item.item_meta.image"></image>
+                </div>
+                <div class="right">
+                    <div>
+                        <div class="name">
+                            {{item.item_name}}
+                        </div>
+                        <div class="price">
+                            <div class="new">
+                                <span>￥</span>{{item.total_yuan}}
+                            </div>
+                            <div class="old">
+                                ￥{{item.product.market_price}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-box">
+                        {{item.item_meta.specs_text}}, {{item.quantity}}件
+                    </div>
+                </div>
+            </div>
+            <div class="line all-goods" v-if="enrolMeta.shopOrder.items.length > 1" @click="jumpGoods">
+                <div class="good-box">
+                    <div class="good-img" v-for="(item,index) in enrolMeta.shopOrder.items" v-show="index < 4">
+                        <img :src="item.item_meta.image" alt="">
+                    </div>
+                </div>
+                <div class="num">
+                    <div> 共{{enrolMeta.shopOrder.count}}件</div>
+                    <div class="iconfont icon-Group104"></div>
+                </div>
+            </div>
+            <div class="comm-account mx-1px-top">
+                {{enrolMeta.shopOrder.count}}件商品，合计￥{{enrolMeta.shopOrder.total_yuan}}
+            </div>
+        </div>
         <div class="bottomBar">
             <div class="item-left" v-if="isCancel || isSign">
                 <button class="bgWhite" @click="cancelConfirm" v-if="isCancel">取消报名</button>
@@ -63,9 +107,9 @@
                 <div class="money">
                     <span class="text subtitle" v-if="enrolData.fee_type != 'OFFLINE_CHARGES' && enrolData.fee_type != 'CHARGING'">{{enrolData.subtitle}}</span>
                     <span class="text" v-if="enrolData.payments && enrolData.payments.type == 0">{{enrolData.payments.point}}积分</span>
-                    <span class="text" v-if="enrolData.payments && enrolData.payments.type == 1"><span>￥</span>{{enrolData.payments.price}}</span>
-                    <span class="text" v-if="enrolData.payments && enrolData.payments.type == 2"><span>￥</span>{{enrolData.payments.price}}+{{enrolData.payments.point}}积分</span>
-                    <span class="text" v-if="enrolData.payments && enrolData.payments.type == 4"><span>￥</span>{{enrolData.payments.price}}</span>
+                    <span class="text" v-if="enrolData.payments && enrolData.payments.type == 1"><span>￥</span>{{enrolMeta.activityOrder.total / 100}}</span>
+                    <span class="text" v-if="enrolData.payments && enrolData.payments.type == 2"><span>￥</span>{{enrolMeta.activityOrder.total / 100}}+{{enrolData.payments.point}}积分</span>
+                    <span class="text" v-if="enrolData.payments && enrolData.payments.type == 4"><span>￥</span>{{enrolMeta.activityOrder.total / 100}}</span>
                 </div>
                 <div class="go-pay">去付款</div>
             </div>
@@ -103,6 +147,11 @@
             makeCall(phoneNumber){
                 wx.makePhoneCall({
                     phoneNumber:phoneNumber
+                })
+            },
+            jumpGoods() {
+                wx.navigateTo({
+                    url:`/pages/orderGoods/main?order_no=${this.enrolMeta.shopOrder.order_no}`,
                 })
             },
 //            跳到支付页面
@@ -314,6 +363,13 @@
                             this.register_txt = getApp().register_status_txt(res.data.status,res.data.member_status);
                             this.isCancel = this.isCanCancel();
                             this.isSign = this.isCanSign();
+
+                            if (res.meta.shopOrder) {
+                                var data = {
+                                    order: res.meta.shopOrder
+                                }
+                                this.$storage.set('orderGoods', data);
+                            }
                         } else {
                             wx.showModal({
                                 content: res.message || "请求失败",
@@ -333,13 +389,145 @@
 
     }
 </script>
-<style rel="stylesheet/less" lang="less">
+<style rel="stylesheet/less" lang="less" type="text/less">
     @import "../../../static/global.less";
     page{
-        height: 100%;
+        /*height: 100%;*/
         background-color:#F3F3F3;
     }
     #enrol_index{
+        margin-bottom: 60px;
+        .block-item {
+            /*margin-top: 10px;*/
+            background: #FFFFFF;
+            .title {
+                font-size: 14px;
+                padding: 10px 15px;
+                color: #2E2D2D;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                .iconfont {
+                    font-size: 12px;
+                    color: #2E2D2D;
+                }
+            }
+            &.goods {
+                .goods-item {
+                    display: flex;
+                    padding: 5px 15px;
+                    background: #FFFFFF;
+                    .left {
+                        position: relative;
+                        width: 95px;
+                        height: 95px;
+
+                        image {
+                            width: 100%;
+                            height: 100%;
+                        }
+                        .required {
+                            position: absolute;
+                            bottom: 0;
+                            left: 0;
+                            right: 0;
+                            height: 22px;
+                            line-height: 22px;
+                            font-size: 12px;
+                            color: #FFFFFF;
+                            background: @globalColor;
+                            text-align: center;
+                            opacity: .8;
+                        }
+                    }
+                    .right {
+                        flex: 1;
+                        overflow: hidden;
+                        padding-left: 10px;
+                        .name {
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            white-space: nowrap;
+                        }
+                        .price {
+                            display: flex;
+                            align-items: center;
+                            margin-top: 10px;
+                            .new {
+                                color: @globalColor;
+                                span {
+                                    font-size: 12px;
+                                }
+                            }
+                            .old {
+                                padding-top: 6px;
+                                font-size: 12px;
+                                color: #9B9B9B;
+                                text-decoration: line-through;
+                                margin-left: 5px;
+                            }
+                        }
+                        .btn-box {
+                            color: #9B9B9B;
+                            font-size: 13px;
+                            margin-top: 10px;
+                        }
+                    }
+                }
+                .line {
+                    padding: 10px 15px;
+                    font-size: 12px;
+                    line-height: 18px;
+                    /* background-image: url('https://uto.ibrand.cc/m/static/img/ic_forward.png');
+                     background-repeat: no-repeat;
+                     background-position: 100%;
+                     background-size: 15px;*/
+                }
+                .all-goods{
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    .good-box{
+                        display: flex;
+                        align-items: center;
+                        flex: 1;
+                        overflow: hidden;
+                        .good-img{
+                            display: inline-block;
+                            width: 60px;
+                            height: 60px;
+                            margin-right: 10px;
+                            img{
+                                width: 100%;
+                                height: 100%;
+                                overflow: auto;
+                            }
+                        }
+                    }
+                    .num{
+                        display: flex;
+                        align-items: center;
+                        color:#9b9b9b;
+                        font-size: 12px;
+
+                        .iconfont {
+                            font-size: 12px;
+                            margin-left: 10px;
+                        }
+                    }
+
+                }
+                .comm-account {
+                    height: 40px;
+                    line-height: 40px;
+                    background: #fff;
+                    text-align: right;
+                    font-size: 12px;
+                    padding: 0 12px;
+                }
+            }
+        }
         .ac-status{
             margin:5px 0;
             background-color: #FFFFFF;
@@ -438,7 +626,7 @@
         }
         .ac-intro{
             background-color:#FFFFFF;
-            margin-bottom: 28px;
+            margin-bottom: 10px;
             .title{
                 color: #4A4A4A;
                 font-size: 14px;

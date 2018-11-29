@@ -170,7 +170,10 @@ export default {
             'pages/myCoupon/main',
             'pages/couponOver/main',
             'pages/couponDetail/main',
-            'pages/myPoint/main'
+            'pages/myPoint/main',
+            'pages/addressAdd/main',
+            'pages/addressList/main',
+            'pages/orderGoods/main',
         ],
         window: {
             backgroundTextStyle: 'light',

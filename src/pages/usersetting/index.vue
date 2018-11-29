@@ -308,6 +308,16 @@
                                     setTimeout(() => {
                                         console.log(1);
                                         if (this.url) {
+                                            var order = this.$storage.get('activeOrder');
+                                            var info = {
+                                                id: order.size.id,
+                                                user_id: order.size.user_id,
+                                                lower:this.pants[this.pantsIndex],
+                                                shoes:this.shoes[this.shoesIndex],
+                                                upper:this.jacket[this.jackIndex]
+                                            }
+                                            order.size = info;
+                                            this.$storage.set('activeOrder', order);
                                             wx.redirectTo({
                                                 url: "/" + this.url
                                             })

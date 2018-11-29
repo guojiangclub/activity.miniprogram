@@ -2,7 +2,7 @@
     <div id="detailIndex">
 
         <block>
-            <!--<div class="activity-content">
+            <div class="activity-content">
                 <image :src="detail.img" mode="widthFix"></image>
                 <div class="introduce">
                     <div class="name">
@@ -32,7 +32,7 @@
                         </div>
                     </div>
                 </div>
-            </div>-->
+            </div>
             <div class="activity-tab">
                 <div class="tab-header">
                     <div class="tab-title">
@@ -202,15 +202,15 @@
 
                         <div class="img_box">
                             <img v-if="select_product && select_product.img" :src="select_product.img">
-                            <!--<img v-else :src="photos[0].img" alt="">-->
+                            <img v-if="(!select_product || !select_product.img) && meta.goods && meta.goods[currentIndex].goods.img" :src="meta.goods[currentIndex].goods.img" alt="">
                         </div>
 
 
                         <div class="price_item">
                         <span v-if="select_product">
-                            <span>{{select_product.price}}</span>
+                            <span>￥{{select_product.price}}</span>
                         </span>
-                            <span v-else>￥未定</span>
+                            <span v-else>￥{{meta.goods[currentIndex].goods.sell_price}}</span>
                             <span>库存{{store_count}}</span>
                         </div>
                     </div>
@@ -245,9 +245,6 @@
 
                         <div class="button" :class="{disabled: disallow_cart}" @click="confirm">
                             确定
-                            <submit-button v-ref:button @submit="confirm" :status="disallow_cart ? 'disabled' : 'normal'">
-
-                            </submit-button>
                         </div>
                     </div>
                 </div>
@@ -314,7 +311,6 @@
             }
         },
         onShow() {
-
             console.log(111);
             this.id = this.$root.$mp.query.id;
             var scene = this.$root.$mp.query.scene;
@@ -354,10 +350,17 @@
             this.loginDetail = {};
             this.article = '';
             this.describe = '';
-            this.activeIndex = 2;
+            this.activeIndex = 0;
             this.show_share = false;
             this.show_ticket = false;
-
+            this.show_select = false;
+            this.spec = [];
+            this.skuTable = {};
+            this.store_count = 0;
+            this.select_count = 1;
+            this.select_product = {};
+            this.currentIndex = 0;
+            this.goodsInfo = [];
 
             // this.getGoods(176);
         },
@@ -473,7 +476,9 @@
                         this.detail = res.data;
                         this.meta = res.meta;
                         if (res.meta && res.meta.goods && res.meta.goods.length) {
-                            this.tabList.push({ title:"装备推荐"});
+                            if (this.tabList.length < 3) {
+                                this.tabList.push({ title:"装备推荐"});
+                            }
                             this.$storage.set('detailGoods', res.meta.goods);
                         }
                         this.describe = res.data.coach.describe;
@@ -609,18 +614,6 @@
                 }
                 let isReady = true;
 
-                if (this.meta && this.meta.goods) {
-                    this.meta.goods.forEach(item => {
-                        if (item.goods.required && !item.goods.isCheck) {
-                           wx.showModal({
-                               content: '有必选装备未选择',
-                               showCancel: false
-                           })
-                            isReady = false
-                        }
-                    })
-                }
-                if (!isReady) return;
 //                线上活动
                 if (this.detail.fee_type == 'CHARGING') {
                     if (this.loginDetail.order) {
@@ -633,14 +626,51 @@
                             })
 
                         } else {
+                            if (this.meta && this.meta.goods) {
+                                this.meta.goods.forEach(item => {
+                                    if (item.goods.required && !item.goods.isCheck) {
+                                        wx.showModal({
+                                            content: '有必选装备未选择',
+                                            showCancel: false
+                                        })
+                                        isReady = false
+                                    }
+                                })
+                            }
+                            if (!isReady) return;
                             // 弹出票种选择
                             this.changeTicket();
                         }
                     } else {
+                        if (this.meta && this.meta.goods) {
+                            this.meta.goods.forEach(item => {
+                                if (item.goods.required && !item.goods.isCheck) {
+                                    wx.showModal({
+                                        content: '有必选装备未选择',
+                                        showCancel: false
+                                    })
+                                    isReady = false
+                                }
+                            })
+                        }
+                        if (!isReady) return;
                         // 弹出票种选择
                         this.changeTicket()
                     }
                 } else {
+                    if (this.meta && this.meta.goods) {
+                        this.meta.goods.forEach(item => {
+                            if (item.goods.required && !item.goods.isCheck) {
+                                wx.showModal({
+                                    content: '有必选装备未选择',
+                                    showCancel: false
+                                })
+                                isReady = false
+                            }
+                        })
+                    }
+                    if (!isReady) return;
+
                     // 当为线下活动的直接取第一种支付方式
                     this.selectPayment = this.detail.payments[0].id
                     this.submitActive();
@@ -897,7 +927,7 @@
                 var goods = this.$storage.get('detailGoods');
                 console.log(goods);
                 var res = goods[index];
-                if (id == this.select_product.activeId) return
+                if (this.select_product && id == this.select_product.activeId) return
 
                 this.specs = [];
                 this.skuTable = {};
@@ -1116,7 +1146,6 @@
 
                 let select_product = this.select_product;
                 let goodsInfo = this.meta.goods[this.currentIndex].goods;
-
                 let data = this.specs.length ? {
                     id: select_product.id,
                     name: goodsInfo.name,
@@ -1125,7 +1154,7 @@
                     price: select_product.price,
                     market_price: goodsInfo.market_price,
                     attributes: {
-                        img: select_product.img || goodsInfo.image,
+                        img: select_product.img || goodsInfo.img,
                         size: select_product.size,
                         color: select_product.color,
                         com_id: goodsInfo.id,
@@ -1170,7 +1199,19 @@
                         Authorization:token
                     }
                 }).then(res => {
-                    console.log(res);
+                    res = res.data;
+                    if (res.status) {
+                        this.$storage.set('activeOrder', res.data);
+                        // 跳转到填写表单页面
+                        wx.navigateTo({
+                            url:'/pages/form/main?id='+this.id+'&payment_id='+this.selectPayment
+                        })
+                    } else {
+                        wx.showModal({
+                            content: res.message || '请求失败',
+                            showCancel: false,
+                        })
+                    }
                     wx.hideLoading();
                 }, err => {
                     wx.showModal({
@@ -1216,7 +1257,10 @@
                     ids = ids.sort((a, b) => a > b).join('-');
                     select_product = Object.assign(select_product, this.skuTable[ids]);
                 }
-                select_product.activeId = this.meta.goods[this.currentIndex].goods.id;
+                if (this.meta.goods && this.meta.goods.length) {
+                    select_product.activeId = this.meta.goods[this.currentIndex].goods.id;
+                }
+
                 // this.price = select_product.price;
                 this.select_product = select_product;
 
@@ -1424,8 +1468,8 @@
                                 background: #FFFFFF;
                                 .left {
                                     position: relative;
-                                    width: 95px;
-                                    height: 95px;
+                                    width: 80px;
+                                    height: 80px;
 
                                     image {
                                         width: 100%;

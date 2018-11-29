@@ -5,7 +5,7 @@ const app = new Vue(App)
 app.$mount()
 
 export default {
-  config: {
-    navigationBarTitleText: '提交信息'
-  }
+    config: {
+        navigationBarTitleText: '收货地址'
+    }
 }

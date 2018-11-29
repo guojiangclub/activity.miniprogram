@@ -194,7 +194,7 @@
     }
 </script>
 
-<style rel="stylesheet/less" lang="less">
+<style rel="stylesheet/less" lang="less" type="text/less">
     @import "../../../static/global.less";
     #enroll {
         .title {

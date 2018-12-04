@@ -443,13 +443,13 @@
             },
             //下一步提交表单信息
             submitStep(){
-
                 // 如果有商品就需要选择地址
                 if (this.order.order && !this.order.address) {
                     wx.showModal({
                         content: '请选择收货地址',
                         showCancel: false
                     })
+                    return
                 } else if (this.order.activity.fee_type == 'OFFLINE_CHARGES') {
                     // 线下需要填写尺码信息
                     if (this.order.size == null || !this.order.size.upper || !this.order.size.lower || !this.order.size.shoes) {
@@ -457,6 +457,7 @@
                             content: '请先完善报名资料中的服装尺码信息！',
                             showCancel: false
                         })
+                        return
                     }
                 } else if (this.list && this.list.length) {
                     // 表单校验
@@ -492,6 +493,7 @@
                         return;
                     }
                 }
+
                 this.confirm();
                 // this.submitPay(this.id,this.payment_id,this.user);
             },

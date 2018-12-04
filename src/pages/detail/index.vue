@@ -658,22 +658,31 @@
                         this.changeTicket()
                     }
                 } else {
-                    if (this.meta && this.meta.goods) {
-                        this.meta.goods.forEach(item => {
-                            if (item.goods.required && !item.goods.isCheck) {
-                                wx.showModal({
-                                    content: '有必选装备未选择',
-                                    showCancel: false
-                                })
-                                isReady = false
-                            }
+                    let pay_status = this.loginDetail.order.pay_status;
+//                        订单支付状态
+                    if (pay_status == 0) {
+//                            跳转到线上支付
+                        wx.navigateTo({
+                            url: '/pages/pay/main?order_no=' + this.loginDetail.order.order_no
                         })
-                    }
-                    if (!isReady) return;
 
-                    // 当为线下活动的直接取第一种支付方式
-                    this.selectPayment = this.detail.payments[0].id
-                    this.submitActive();
+                    } else {
+                        if (this.meta && this.meta.goods) {
+                            this.meta.goods.forEach(item => {
+                                if (item.goods.required && !item.goods.isCheck) {
+                                    wx.showModal({
+                                        content: '有必选装备未选择',
+                                        showCancel: false
+                                    })
+                                    isReady = false
+                                }
+                            })
+                        }
+                        if (!isReady) return;
+                        // 当为线下活动的直接取第一种支付方式
+                        this.selectPayment = this.detail.payments[0].id
+                        this.submitActive();
+                    }
 //                    线下预约活动跳转到填写尺码页面
                    /* wx.navigateTo({
                         url: '/pages/enroll/main?id=' + this.id
@@ -922,20 +931,23 @@
                 }
             },
 
-
+            // 获取商品数据
             getGoods(index,id,key) {
                 var goods = this.$storage.get('detailGoods');
                 console.log(goods);
                 var res = goods[index];
-                if (this.select_product && id == this.select_product.activeId) return
+                // if (this.select_product && id == this.select_product.activeId) return
 
                 this.specs = [];
                 this.skuTable = {};
                 this.select_count = 1;
                 this.select_product = {};
 
+
+                this.store_count = res.goods.store_nums
+                this.select_product.price = Number(res.goods.sell_price).toFixed(2)
                 // 规格
-                if (res.specs && typeof key === 'undefined') {
+                if (res.specs  && typeof key === 'undefined') {
                     let specs = [];
                     Object.keys(res.specs)
                         .forEach((key, index) => {

@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 1,
+			"current": 18,
 			"list": [
 				{
 					"id": -1,
@@ -138,6 +138,12 @@
 					"name": "收货地址列表",
 					"pathName": "pages/addressList/main",
 					"query": ""
+				},
+				{
+					"id": 18,
+					"name": "扫码签到",
+					"pathName": "pages/userSign/main",
+					"query": "scene=06b9932478272784dfd64865b87561d2,90"
 				}
 			]
 		}

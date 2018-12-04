@@ -16,7 +16,7 @@
                         </div>
                         <div class="right-bottom">
                             <div class="text-grey">{{item.item_meta.specs_text}}</div>
-                            <div class="text-grey">￥{{item.total | fen_to_yuan}}</div>
+                            <div class="text-grey">￥{{item.total / 100}}</div>
                         </div>
                     </div>
                 </div>

@@ -304,7 +304,9 @@
                     mask:true
                 })
                 this.$http
-                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/coachAct/'+id,{},{
+                    .get(this.$config.GLOBAL.baseUrl + 'api/activity/coachAct/'+id,{
+                        type: 'mini_program'
+                    },{
                         headers: {
                             Authorization:token
                         }

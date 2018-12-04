@@ -202,7 +202,7 @@
 
                         <div class="img_box">
                             <img v-if="select_product && select_product.img" :src="select_product.img">
-                            <img v-if="(!select_product || !select_product.img) && meta.goods && meta.goods[currentIndex].goods.img" :src="meta.goods[currentIndex].goods.img" alt="">
+                            <img v-if="(!select_product || !select_product.img) && meta.goods && meta.goods.length && meta.goods[currentIndex].goods.img" :src="meta.goods[currentIndex].goods.img" alt="">
                         </div>
 
 

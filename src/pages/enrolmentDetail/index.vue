@@ -327,11 +327,12 @@
                 var fee_type = this.enrolData.fee_type;
                 var  refund_status = this.enrolData.refund_status;
                 var  time = new Date(start.replace(/-/g,"/")).getTime() - cancel*60*1000 - new Date().getTime();
+                var order = this.enrolMeta.shopOrder;
                 if(refund_status == 0){
                     return false
                 }
 
-                if ( mStatus==1 || (mStatus == 0 && fee_type == 'CHARGING')) {
+                if ( mStatus==1 || (mStatus == 0 && fee_type == 'CHARGING') || (mStatus == 0 && fee_type == 'OFFLINE_CHARGES' && order)) {
                     switch (true) {
                         case status==1: case status==4: case status==5: case status==2 && time>0:
                         return true;

@@ -164,6 +164,7 @@ export default {
             'pages/rewards/main',
             'pages/user/main',
             'pages/usersetting/main',
+            'pages/userSign/main',
             'pages/shareImg/main',
             'pages/form/main',
             'pages/bindPhone/main',

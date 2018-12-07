@@ -45,7 +45,19 @@
                     </div>
                 </div>
                 <div class="content" v-show="activeIndex == 0">
-                    <wxparser :rich-text="detail.content"></wxparser>
+                    <div class="content-info">
+                        <div class="info">
+                            这个是简介
+                        </div>
+                        <div class="see-more">
+                            查看更多
+                        </div>
+                        <div class="arr">
+                            <img src="http://ibrand-miniprogram.oss-cn-hangzhou.aliyuncs.com/18-12-6/12379848.jpg" alt="">
+                        </div>
+
+                    </div>
+                    <!--<wxparser :rich-text="detail.content"></wxparser>-->
                     <!--<wxParse :content="detail.content" @preview="preview" @navigate="navigate"></wxParse>-->
                 </div>
                 <div class="content" v-show="activeIndex == 1">
@@ -65,7 +77,7 @@
                    <!--<div class="goods-tips">
                        徒步鞋徒步袜，快干裤，短袖，皮肤风衣或软壳
                    </div>-->
-                    <div class="goods-list" v-if="meta && meta.goods">
+                   <!-- <div class="goods-list" v-if="meta && meta.goods">
                         <div class="goods-item" v-for="item in meta.goods">
                             <div class="goods">
                                 <div class="left">
@@ -126,7 +138,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div>-->
                 </div>
             </div>
             <div class="fixed-btn">
@@ -194,9 +206,9 @@
 
             </div>
             <!--sku弹出-->
-            <div class="sku-box" :class="show_select ? 'active':''">
+            <!--<div class="sku-box" :class="show_select ? 'active':''">
                 <div class="select_goods_container">
-                    <!--关闭按钮-->
+                    &lt;!&ndash;关闭按钮&ndash;&gt;
                     <div class="select_goods_cloese" @click="show_select = false"></div>
                     <div class="select_goods_header">
 
@@ -248,7 +260,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </block>
 
     </div>
@@ -658,14 +670,15 @@
                         this.changeTicket()
                     }
                 } else {
-                    let pay_status = this.loginDetail.order.pay_status;
 //                        订单支付状态
-                    if (pay_status == 0) {
-//                            跳转到线上支付
-                        wx.navigateTo({
-                            url: '/pages/pay/main?order_no=' + this.loginDetail.order.order_no
-                        })
-
+                    if (this.loginDetail.order) {
+                        let pay_status = this.loginDetail.order.pay_status;
+                        if (pay_status == 0) {
+                            // 跳转到线上支付
+                            wx.navigateTo({
+                                url: '/pages/pay/main?order_no=' + this.loginDetail.order.order_no
+                            })
+                        }
                     } else {
                         if (this.meta && this.meta.goods) {
                             this.meta.goods.forEach(item => {
@@ -1214,10 +1227,12 @@
                     res = res.data;
                     if (res.status) {
                         this.$storage.set('activeOrder', res.data);
+                        this.goodsInfo = [];
                         // 跳转到填写表单页面
                         wx.navigateTo({
                             url:'/pages/form/main?id='+this.id+'&payment_id='+this.selectPayment
-                        })
+                        });
+
                     } else {
                         wx.showModal({
                             content: res.message || '请求失败',
@@ -1383,7 +1398,7 @@
             }
         }
         .activity-tab {
-            padding-bottom:100px;
+            padding-bottom:70px;
             .tab-header {
                 position: relative;
                 background-color: #FFFFFF;
@@ -1428,8 +1443,30 @@
             }*/
             .content{
                 background-color: #FFFFFF;
-                min-height:200px;
+                /*min-height:200px;*/
                 padding: 0 12px;
+
+                .content-info {
+                    padding: 12px 0;
+                    .info {
+                        font-size: 12px;
+                        color: #4A4A4A;
+                    }
+                    .see-more {
+                        font-size: 14px;
+                        text-align: center;
+                        margin-top: 12px;
+                    }
+                    .arr {
+                        margin-top: 10px;
+                        text-align: center;
+
+                        img {
+                            width: 15px;
+                            height: 15px;
+                        }
+                    }
+                }
                 .coach-intro{
                     text-align: center;
                     .avatar{

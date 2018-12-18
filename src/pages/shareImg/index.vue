@@ -25,12 +25,6 @@
                 var id = this.$root.$mp.query.id;
                 var path = this.$root.$mp.query.path;
                 var token = this.$storage.get('user_token');
-                if (!token) {
-
-                } else {
-
-                }
-
                 wx.showLoading({
                     title: "图片生成中",
                     mask: true
@@ -40,7 +34,7 @@
                     page: path
                 }, {
                     headers: {
-                        Authorization: token
+                        Authorization: token || ''
                     }
                 }).then(res => {
                     res = res.data;

@@ -6,6 +6,6 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '支付结果'
+        navigationBarTitleText: '活动详情'
     }
 }

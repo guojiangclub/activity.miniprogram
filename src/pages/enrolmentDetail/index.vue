@@ -397,7 +397,7 @@
         background-color:#F3F3F3;
     }
     #enrol_index{
-        margin-bottom: 60px;
+        padding-bottom: 70px;
         .block-item {
             /*margin-top: 10px;*/
             background: #FFFFFF;

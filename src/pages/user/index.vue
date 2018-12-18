@@ -104,19 +104,19 @@
                 <div class="iconfont icon-Group104"></div>
             </div>
         </div>
-       <!-- <div class="info-detail">
+        <!--<div class="info-detail">
             <div class="item" @click="jumpPath()">
                 <div class="number"><span>{{marketInfo.favorite || 0}}</span></div>
                 <div>收藏</div>
             </div>
-            &lt;!&ndash;<div class="item">
+            <div class="item">
                 <div class="number"><span>0</span></div>
                 <div>地址</div>
             </div>
             <div class="item">
                 <div class="number"><span>0</span></div>
                 <div>余额</div>
-            </div>&ndash;&gt;
+            </div>
             <div class="item" @click="jumpPath('/pages/myPoint/main')">
                 <div class="number"><span>{{marketInfo.point || 0}}</span></div>
                 <div>积分</div>

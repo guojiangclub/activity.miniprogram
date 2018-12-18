@@ -175,6 +175,7 @@ export default {
             'pages/addressAdd/main',
             'pages/addressList/main',
             'pages/orderGoods/main',
+            'pages/detailInfo/main',
         ],
         window: {
             backgroundTextStyle: 'light',
@@ -186,13 +187,7 @@ export default {
         navigateToMiniProgramAppIdList: [
             'wx38e537a9de6d096a',
             'wx8eed5123f76a1cf2'
-        ],
-        plugins: {
-            wxparserPlugin: {
-                version: '0.2.1',
-                provider: 'wx9d4d4ffa781ff3ac'
-            }
-        }
+        ]
         /*tabBar: {
             backgroundColor: '#fff',
             color: '#9B9B9B',

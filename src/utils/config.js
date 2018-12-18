@@ -12,19 +12,21 @@ export default {
     // https://wx.qlogo.cn/mmhead/Q3auHgzwzM4Hr59sxBlnH4jfKMQJYACQOzibNe0xticCaP7RnuFlrvXQ/0  运运清货
     // https://wx.qlogo.cn/mmhead/Q3auHgzwzM6AJcJTnABAibZjGruHrHHmibmmj5Qd5e5HCFIYlMr1ofZw/0  万有logo
     // https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0 UTO活动
-
+    // https://mp.weixin.qq.com/wxopen/basicprofile?action=get_headimg&token=1959551758&t=20181218182052 撸球集结令
 
 
     // https://uto-admin.ibrand.cc/
     // https://admin-dev.ibrand.cc/
+    // https://admin.wanyoujishi.com/
+    // https://tennis-admin.ibrand.cc/
 
   BRAND: {
-    name: 'UTO助力首百',
-    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0',
-    title: 'UTO助力首百',
+    name: '撸球集结令',
+    logo: 'https://mp.weixin.qq.com/wxopen/basicprofile?action=get_headimg&token=1959551758&t=20181218182052',
+    title: '撸球集结令',
   },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://tennis-admin.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

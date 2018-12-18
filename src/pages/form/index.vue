@@ -369,6 +369,7 @@
                     payment: {}
                 },
                 time: '',
+                statusUpdate: false
             }
         },
         onLoad() {
@@ -380,13 +381,12 @@
 
             this.statement = false;
             this.time = '';
-            // this.getFormList(this.id);
-            // this.getDetail(id);
-        },
-        onShow() {
+
             this.id = this.$root.$mp.query.id;
             this.payment_id = this.$root.$mp.query.payment_id;
             this.checkOrder();
+            // this.getFormList(this.id);
+            // this.getDetail(id);
         },
         methods: {
             // 验证缓存
@@ -777,6 +777,9 @@
                         //返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
                         var tempFilePaths = res.tempFilePaths; //图片的本地文件路径列表
                         var tempFiles = res.tempFiles;//图片的本地文件列表，每一项是一个 File 对象
+                        wx.showLoading({
+                            title: '上传中'
+                        })
                  wx.uploadFile({//将本地资源上传到开发者服务器，客户端发起一个HTTP post请求，其中content-type为multipart/form-data
                         header:{
                             'content-type': 'multipart/form-data',
@@ -788,7 +791,11 @@
                         success:rej=>{
                         var result = JSON.parse(rej.data);
                         this.user[name].push(result.data.url);
-            }
+                        this.statusUpdate = !this.statusUpdate;
+            },
+                     complete: err => {
+                            wx.hideLoading();
+                     }
 
             })
                     }
@@ -798,6 +805,7 @@
             //删除图片
             deleteX(item,index){
                 this.user[item].splice(index,1);
+                this.statusUpdate = !this.statusUpdate;
             },
             //查看声明详情
             lookDetail(){

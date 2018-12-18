@@ -71,7 +71,7 @@
         },
         mounted(){
             this.order_no = this.$root.$mp.query.order_no;
-
+            this.init = false;
             this.sign = {
                 activity: {
                     coach: {}
@@ -89,7 +89,7 @@
             getLoginDetail(order_no) {
                 var token = this.$storage.get('user_token')
                 this.$http
-                    .post(this.$config.GLOBAL.baseUrl + 'api/activity/order/paid', {
+                    .post(this.$config.GLOBAL.baseUrl + 'api/activity/mini/order/paid', {
                         order_no: order_no
                     }, {
                         headers: {
@@ -97,6 +97,7 @@
                         }
                     })
                     .then(res => {
+                        console.log(res);
                         res = res.data;
                         if (res.status) {
                             this.sign = res.data;

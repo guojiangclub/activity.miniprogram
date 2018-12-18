@@ -47,12 +47,12 @@
                 <div class="content" v-show="activeIndex == 0">
                     <div class="content-info">
                         <div class="info">
-                            这个是简介
+                            {{detail.description}}
                         </div>
-                        <div class="see-more">
+                        <div class="see-more" @click="seeMore">
                             查看更多
                         </div>
-                        <div class="arr">
+                        <div class="arr" @click="seeMore">
                             <img src="http://ibrand-miniprogram.oss-cn-hangzhou.aliyuncs.com/18-12-6/12379848.jpg" alt="">
                         </div>
 
@@ -77,7 +77,7 @@
                    <!--<div class="goods-tips">
                        徒步鞋徒步袜，快干裤，短袖，皮肤风衣或软壳
                    </div>-->
-                   <!-- <div class="goods-list" v-if="meta && meta.goods">
+                    <div class="goods-list" v-if="meta && meta.goods">
                         <div class="goods-item" v-for="item in meta.goods">
                             <div class="goods">
                                 <div class="left">
@@ -138,7 +138,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>-->
+                    </div>
                 </div>
             </div>
             <div class="fixed-btn">
@@ -206,9 +206,9 @@
 
             </div>
             <!--sku弹出-->
-            <!--<div class="sku-box" :class="show_select ? 'active':''">
+            <div class="sku-box" :class="show_select ? 'active':''">
                 <div class="select_goods_container">
-                    &lt;!&ndash;关闭按钮&ndash;&gt;
+                    <!--关闭按钮-->
                     <div class="select_goods_cloese" @click="show_select = false"></div>
                     <div class="select_goods_header">
 
@@ -260,7 +260,7 @@
                         </div>
                     </div>
                 </div>
-            </div>-->
+            </div>
         </block>
 
     </div>
@@ -405,6 +405,12 @@
             },
             changeTicket() {
                 this.show_ticket = !this.show_ticket;
+            },
+            // 跳转详情
+            seeMore() {
+                wx.navigateTo({
+                    url: '/pages/detailInfo/main?id=' + this.id
+                })
             },
             //点击收藏
             collect(id){

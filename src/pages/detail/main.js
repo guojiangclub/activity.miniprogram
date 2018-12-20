@@ -6,9 +6,6 @@ app.$mount()
 
 export default {
     config: {
-        navigationBarTitleText: '活动详情',
-        usingComponents: {
-            wxparser: 'plugin://wxparserPlugin/wxparser'
-        }
+        navigationBarTitleText: '活动详情'
     }
 }

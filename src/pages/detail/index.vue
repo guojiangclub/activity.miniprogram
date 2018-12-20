@@ -50,11 +50,14 @@
                             {{detail.description}}
                         </div>
                         <div class="see-more" @click="seeMore">
-                            查看更多
+                            <div>
+                                点击查看更多
+                            </div>
+                             <!--<i class="iconfont icon-Group98"></i>-->
                         </div>
-                        <div class="arr" @click="seeMore">
+                        <!--<div class="arr" @click="seeMore">
                             <img src="http://ibrand-miniprogram.oss-cn-hangzhou.aliyuncs.com/18-12-6/12379848.jpg" alt="">
-                        </div>
+                        </div>-->
 
                     </div>
                     <!--<wxparser :rich-text="detail.content"></wxparser>-->
@@ -1459,6 +1462,9 @@
                         color: #4A4A4A;
                     }
                     .see-more {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
                         font-size: 14px;
                         text-align: center;
                         margin-top: 12px;

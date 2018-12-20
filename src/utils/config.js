@@ -20,13 +20,18 @@ export default {
     // https://admin.wanyoujishi.com/
     // https://tennis-admin.ibrand.cc/
 
-  BRAND: {
-    name: '撸球集结令',
-    logo: 'https://mp.weixin.qq.com/wxopen/basicprofile?action=get_headimg&token=1959551758&t=20181218182052',
-    title: '撸球集结令',
-  },
+  /*BRAND: {
+    name: '助力首百助手',
+    logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM6m4icqPIzgMicWwZgP15IBiaZRBecdJkktbnTjY5V3eSvOw/0',
+    title: '助力首百助手',
+  },*/
+    BRAND: {
+        name: '撸球集结令',
+        logo: 'https://mp.weixin.qq.com/wxopen/basicprofile?action=get_headimg&token=1959551758&t=20181218182052',
+        title: '撸球集结令',
+    },
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://tennis-admin.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://tennis-admin.ibrand.cc/' : 'https://tennis-admin.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

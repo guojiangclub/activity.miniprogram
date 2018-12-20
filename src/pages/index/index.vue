@@ -199,16 +199,17 @@ export default {
                       var total_page = page.total_page;// 获取后台数据总共页数
                       this.cityPage.per_page = page.per_page;*/
                           list = this.cityList.concat(res.data);
-                          var that = this;
+                      var that = this;
+                      that.tabTitleList[0].content = [{
+                          title:"所有城市",
+                          active:true,
+                          id:'all'
+                      }];
                           list.forEach(function (val,index) {
                               let title = val.name;
                               let id = val.id;
                               let active = false;
-                              that.tabTitleList[0].content = [{
-                                  title:"所有城市",
-                                  active:true,
-                                  id:'all'
-                              }];
+                              console.log(that.tabTitleList[0].content);
                               that.tabTitleList[0].content.push({
                                   title,
                                   id,
@@ -261,15 +262,15 @@ export default {
                     var category = [];
                     category = category.concat(res.data);
                     var that = this;
+                    that.tabTitleList[1].content = [{
+                        title:"所有分类",
+                        active:true,
+                        id:'all'
+                    }];
                     category.forEach(function (val,index) {
                         let title = val.name;
                         let id = val.id;
                         let active = false;
-                        that.tabTitleList[1].content = [{
-                            title:"所有城市",
-                            active:true,
-                            id:'all'
-                        }];
                         that.tabTitleList[1].content.push({
                             title,
                             id,

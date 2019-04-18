@@ -1,16 +1,16 @@
 <template>
     <div>
-        <div>
-            <textarea v-if="isEdit" class='input_view' maxlength='-1' auto-height='true'   v-model.lazy="firstCon" placeholder='写点什么...' :focus='focusList[0].focus' @blur="_outBlur"  data-index='0' />
-            <div v-if="!isEdit" @tap='_focusView' class='input_view2 text-gray' data-index='0'>{{firstCon||"写点什么..."}}</div>
+        <div class="rict-box">
+            <textarea v-show="isEdit" class='input_view' maxlength='-1' auto-height='true'   v-model.lazy="firstCon" placeholder='写点什么...' :focus='focusList[0].focus' @blur="_outBlur" :style="{width:width-20 + 'px'}"   data-index='0' />
+            <div v-show="!isEdit" @click='_focusView' class='input_view2 text-gray' data-index='0'>{{firstCon||"写点什么..."}}</div>
             <div v-for="item in dataList" :key="index">
                 <div class='img_view' :style="{height: width / 2 + 'px'}">
                     <image :src='item.img' mode='aspectFill' />
-                    <i @tap='_deletedImg' :data-index='index' class='iconfont icon-close-circle-o close_img'>
+                    <i @click='_deletedImg' :data-index='index' class='iconfont icon-close-circle-o close_img'>
                     </i>
                 </div>
-                <textarea v-if="isEdit" class='input_view' maxlength='-1' auto-height='true'  v-model.lazy="item.info" placeholder='写点什么...' :focus='focusList[index+1].focus' @blur="_outBlur"  />
-                <div  v-if="!isEdit" @tap='_focusView' class='input_view2 text-gray' :data-index='index+1'>{{item.info||'写点什么...'}}</div>
+                <textarea v-show="isEdit" class='input_view' maxlength='-1' auto-height='true'  v-model.lazy="item.info" placeholder='写点什么...' :focus='focusList[index+1].focus' @blur="_outBlur" :style="{width:width-20 + 'px'}" :data-index='index+1'  />
+                <div  v-show="!isEdit" @click='_focusView' class='input_view2 text-gray' :data-index='index+1'>{{item.info||'写点什么...'}}</div>
             </div>
         </div>
         <div class='add-img'>
@@ -21,12 +21,10 @@
             </div>
         </div>
 
-        <div class='save'>
-            <div class='circle_center_view img-s-4 bg-white hx-btn p-relative' @tap='_saveRichText'>
-                保存
-            </div>
-        </div>
 
+        <cover-view class='save' @click='_saveRichText'>
+            保存
+        </cover-view>
     </div>
 </template>
 
@@ -157,29 +155,90 @@
                 this.dataList.splice(index,1);
             },
             _saveRichText(){
-                console.log("保存");
-                let list = [];
-                if(this.firstCon){
-                    list.push({
-                        info: this.firstCon,
-                        type: 0
+                setTimeout(() => {
+                    let list = [];
+                    if(this.firstCon){
+                        list.push({
+                            info: this.firstCon,
+                            type: 0,
+                            html: `<p>${this.firstCon}<p>`
+                        })
+                    }
+                    this.dataList.forEach(item => {
+                        if(item.img){
+                            list.push({
+                                info: item.img,
+                                type: 1,
+                                html: `<img src="${item.img}" />`
+                            })
+                        }
+                        if(item.info){
+                            list.push({
+                                info: item.info,
+                                type: 0,
+                                html: `<p>${item.info}<p>`
+                            })
+                        }
                     })
+                    console.log(list);
+                    this.$emit('getDataList', list);
+
+                    this.releaseActivity();
+
+                }, 150)
+            },
+            releaseActivity() {
+                const token = this.$storage.get('user_token');
+                let data = {
+                    title: '这个是活动名称', // 活动名称
+                    img: 'https://admin-dev.ibrand.cc/storage/uploads/images/2019_04_18/knjMNWCGNpgGzuADuaY7hw3BI4Fsf7uZWUz7fvkR.jpeg', // 活动图片
+                    img_list: 'https://admin-dev.ibrand.cc/storage/uploads/images/2019_04_18/knjMNWCGNpgGzuADuaY7hw3BI4Fsf7uZWUz7fvkR.jpeg', // 活动图片
+                    content: '<p>活动那内容</p>', // 活动详情
+                    starts_at: '2019-04-18 12:05:30', // 活动开始时间
+                    ends_at: '2019-04-21 22:00:30', // 活动结束时间
+                    entry_end_at: '2019-04-18 12:04:30', // 报名截止时间
+                    city_id: '1', // 活动城市
+                    address: '长沙', // 活动地址
+                    address_point: '28.243908,113.092575', // 详细活动地址
+                    member_limit: '10', // 报名人数
+                    form_id: '1', // 活动报名表单
+                    statement_id: '1', // 活动免责声明
+                    payments: [
+                        {
+                            title: '测试', // 电子票名称
+                            price: '1', // 电子票金额
+                            point: '1', // 电子票积分
+                            limit: '1' // 电子票数量限制
+                        }
+                    ]
                 }
-                this.dataList.forEach(item => {
-                    if(item.img){
-                        list.push({
-                            info: item.img,
-                            type: 1
-                        })
-                    }
-                    if(item.info){
-                        list.push({
-                            info: item.info,
-                            type: 0
-                        })
-                    }
+                wx.showLoading({
+                    title: '正在提交',
+                    mask: true
                 })
-                this.$emit('getDataList', list);
+                this.$http
+                    .post(this.$config.GLOBAL.baseUrl + 'api/activity/publish/store', data, {
+                        headers: {
+                            Authorization: token
+                        }
+                    }).then(res => {
+                        res = res.data;
+                        if (res.status) {
+
+                        } else {
+                            wx.showModal({
+                                content: res.message || "请求失败",
+                                showCancel: false
+                            })
+                        }
+                    wx.hideLoading();
+                }, err => {
+                    wx.showModal({
+                        content: '请求失败，请重试',
+                        showCancel: false,
+                    })
+                    wx.hideLoading();
+                })
             }
         }
     }
@@ -187,6 +246,10 @@
 
 
 <style rel="stylesheet/less" lang="less">
+    @import "../../static/global";
+    .rict-box {
+        padding-bottom: 100px;
+    }
     .input_view{
         padding: 10px;
         width: 100%;
@@ -199,6 +262,7 @@
         white-space: pre-wrap;
         word-break: break-all;
         box-sizing: border-box;
+        line-height: 20px;
     }
     .img_view{
         display: flex;
@@ -221,15 +285,19 @@
         display: flex;
         background-size:cover;
         position:fixed;
-        right:74rpx;
-        bottom:140px;
+        right:15px;
+        bottom:100px;
     }
     .save{
-        display: flex;
-        background-size:cover;
         position:fixed;
-        right:74rpx;
-        bottom:70px;
+        bottom:0px;
+        left: 0;
+        right: 0;
+        background: @globalColor;
+        text-align: center;
+        height: 50px;
+        line-height: 50px;
+        color: #FFFFFF;
     }
     .circle_center_view{
         box-shadow:0px 2px 4px 0px rgba(0,0,0,0.2);
@@ -239,7 +307,6 @@
         height: 45px;
         text-align: center;
         line-height: 45px;
-        border: 1px solid;
         background: #FFFFFF;
         .iconfont {
             color: #666666;

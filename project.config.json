@@ -153,9 +153,17 @@
 					"scene": null
 				},
 				{
+					"id": 20,
+					"name": "活动费用",
+					"pathName": "pages/signUpForm/main",
+					"query": "",
+					"scene": null
+				},
+				{
 					"id": -1,
-					"name": "发布活动",
-					"pathName": "pages/releaseActivity/main",
+					"name": "添加活动费用",
+					"pathName": "pages/signUpFormDetail/main",
+					"query": "",
 					"scene": null
 				}
 			]

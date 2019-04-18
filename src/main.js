@@ -177,6 +177,8 @@ export default {
             'pages/orderGoods/main',
             'pages/detailInfo/main',
             'pages/releaseActivity/main',
+            'pages/signUpForm/main',
+            'pages/signUpFormDetail/main',
         ],
         window: {
             backgroundTextStyle: 'light',
@@ -188,7 +190,12 @@ export default {
         navigateToMiniProgramAppIdList: [
             'wx38e537a9de6d096a',
             'wx8eed5123f76a1cf2'
-        ]
+        ],
+        permission: {
+            "scope.userLocation": {
+                desc: "为了提高服务质量，请允许我们获取您的位置信息"
+            }
+        },
         /*tabBar: {
             backgroundColor: '#fff',
             color: '#9B9B9B',

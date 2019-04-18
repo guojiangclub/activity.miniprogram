@@ -63,10 +63,18 @@
                 <div class="adress item">
                     <div class="topic">活动地点：</div>
                     <div class="picker-info" @click="chooseLocation">
-                        <div class="picker choose-txt">
+                        <div class="picker" v-if="address_point">{{address}}</div>
+                        <div class="picker choose-txt" v-else>
                             请选择 <span class="iconfont icon-Group104"></span>
                         </div>
                     </div>
+                </div>
+            </div>
+            <!--活动规模-->
+            <div class="detail-infomation">
+                <div class="item">
+                    <div class="topic">活动规模：</div>
+                    <input type="text"  placeholder="请输入活动规模" placeholder-class="input-placeholder"/>
                 </div>
             </div>
         </div>
@@ -112,8 +120,9 @@
                 end_placeholder:'请选择时间',
                 city_index:-1,
                 city_array:['美国', '中国', '巴西', '日本'],
-                address_point:'',//活动地址
-                is_refused:''
+                address:'',//活动地址
+                address_point:'',//详细活动地址经纬度
+                is_refused:'',
             }
         },
         methods: {
@@ -147,23 +156,22 @@
                                     //打开地图
                                     wx.chooseLocation({
                                         success:res=>{
-                                            this.address_point = res.address
+                                            this.address_point = res.latitude + ',' + res.longitude;
+                                            this.address = res.address
                                         }
                                     })
                                 },
                                 // 用户拒绝授权
                                 fail: ret => {
                                     this.is_refused = true
-
                                 }
                             })
                         } else {
                             //之前授权过
                             wx.chooseLocation({
                                 success:res=>{
-                                    this.setData({
-                                        address_point:res.address
-                                    })
+                                    this.address_point = res.latitude + ',' + res.longitude;
+                                    this.address = res.address
                                 }
                             })
                         }
@@ -319,6 +327,7 @@
                 }
                 .picker-info{
                     flex: 2;
+
                 }
                 &.mar-b{
                     margin-bottom: 10px;
@@ -347,6 +356,9 @@
                 .picker-info{
                     flex: 2;
                     text-align: right;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                     .picker{
                         &.choose-txt{
                             color:#909090 ;
@@ -360,6 +372,29 @@
                     }
                 }
 
+            }
+        }
+        .detail-infomation{
+            background-color: #FFFFFF;
+            padding: 0 15px;
+            margin-bottom: 10px;
+            .item{
+                display: flex;
+                align-items: center;
+                line-height: 50px;
+                height: 50px;
+                color:#333333;
+                font-size: 14px;
+                .topic{
+                    flex: 1;
+                }
+                input{
+                    flex: 2;
+                    text-align: right;
+                }
+                .input-placeholder{
+                    color: #909090;
+                }
             }
         }
         .mask{

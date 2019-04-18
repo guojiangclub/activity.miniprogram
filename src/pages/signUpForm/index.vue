@@ -5,8 +5,8 @@
                 <div>票种设置</div>
             </div>
 
-            <div class="ticket-item mx-1px-bottom" v-for="item in ticketList">
-                <div class="delete-icon iconfont icon-minus-circle">
+            <div class="ticket-item mx-1px-bottom" v-for="(item, index) in ticketList" @click="jumpTicketDetail(index)">
+                <div class="delete-icon iconfont icon-minus-circle" @click.stop="deleteTicket(index)">
 
                 </div>
                 <div class="name">
@@ -21,13 +21,11 @@
             </div>
         </div>
 
-
-
-        <div class="title-box">
+        <div class="title-box" @click="jumpTicketDetail">
             <i class="iconfont icon-Group99"></i>
             <div>添加票种</div>
         </div>
-        <div class="btn">
+        <div class="btn" @click="ok">
             完成
         </div>
     </div>
@@ -47,7 +45,21 @@
             this.ticketList = this.$storage.get('ticketList') || [];
         },
         methods: {
-
+            jumpTicketDetail(index) {
+                wx.navigateTo({
+                    url: '/pages/signUpFormDetail/main?index=' + index
+                })
+            },
+            deleteTicket(index) {
+                console.log(index);
+                this.ticketList.splice(index, 1);
+                this.$storage.set('ticketList', this.ticketList);
+            },
+            ok() {
+                wx.reLaunch({
+                    url: '/pages/releaseActivity/main'
+                })
+            }
         },
         mounted() {
             var token = this.$storage.get('user_token');

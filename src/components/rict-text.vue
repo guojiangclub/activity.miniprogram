@@ -126,13 +126,30 @@
                 if(this.dataList.length<this.max_length){
                     wx.chooseImage({
                         success: res => {
-                            this.dataList.splice(this.insertIndex, 0, {
-                                img: res.tempFilePaths[0],
-                                info: ''
+                            let tempFilePaths = res.tempFilePaths
+                            let token = this.$storage.get('user_token');
+
+                            wx.uploadFile({
+                                header: {
+                                    'content-type': 'multipart/form-data',
+                                    Authorization: token
+                                },
+                                url: this.$config.GLOBAL.baseUrl + 'api/users/upload/avatar',
+                                filePath: tempFilePaths[0],
+                                name: 'avatar_file',
+                                success: rej => {
+                                    var result = JSON.parse(rej.data);
+                                    this.dataList.splice(this.insertIndex, 0, {
+                                        img: result.data.url,
+                                        info: ''
+                                    })
+                                    this.focusList.splice(this.insertIndex + 1, 0, {
+                                        focus: false
+                                    })
+                                }
                             })
-                            this.focusList.splice(this.insertIndex + 1, 0, {
-                                focus: false
-                            })
+
+
                         }
                     })
                 }else{

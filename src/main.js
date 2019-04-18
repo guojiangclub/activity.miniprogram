@@ -179,6 +179,7 @@ export default {
             'pages/releaseActivity/main',
             'pages/signUpForm/main',
             'pages/signUpFormDetail/main',
+            'pages/rictText/main',
         ],
         window: {
             backgroundTextStyle: 'light',

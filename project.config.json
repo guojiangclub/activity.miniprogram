@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 19,
+			"current": 20,
 			"list": [
 				{
 					"id": -1,
@@ -150,6 +150,12 @@
 					"name": "发布活动",
 					"pathName": "pages/releaseActivity/main",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "发布活动",
+					"pathName": "pages/releaseActivity/main",
 					"scene": null
 				}
 			]

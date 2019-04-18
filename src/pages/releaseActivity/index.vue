@@ -24,19 +24,20 @@
             </div>
             <!--報名細節-->
             <div class="attention-detail">
-                <div class="section">
+                <view class="section">
+                    <div class="section__title">多列选择器</div>
                     <picker
-                            mode="date"
-                            :value="entry_end_at"
-                            start="2015-09-01"
-                            end="2017-09-01"
-                            @change="bindDateChange"
+                            mode="multiSelector"
+                            @change="bindMultiPickerChange"
+                            @columnchange="bindMultiPickerColumnChange"
+                            :value="multiIndex"
+                            :range="multiArray"
                     >
-                        <div class="topic">报名截止时间:</div>
-                        <div class="current">{{entry_end_at}}</div>
+                        <div class="picker">
+                            当前选择：{{multiArray[0][multiIndex[0]]}}，{{multiArray[1][multiIndex[1]]}}，{{multiArray[2][multiIndex[2]]}}
+                        </div>
                     </picker>
-
-                </div>
+                </view>
             </div>
         </div>
 
@@ -52,7 +53,8 @@
         data() {
             return {
                 token: '',
-                entry_end_at:'2016-09-01',
+                multiIndex: [0, 0, 0],
+                multiArray: [['无脊柱动物', '脊柱动物'], ['扁性动物', '线形动物', '环节动物', '软体动物', '节肢动物'], ['猪肉绦虫', '吸血虫']],
             }
         },
         methods: {

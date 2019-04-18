@@ -15,7 +15,7 @@
         },
         onShow() {
             var id = this.$root.$mp.query.id;
-            this.url = this.$config.GLOBAL.baseUrl + '/activity/detail/' + id;
+            this.url = this.$config.GLOBAL.baseUrl + 'activity/detail/' + id;
         }
     }
 </script>

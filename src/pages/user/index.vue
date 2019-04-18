@@ -104,19 +104,19 @@
                 <div class="iconfont icon-Group104"></div>
             </div>
         </div>
-        <!--<div class="info-detail">
+       <!-- <div class="info-detail">
             <div class="item" @click="jumpPath()">
                 <div class="number"><span>{{marketInfo.favorite || 0}}</span></div>
                 <div>收藏</div>
             </div>
-            <div class="item">
+           &lt;!&ndash; <div class="item">
                 <div class="number"><span>0</span></div>
                 <div>地址</div>
             </div>
             <div class="item">
                 <div class="number"><span>0</span></div>
                 <div>余额</div>
-            </div>
+            </div>&ndash;&gt;
             <div class="item" @click="jumpPath('/pages/myPoint/main')">
                 <div class="number"><span>{{marketInfo.point || 0}}</span></div>
                 <div>积分</div>
@@ -125,8 +125,8 @@
                 <div class="number"><span>{{marketInfo.coupon || 0}}</span></div>
                 <div>优惠券</div>
             </div>
-        </div>-->
-        <!--<div class="section-serve">
+        </div>
+        <div class="section-serve">
             <div class="title mx-1px-bottom">我的服务</div>
             <div class="server-box mx-1px-bottom">
                 <navigator target="miniProgram" hover-class="none" app-id="wx38e537a9de6d096a" class="item">

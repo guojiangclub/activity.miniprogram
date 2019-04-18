@@ -176,6 +176,7 @@ export default {
             'pages/addressList/main',
             'pages/orderGoods/main',
             'pages/detailInfo/main',
+            'pages/releaseActivity/main',
         ],
         window: {
             backgroundTextStyle: 'light',

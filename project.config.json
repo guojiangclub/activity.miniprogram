@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 15,
+			"current": 19,
 			"list": [
 				{
 					"id": -1,
@@ -65,7 +65,7 @@
 					"id": 5,
 					"name": "线下活动成功",
 					"pathName": "pages/success/main",
-					"query": "id=51"
+					"query": "order_no=AC2019010722136093549"
 				},
 				{
 					"id": 6,
@@ -77,7 +77,7 @@
 					"id": 7,
 					"name": "报名详情",
 					"pathName": "pages/enrolmentDetail/main",
-					"query": "id=84"
+					"query": "id=101"
 				},
 				{
 					"id": -1,
@@ -144,6 +144,13 @@
 					"name": "扫码签到",
 					"pathName": "pages/userSign/main",
 					"query": "scene=06b9932478272784dfd64865b87561d2,90"
+				},
+				{
+					"id": -1,
+					"name": "发布活动",
+					"pathName": "pages/releaseActivity/main",
+					"query": "",
+					"scene": null
 				}
 			]
 		}

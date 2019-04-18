@@ -47,6 +47,20 @@
                     </div>
                 </div>
             </div>
+
+            <div class="wrap active-info mx-1px-top" v-if="sign.formData && sign.formData.length">
+                <div class="info-title">
+                    报名表单信息
+                </div>
+                <div class="info-item" v-for="item in sign.formData">
+                    <div class="name">
+                        {{item.key}}:
+                    </div>
+                    <div class="text">
+                        {{item.value}}
+                    </div>
+                </div>
+            </div>
             <div class="buttom" @click="jump('/pages/myActivity/main')">
                 查看我的报名
             </div>

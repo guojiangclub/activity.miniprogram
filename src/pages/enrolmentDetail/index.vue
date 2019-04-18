@@ -34,7 +34,7 @@
                     <div class="info-tit">活动地点</div>
                     <div class="info-detail">{{enrolData.address}}</div>
                 </div>
-                <div class="info mx-1px-bottom">
+                <div class="info mx-1px-bottom" v-if="enrolData.coach.nick_name">
                     <div class="info-tit">活动领队</div>
                     <div class="info-detail">{{enrolData.coach.nick_name}}</div>
                 </div>
@@ -44,6 +44,18 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="ac-intro" v-if="enrolMeta.formData && enrolMeta.formData.length">
+            <div class="title mx-1px-bottom">报名表单信息：</div>
+            <div class="intro-content">
+                <div class="info mx-1px-bottom" v-for="item in enrolMeta.formData">
+                    <div class="info-tit">{{item.key}}</div>
+                    <div class="info-detail">{{item.value}}</div>
+                </div>
+            </div>
+        </div>
+
         <!--<div class="total-price">
             <div class="ac-total">
                 <span>活动总价</span>

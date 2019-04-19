@@ -140,15 +140,22 @@
                 </navigator>
             </div>
         </div>-->
-        <div class="tabbar">
+        <!--<div class="tabbar">
             <div class="mx-1px-right" @click="jumpList">活动列表</div>
             <div class="active">个人中心</div>
-        </div>
+        </div>-->
+        <tab-bar index="2">
+
+        </tab-bar>
     </div>
 </template>
 <script>
     import { getUrl } from '../../utils';
+    import tabBar from '../../components/tabbar';
     export default{
+        components: {
+            tabBar
+        },
         data(){
             return{
                 info:{},

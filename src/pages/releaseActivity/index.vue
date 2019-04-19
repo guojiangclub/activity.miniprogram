@@ -1,11 +1,5 @@
 <template>
     <div id="release-activity">
-        <!--下面的tabbar-->
-        <div class="tabbar">
-            <div class="mx-1px-right" @click="jumpMine(1)">活动列表</div>
-            <div class="mx-1px-right active">发布活动</div>
-            <div @click="jumpMine(2)">个人中心</div>
-        </div>
         <!--内容开始-->
         <div class="content-top">
             <!--选择活动图片-->
@@ -92,22 +86,26 @@
         </div>
 
 
+        <tab-bar index="1">
 
+        </tab-bar>
     </div>
 </template>
 
 <script>
     import {getUrl} from '../../utils';
+    import tabBar from '../../components/tabbar';
     import PickerDate from '../../components/picker-date.vue';
 
     export default {
         components:{
-            PickerDate
+            PickerDate,
+            tabBar
         },
         data() {
             return {
                 token: '',
-                entry_end_at:'2021-01-01 12:38',//报名截止时间
+                entry_end_at:'',//报名截止时间
                 starts_at:'2021-01-01 12:38',//活动开始时间
                 ends_at:'2021-01-01 12:38',//活动结束时间
                 disabled:false,//设置是否能点击 false可以 true不能点击

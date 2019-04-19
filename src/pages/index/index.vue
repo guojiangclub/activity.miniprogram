@@ -44,16 +44,23 @@
     <div class="my-activity" @click="jumpMine(1)">
       我的活动
     </div>
-    <div class="tabbar">
+    <!--<div class="tabbar">
       <div class="mx-1px-right active">活动列表</div>
       <div @click="jumpMine(2)">个人中心</div>
-    </div>
+    </div>-->
+    <tab-bar index="0">
+
+    </tab-bar>
   </div>
 </template>
 
 <script>
     import { getUrl } from '../../utils';
+    import tabBar from '../../components/tabbar';
 export default {
+    components: {
+        tabBar
+    },
   data () {
     return {
         tabTitleList:[{

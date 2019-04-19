@@ -6,6 +6,6 @@ app.$mount()
 
 export default {
   config: {
-    navigationBarTitleText: '报名表单'
+    navigationBarTitleText: '发布活动'
   }
 }

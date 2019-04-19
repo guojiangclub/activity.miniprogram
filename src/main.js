@@ -177,6 +177,7 @@ export default {
             'pages/orderGoods/main',
             'pages/detailInfo/main',
             'pages/releaseActivity/main',
+            'pages/releaseActivityForm/main',
             'pages/signUpForm/main',
             'pages/signUpFormDetail/main',
             'pages/rictText/main',

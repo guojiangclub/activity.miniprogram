@@ -1,6 +1,6 @@
 <template>
     <div id="rictText">
-        <rict-text>
+        <rict-text @getDataList="getDataList">
 
         </rict-text>
     </div>
@@ -23,7 +23,11 @@
 
         },
         methods: {
-
+            getDataList(e) {
+                wx.redirectTo({
+                    url: '/pages/releaseActivity/main'
+                })
+            }
         },
         mounted() {
 

@@ -11,13 +11,13 @@
             <div class="name">
                 金额：
             </div>
-            <input type="digit" v-model="ticket.price" placeholder="请填写金额">
+            <input type="number" v-model="ticket.price" placeholder="请填写金额">
         </div>
         <div class="item mx-1px-bottom">
             <div class="name">
                 积分：
             </div>
-            <input type="digit" v-model="ticket.point" placeholder="请填写积分">
+            <input type="number" v-model="ticket.point" placeholder="请填写积分">
         </div>
         <div class="item mx-1px-bottom">
             <div class="name">

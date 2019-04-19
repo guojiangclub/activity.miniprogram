@@ -9,7 +9,7 @@
                     <i @click='_deletedImg' :data-index='index' class='iconfont icon-close-circle-o close_img'>
                     </i>
                 </div>
-                <textarea v-show="isEdit" class='input_view' maxlength='-1' auto-height='true'  v-model.lazy="item.info" placeholder='写点什么...' :focus='focusList[index+1].focus' @blur="_outBlur" :style="{width:width-20 + 'px'}" :data-index='index+1'  />
+                <textarea v-show="isEdit" class='input_view' maxlength='-1' auto-height='true'  v-model.lazy="item.info" placeholder='写点什么...' :focus='focusList[index+1] ? focusList[index+1].focus : false' @blur="_outBlur" :style="{width:width-20 + 'px'}" :data-index='index+1'  />
                 <div  v-show="!isEdit" @click='_focusView' class='input_view2 text-gray' :data-index='index+1'>{{item.info||'写点什么...'}}</div>
             </div>
         </div>
@@ -46,7 +46,7 @@
             },
             max_length:{ // 传入图片上限，默认为4
                 type:Number,
-                default:4
+                default:100
             }
         },
         data() {
@@ -70,12 +70,21 @@
             /*this.setData({
                 width: app.globalData.systemInfo.windowWidth
             })*/
+            let list = this.$storage.get('rictText');
+            this.initlist = list;
             this._initRichText();
         },
         methods: {
             _initRichText(){
-                console.log(this.data);
+                console.log(this.initlist);
+                let list = [];
                 if (this.initlist && this.initlist.length>0){// 初始化数据不为空
+                    this.initlist.forEach((item, index) => {
+                        list.push({
+                            focus: false
+                        })
+                    })
+                    this.focusList = list;
                     for (let i = 0; i < this.initlist.length;i++){
                         if(i===0){
                             if (this.initlist[i].type===0){
@@ -88,7 +97,7 @@
                             }
                         } else {
                             if (this.initlist[i].type === 0) { // 文字
-                                this.dataList[this.dataList.length - 1].info = this.data.initlist[i].info;
+                                this.dataList[this.dataList.length - 1].info = this.initlist[i].info;
                             } else {
                                 this.dataList.push({
                                     img: this.initlist[i].info,
@@ -125,27 +134,49 @@
             _addImg(){
                 if(this.dataList.length<this.max_length){
                     wx.chooseImage({
+                        count: 1,
                         success: res => {
                             let tempFilePaths = res.tempFilePaths
                             let token = this.$storage.get('user_token');
-
+                            wx.showLoading({
+                                title: '正在上传',
+                                mask: true
+                            })
                             wx.uploadFile({
                                 header: {
                                     'content-type': 'multipart/form-data',
                                     Authorization: token
                                 },
-                                url: this.$config.GLOBAL.baseUrl + 'api/users/upload/avatar',
+                                url: this.$config.GLOBAL.baseUrl + 'api/image/upload',
                                 filePath: tempFilePaths[0],
-                                name: 'avatar_file',
+                                name: 'image',
                                 success: rej => {
-                                    var result = JSON.parse(rej.data);
-                                    this.dataList.splice(this.insertIndex, 0, {
-                                        img: result.data.url,
-                                        info: ''
-                                    })
-                                    this.focusList.splice(this.insertIndex + 1, 0, {
-                                        focus: false
-                                    })
+                                    if (rej.statusCode ==200) {
+                                        var result = JSON.parse(rej.data);
+                                        if (result.status) {
+                                            this.dataList.splice(this.insertIndex, 0, {
+                                                img: result.data.url,
+                                                info: ''
+                                            })
+                                            this.focusList.splice(this.insertIndex + 1, 0, {
+                                                focus: false
+                                            })
+                                        } else {
+                                            wx.showModal({
+                                                content: result.message || '请求失败，请重试',
+                                                showCancel: false,
+                                            })
+                                        }
+                                        wx.hideLoading();
+                                    } else {
+                                        wx.showModal({
+                                            content: '请求失败，请重试',
+                                            showCancel: false,
+                                        })
+                                        wx.hideLoading();
+                                    }
+
+
                                 }
                             })
 
@@ -197,14 +228,14 @@
                             })
                         }
                     })
-                    console.log(list);
+                    /*console.log(list);*/
                     this.$emit('getDataList', list);
-
-                    this.releaseActivity();
+                    this.$storage.set('rictText', list, '30n');
+                    /*this.releaseActivity();*/
 
                 }, 150)
             },
-            releaseActivity() {
+           /* releaseActivity() {
                 const token = this.$storage.get('user_token');
                 let data = {
                     title: '这个是活动名称', // 活动名称
@@ -256,7 +287,7 @@
                     })
                     wx.hideLoading();
                 })
-            }
+            }*/
         }
     }
 </script>

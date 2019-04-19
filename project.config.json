@@ -29,7 +29,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 22,
+			"current": 23,
 			"list": [
 				{
 					"id": -1,
@@ -171,6 +171,13 @@
 					"name": "富文本页面",
 					"pathName": "pages/rictText/main",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": 23,
+					"name": "活动表单页面",
+					"pathName": "pages/releaseActivityForm/main",
+					"query": "id=1",
 					"scene": null
 				}
 			]

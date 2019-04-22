@@ -191,7 +191,8 @@ export default {
         },
         navigateToMiniProgramAppIdList: [
             'wx38e537a9de6d096a',
-            'wx8eed5123f76a1cf2'
+            'wx8eed5123f76a1cf2',
+            'wx53d4c6e7b2c13a13'
         ],
         permission: {
             "scope.userLocation": {

@@ -2,167 +2,168 @@
     <div id="release-activity">
         <div class="un-token" v-if="!token">
             <div class="avatar">
-                <image mode="widthFix"  src="../../../static/image/defaultAvatar.png"></image>
+                <image class="avatarImg"  src="../../static/image/defaultAvatar.png"></image>
             </div>
             <div class="txt">登录发布活动</div>
             <div class="btn" @click="jumpLogin">登录账号</div>
         </div>
-        <div class="un-token" v-if="token && initData.can_publish == 0">
-            <div class="avatar">
-                <image mode="widthFix" src="../../../static/image/svip.png"></image>
-            </div>
-            <div class="txt">活动仅支持SVIP发布</div>
-            <div class="btn svip-btn">
-                <navigator target="miniProgram" hover-class="none" app-id="wx009e0be72cbf5e80" class="item">
-                    升级为SVIP
-                </navigator>
-            </div>
-        </div>
-        <div v-if="token && initData.can_publish">
-            <!--内容开始-->
-            <div class="content-top">
-                <!--选择活动图片-->
-                <div class="choose-img" @click="uploadImg">
-                    <div class="has-img" v-if="activity_data.img">
-                        <image :src="activity_data.img"></image>
-                        <div class="edit-img">
-                            <span class="iconfont icon-edit"></span>
-                            修改图片
-                        </div>
-                    </div>
-                    <image v-else mode="widthFix" src="../../static/image/choose-img.png"></image>
-                </div>
-                <!--活動名稱  活動詳情描述-->
-                <div class="name-describle">
-                    <div class="name mx-1px-bottom">
-                        <div class="topic">活动名称:</div>
-                        <input type="text" placeholder="请输入活动名称" placeholder-class="input-placeholder" v-model="activity_data.title"/>
-                    </div>
-                    <div class="describle" @click="jumpRictText">
-                        <div class="has-content" v-if="content && content.length">
-                            <div class="item" v-for="(item,index) in content">
-                                <div class="type-text" v-if="item.type == 0">{{item.info}}</div>
-                                <image mode="widthFix" :src="item.info" v-if="item.type == 1"></image>
-                            </div>
-                        </div>
-                        <textarea v-else disabled="true" name="" id="" cols="30" rows="10" placeholder="活动详情描述" placeholder-class="textarea-placeholder"></textarea>
-                    </div>
-                    <div class="continue-edit" v-if="content && content.length" @click="jumpRictText">
-                        <span class="iconfont icon-edit"></span>
-                        继续编辑
-                    </div>
-                </div>
-                <!--報名細節-->
-                <div class="attention-detail">
-                    <div class="tui-picker-content mar-b">
-                        <div class="topic">报名截止时间：</div>
-                        <div class="picker-info">
-                            <PickerDate :placeholder="placeholder" :date="activity_data.entry_end_at" :disabled="disabled" @onPickerChange="onPickerChange" :startDate="startDate" :endDate="endDate"></PickerDate>
-                        </div>
-                    </div>
-                    <div class="time-picker">
-                        <div class="tui-picker-content mx-1px-bottom pa-none">
-                            <div class="topic">活动开始时间：</div>
-                            <div class="picker-info">
-                                <PickerDate :placeholder="start_placeholder" :date="activity_data.starts_at" :disabled="start_show" @onPickerChange="onPickerStart" :startDate="startDate" :endDate="endDate"></PickerDate>
-                            </div>
-                        </div>
-                        <div class="tui-picker-content pa-none">
-                            <div class="topic">活动结束时间：</div>
-                            <div class="picker-info">
-                                <PickerDate :placeholder="end_placeholder" :date="activity_data.ends_at" :disabled="end_show" @onPickerChange="onPickerEnd" :startDate="startDate" :endDate="endDate"></PickerDate>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--活动的城市地点-->
-                <div class="city-adress">
-                    <div class="city item mx-1px-bottom">
-                        <div class="topic">活动城市：</div>
-                        <div class="picker-info">
-                            <picker @change="bindPickerChange" :value="city_index" :range="city_array">
-                                <div class="picker" v-if="activity_data.city_id">
-                                    {{city_array[city_index]}} <span class="iconfont icon-Group104 selected"></span>
-                                </div>
-                                <div class="picker choose-txt" v-else>
-                                    请选择 <span class="iconfont icon-Group104"></span>
-                                </div>
-                            </picker>
-                        </div>
-                    </div>
-                    <div class="adress item">
-                        <div class="topic">活动地点：</div>
-                        <div class="picker-info" @click="chooseLocation">
-                            <div class="picker" v-if="activity_data.address_point">{{activity_data.address}}</div>
-                            <div class="picker choose-txt" v-else>
-                                请选择 <span class="iconfont icon-Group104"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!--活动规模-->
-                <div class="detail-infomation">
-                    <div class="item mar-b">
-                        <div class="topic">活动规模：</div>
-                        <input type="number" placeholder="请输入活动规模" placeholder-class="input-placeholder" v-model="activity_data.member_limit"/>
-                    </div>
-                    <div class="item mar-b" @click="jumpSignUpForm">
-                        <div class="topic">报名费用：</div>
-                        <div class="picker-info">
-                            <div class="picker" v-if="activity_data.payments[0].title">
-                                ￥ {{activity_data.payments[0].price}} + {{activity_data.payments[0].point}} 积分
-                                <span class="iconfont icon-Group104 selected"></span>
-                            </div>
-                            <div class="picker choose-txt" v-else>
-                                请设置 <span class="iconfont icon-Group104"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item mar-b" @click="jumpReleaseActivityForm">
-                        <div class="topic">报名表单：</div>
-                        <div class="picker-info">
-                            <div class="picker choose-txt">
-                                已设置 请点击查看 <span class="iconfont icon-Group104"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="item">
-                        <div class="topic" @click="lookDetail">免责声明 <span class="iconfont icon-question-circle-o"></span></div>
-                        <div class="picker-info">
-                            <switch color="#FB5054" @change="switchChange"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="commit-btn can" @click="confirmRelease">
-                    确认发布
-                </div>
-            </div>
-            <!--用户拒绝授权弹出-->
-            <div class="mask" v-if="is_refused">
-                <div class="paney">
-                    <div class="paney-body">
-                        重新授权，打开地图选择位置
-                    </div>
-                    <div class="paney-foot">
-                        <button @click="changeSave" class="mx-1px-right">取消</button>
-                        <button open-type="openSetting" @click="changeSave">确定</button>
-                    </div>
-                </div>
-            </div>
+       <block v-if="token">
+           <div class="un-token" v-if="token && initData.can_publish == 0">
+               <div class="avatar">
+                   <image class="svipImg" src="../../static/image/svip.png"></image>
+               </div>
+               <div class="txt">活动仅支持SVIP发布</div>
+               <div class="btn svip-btn">
+                   <navigator target="miniProgram" hover-class="none" app-id="wx53d4c6e7b2c13a13" path="/pages/recharge/index/index" class="item">
+                       升级为SVIP
+                   </navigator>
+               </div>
+           </div>
+           <div  v-if="token && initData.can_publish">
+               <!--内容开始-->
+               <div class="content-top">
+                   <!--选择活动图片-->
+                   <div class="choose-img" @click="uploadImg">
+                       <div class="has-img" v-if="activity_data.img">
+                           <image :src="activity_data.img" class="img-bbs" mode='aspectFill'></image>
+                           <div class="edit-img">
+                               <span class="iconfont icon-edit"></span>
+                               修改图片
+                           </div>
+                       </div>
+                       <image v-else mode="widthFix" src="../../static/image/choose-img.png"></image>
+                   </div>
+                   <!--活動名稱  活動詳情描述-->
+                   <div class="name-describle">
+                       <div class="name mx-1px-bottom">
+                           <div class="topic">活动名称:</div>
+                           <input type="text" placeholder="请输入活动名称" placeholder-class="input-placeholder" v-model="activity_data.title"/>
+                       </div>
+                       <div class="describle" @click="jumpRictText">
+                           <div class="has-content" v-if="content && content.length">
+                               <div class="item" v-for="(item,index) in content">
+                                   <div class="type-text" v-if="item.type == 0">{{item.info}}</div>
+                                   <image mode="widthFix" :src="item.info" v-if="item.type == 1"></image>
+                               </div>
+                           </div>
+                           <textarea v-else disabled="true" name="" id="" cols="30" rows="10" placeholder="活动详情描述" placeholder-class="textarea-placeholder"></textarea>
+                       </div>
+                       <div class="continue-edit" v-if="content && content.length" @click="jumpRictText">
+                           <span class="iconfont icon-edit"></span>
+                           继续编辑
+                       </div>
+                   </div>
+                   <!--報名細節-->
+                   <div class="attention-detail">
+                       <div class="tui-picker-content mar-b">
+                           <div class="topic">报名截止时间：</div>
+                           <div class="picker-info">
+                               <PickerDate :placeholder="placeholder" :date="activity_data.entry_end_at" :disabled="disabled" @onPickerChange="onPickerChange" :startDate="startDate" :endDate="endDate"></PickerDate>
+                           </div>
+                       </div>
+                       <div class="time-picker">
+                           <div class="tui-picker-content mx-1px-bottom pa-none">
+                               <div class="topic">活动开始时间：</div>
+                               <div class="picker-info">
+                                   <PickerDate :placeholder="start_placeholder" :date="activity_data.starts_at" :disabled="start_show" @onPickerChange="onPickerStart" :startDate="startDate" :endDate="endDate"></PickerDate>
+                               </div>
+                           </div>
+                           <div class="tui-picker-content pa-none">
+                               <div class="topic">活动结束时间：</div>
+                               <div class="picker-info">
+                                   <PickerDate :placeholder="end_placeholder" :date="activity_data.ends_at" :disabled="end_show" @onPickerChange="onPickerEnd" :startDate="startDate" :endDate="endDate"></PickerDate>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <!--活动的城市地点-->
+                   <div class="city-adress">
+                       <div class="city item mx-1px-bottom">
+                           <div class="topic">活动城市：</div>
+                           <div class="picker-info">
+                               <picker @change="bindPickerChange" :value="city_index" :range="city_array">
+                                   <div class="picker" v-if="activity_data.city_id">
+                                       {{city_array[city_index]}} <span class="iconfont icon-Group104 selected"></span>
+                                   </div>
+                                   <div class="picker choose-txt" v-else>
+                                       请选择 <span class="iconfont icon-Group104"></span>
+                                   </div>
+                               </picker>
+                           </div>
+                       </div>
+                       <div class="adress item">
+                           <div class="topic">活动地点：</div>
+                           <div class="picker-info" @click="chooseLocation">
+                               <div class="picker" v-if="activity_data.address_point">{{activity_data.address}}</div>
+                               <div class="picker choose-txt" v-else>
+                                   请选择 <span class="iconfont icon-Group104"></span>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                   <!--活动规模-->
+                   <div class="detail-infomation">
+                       <div class="item mar-b">
+                           <div class="topic">活动规模：</div>
+                           <input type="number" placeholder="请输入活动规模" placeholder-class="input-placeholder" v-model="activity_data.member_limit"/>
+                       </div>
+                       <div class="item mar-b" @click="jumpSignUpForm">
+                           <div class="topic">报名费用：</div>
+                           <div class="picker-info">
+                               <div class="picker" v-if="activity_data.payments[0].title">
+                                   ￥ {{activity_data.payments[0].price}} + {{activity_data.payments[0].point}} 积分
+                                   <span class="iconfont icon-Group104 selected"></span>
+                               </div>
+                               <div class="picker choose-txt" v-else>
+                                   请设置 <span class="iconfont icon-Group104"></span>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="item mar-b" @click="jumpReleaseActivityForm">
+                           <div class="topic">报名表单：</div>
+                           <div class="picker-info">
+                               <div class="picker choose-txt">
+                                   已设置 请点击查看 <span class="iconfont icon-Group104"></span>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="item">
+                           <div class="topic" @click="lookDetail">免责声明 <span class="iconfont icon-question-circle-o"></span></div>
+                           <div class="picker-info">
+                               <switch color="#FB5054" @change="switchChange"/>
+                           </div>
+                       </div>
+                   </div>
+                   <div class="commit-btn can" @click="confirmRelease">
+                       确认发布
+                   </div>
+               </div>
+               <!--用户拒绝授权弹出-->
+               <div class="mask" v-if="is_refused">
+                   <div class="paney">
+                       <div class="paney-body">
+                           重新授权，打开地图选择位置
+                       </div>
+                       <div class="paney-foot">
+                           <button @click="changeSave" class="mx-1px-right">取消</button>
+                           <button open-type="openSetting" @click="changeSave">确定</button>
+                       </div>
+                   </div>
+               </div>
 
-            <div class="statement_content" v-if="statement">
-                <div class="statement_content_title mx-1px-bottom">
-                    <h3>声明详情</h3>
-                </div>
-                <div class="statement_content_body">
-                    <wxParse :content="initData.statement.statement"></wxParse>
-                </div>
-                <div class="statement_content_footer" @click="lookDetail">
-                    我知道了
-                </div>
-            </div>
-        </div>
-
+               <div class="statement_content" v-if="statement">
+                   <div class="statement_content_title mx-1px-bottom">
+                       <h3>声明详情</h3>
+                   </div>
+                   <div class="statement_content_body">
+                       <wxParse :content="initData.statement.statement"></wxParse>
+                   </div>
+                   <div class="statement_content_footer" @click="lookDetail">
+                       我知道了
+                   </div>
+               </div>
+           </div>
+       </block>
         <tab-bar index="1">
 
         </tab-bar>
@@ -196,7 +197,7 @@
                 end_placeholder: '请选择时间',
                 city_index: -1,
                 content: [],
-                city_array: ['美国', '中国', '巴西', '日本'],
+                city_array: [],
                 statement: false,
                 address: '',//活动地址
                 address_point: '',//详细活动地址经纬度
@@ -229,6 +230,7 @@
             }
         },
         onLoad() {
+            this.isSuccess = false;
             var token = this.$storage.get('user_token');
             this.token = token;
             if(token){
@@ -242,6 +244,8 @@
             var ticketList = this.$storage.get('ticketList');
             var activityData = this.$storage.get('activityData');
             if (activityData) {
+
+                console.log('跑这了嘛');
                 this.activity_data = activityData;
                 if (activityData.starts_at) {
                     this.start_placeholder = activityData.starts_at
@@ -502,9 +506,10 @@
 //            确认发布的按钮的事件
             confirmRelease(){
                 var data = this.activity_data;
-                var entry_end_at = new Date(data.entry_end_at).getTime();
-                var starts_at = new Date(data.starts_at).getTime();
-                var ends_at = new Date(data.ends_at).getTime();
+                var entry_end_at = new Date(data.entry_end_at + ':00').getTime();
+                var starts_at = new Date(data.starts_at + ':00').getTime();
+                var ends_at = new Date(data.ends_at + ':00').getTime();
+                console.log(entry_end_at, starts_at, ends_at);
                 var message = '';
                 if (!data.img) {
                     message = "请选择活动图片"
@@ -528,7 +533,7 @@
                     message = "请设置报名费用"
                 } else if (entry_end_at > starts_at) {
                     message = '报名截止时间 不能晚于 活动开始时间'
-                } else if (starts_at > ends_at) {
+                } else if (starts_at >= ends_at) {
                     message = '活动结束时间 不能早于 活动开始时间'
                 }
                 if (message) {
@@ -544,7 +549,7 @@
 
             releaseActivity() {
                 const token = this.$storage.get('user_token');
-                let data = this.activity_data;
+                let data = Object.assign({}, this.activity_data);
                 let content = '';
                 let rich_text = this.$storage.get('rictText');
                 let ticketList = this.$storage.get('ticketList');
@@ -571,6 +576,32 @@
                     res = res.data;
                     if (res.status) {
                         this.isSuccess = true;
+                        this.content = [];
+                        this.placeholder = '请选择时间';
+                        this.start_placeholder = '请选择时间';
+                        this.end_placeholder = '请选择时间';
+                        this.dateString = '请选择时间';
+                        this.activity_data.title = '';
+                        this.activity_data.img = '';
+                        this.activity_data.img_list = '';
+                        this.activity_data.content = '';
+                        this.activity_data.starts_at = '';
+                        this.activity_data.ends_at = '';
+                        this.activity_data.entry_end_at = '';
+                        this.activity_data.city_id = '';
+                        this.activity_data.address = '';
+                        this.activity_data.address_point = '';
+                        this.activity_data.member_limit = '';
+                        this.activity_data.form_id = '';
+                        this.activity_data.statement_id = '';
+                        this.activity_data.payments = [
+                            {
+                                title: '', // 电子票名称
+                                price: '', // 电子票金额
+                                point: '', // 电子票积分
+                                limit: '' // 电子票数量限制
+                            }
+                        ]
                         this.$storage.clear('city_array');
                         this.$storage.clear('initData');
                         this.$storage.clear('activityData');
@@ -616,9 +647,17 @@
             .avatar{
                 width: 80px;
                 margin: 0 auto;
-                image{
+                /*image{
                     width: 100%;
                     vertical-align: middle;
+                }*/
+                .avatarImg {
+                    width: 80px;
+                    height: 80px;
+                }
+                .svipImg {
+                    width: 80px;
+                    height: 35px;
                 }
             }
             .txt{
@@ -680,6 +719,9 @@
             }
             .has-img {
                 position: relative;
+                .img-bbs {
+                    height: 150px;
+                }
                 .edit-img {
                     position: absolute;
                     right: 15px;

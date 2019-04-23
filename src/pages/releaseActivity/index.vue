@@ -46,7 +46,9 @@
                                    <image mode="widthFix" :src="item.info" v-if="item.type == 1"></image>
                                </div>
                            </div>
-                           <textarea v-else disabled="true" name="" id="" cols="30" rows="10" placeholder="活动详情描述" placeholder-class="textarea-placeholder"></textarea>
+                           <div v-else class="textarea-placeholder">
+                               活动详情描述
+                           </div>
                        </div>
                        <div class="continue-edit" v-if="content && content.length" @click="jumpRictText">
                            <span class="iconfont icon-edit"></span>
@@ -154,13 +156,16 @@
                <div class="statement_content" v-if="statement">
                    <div class="statement_content_title mx-1px-bottom">
                        <h3>声明详情</h3>
+                       <div @click="lookDetail" class="close-statement">
+                           关闭
+                       </div>
                    </div>
                    <div class="statement_content_body">
                        <wxParse :content="initData.statement.statement"></wxParse>
                    </div>
-                   <div class="statement_content_footer" @click="lookDetail">
+                   <!--<div class="statement_content_footer" @click="lookDetail">
                        我知道了
-                   </div>
+                   </div>-->
                </div>
            </div>
        </block>
@@ -230,7 +235,9 @@
             }
         },
         onLoad() {
+            Object.assign(this.$data, this.$options.data());
             this.isSuccess = false;
+            this.statement = false;
             var token = this.$storage.get('user_token');
             this.token = token;
             if(token){
@@ -408,6 +415,7 @@
             },
 //           跳到活动详情描述页面去
             jumpRictText(){
+                console.log(666);
                 wx.navigateTo({
                     url: '/pages/rictText/main'
                 })
@@ -593,7 +601,7 @@
                         this.activity_data.address_point = '';
                         this.activity_data.member_limit = '';
                         this.activity_data.form_id = '';
-                        this.activity_data.statement_id = '';
+                        this.activity_data.statement_id = 0;
                         this.activity_data.payments = [
                             {
                                 title: '', // 电子票名称
@@ -608,8 +616,9 @@
                         this.$storage.clear('rictText');
                         this.$storage.clear('ticketList');
                         wx.reLaunch({
-                            url:'/pages/detail/main?id='+res.data.id
+                            url:'/pages/releaseActivitySuccess/main'
                         })
+
 
                     } else {
                         wx.showModal({
@@ -774,14 +783,12 @@
                         padding: 8px 0;
                     }
                 }
-                textarea {
-                    width: 100%;
-                    height: 80px;
-                    font-size: 14px;
-                    line-height: 18px;
-                }
                 .textarea-placeholder {
                     color: #999999;
+                    font-size: 14px;
+                    line-height: 18px;
+                    width: 100%;
+                    height: 80px;
                     font-size: 14px;
                     line-height: 18px;
                 }
@@ -1044,6 +1051,11 @@
                 background-color: #1aad19;
                 padding-top: 10px;
                 padding-bottom: 10px;
+            }
+            .close-statement {
+                position: absolute;
+                top: 10px;
+                right: 10px;
             }
         }
     }

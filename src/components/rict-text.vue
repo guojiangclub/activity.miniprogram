@@ -1,16 +1,16 @@
 <template>
     <div>
         <div class="rict-box">
-            <textarea v-show="isEdit" class='input_view' maxlength='-1' auto-height='true'   v-model.lazy="firstCon" placeholder='写点什么...' :focus='focusList[0].focus' @blur="_outBlur" :style="{width:width-20 + 'px'}"   data-index='0' />
-            <div v-show="!isEdit" @click='_focusView' class='input_view2 text-gray' data-index='0'>{{firstCon||"写点什么..."}}</div>
+            <textarea v-if="isEdit" class='input_view' maxlength='-1' auto-height='true'   v-model.lazy="firstCon" placeholder='写点什么...' :focus='focusList[0].focus' @blur="_outBlur" :style="{width:width-20 + 'px'}"   data-index='0' />
+            <div v-if="!isEdit" @click='_focusView' class='input_view2 text-gray' data-index='0'>{{firstCon||"写点什么..."}}</div>
             <div v-for="item in dataList" :key="index">
                 <div class='img_view' :style="{height: width / 2 + 'px'}">
                     <image :src='item.img' mode='aspectFill' />
                     <i @click='_deletedImg' :data-index='index' class='iconfont icon-close-circle-o close_img'>
                     </i>
                 </div>
-                <textarea v-show="isEdit" class='input_view' maxlength='-1' auto-height='true'  v-model.lazy="item.info" placeholder='写点什么...' :focus='focusList[index+1] ? focusList[index+1].focus : false' @blur="_outBlur" :style="{width:width-20 + 'px'}" :data-index='index+1'  />
-                <div  v-show="!isEdit" @click='_focusView' class='input_view2 text-gray' :data-index='index+1'>{{item.info||'写点什么...'}}</div>
+                <textarea v-if="isEdit" class='input_view' maxlength='-1' auto-height='true'  v-model.lazy="item.info" placeholder='写点什么...' :focus='focusList[index+1] ? focusList[index+1].focus : false' @blur="_outBlur" :style="{width:width-20 + 'px'}" :data-index='index+1'  />
+                <div v-if="!isEdit" @click='_focusView' class='input_view2 text-gray' :data-index='index+1'>{{item.info||'写点什么...'}}</div>
             </div>
         </div>
         <div class='add-img'>
@@ -22,9 +22,9 @@
         </div>
 
 
-        <cover-view class='save' @click='_saveRichText'>
+        <div class='save' @click='_saveRichText'>
             保存
-        </cover-view>
+        </div>
     </div>
 </template>
 
@@ -32,10 +32,6 @@
 <script>
     export default {
         props: {
-            firstCon:{
-                type:String,
-                default:''
-            },
             initlist:{ // 用于初始化数据，例如，编辑富文本
                 type:Array,
                 default:[]
@@ -58,20 +54,26 @@
                 isEdit:true,
                 addImgView:{},
                 insertIndex:0,
-                width:375
+                width:375,
+                firstCon: ''
             }
         },
-        mounted() { // 当组件挂载到页面时，才会执行初始化
+        mounted() {
+            Object.assign(this.$data, this.$options.data());
+            this.dataList = [];
+            this.focusList = [
+                {
+                    focus:true
+                }
+            ]
+            this.isEdit = true;
+            this.insertIndex = 0;
+            this.addImgView = {};
             wx.getSystemInfo({
                 success: res => {
                     this.width = res.windowWidth
                 }
             })
-            /*this.setData({
-                width: app.globalData.systemInfo.windowWidth
-            })*/
-            let list = this.$storage.get('rictText');
-            this.initlist = list;
             this._initRichText();
         },
         methods: {

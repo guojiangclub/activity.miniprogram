@@ -785,9 +785,9 @@
                             'content-type': 'multipart/form-data',
                             Authorization: token
                         },
-                        url:this.$config.GLOBAL.baseUrl + 'api/users/upload/avatar',
+                        url:this.$config.GLOBAL.baseUrl + 'api/activity/image/upload',
                         filePath: tempFilePaths[0],
-                        name:'avatar_file', //与后台商定的名字，文件对应的 key , 开发者在服务器端通过这个 key 可以获取到文件二进制内容
+                        name:'image', //与后台商定的名字，文件对应的 key , 开发者在服务器端通过这个 key 可以获取到文件二进制内容
                         success:rej=>{
                         var result = JSON.parse(rej.data);
                         this.user[name].push(result.data.url);

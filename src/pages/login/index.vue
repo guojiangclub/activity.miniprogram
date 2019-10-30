@@ -19,7 +19,8 @@
         </div>
         <div class="select">
             <checkbox @click="changeChecked" color="#fff" :checked="checked"/>
-            <text> 同意《万有邻里》用户协议</text>
+            <!--<text> 同意《万有邻里》用户协议</text>-->
+            <text> 同意《果酱互动》用户协议</text>
         </div>
     </view>
 </template>

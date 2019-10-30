@@ -52,8 +52,9 @@ export default {
         logo: 'https://wx.qlogo.cn/mmhead/Q3auHgzwzM5VMF6socvxnJjvddQokYfiajsakS87iaGneyQADwnzibRZQ/0',
         title: '平行镜界',
     },*/
+  //  https://uto-admin.ibrand.cc/  助力手百
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : 'https://uto-admin.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : ' https://guojiang-activity-demo.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

@@ -20,7 +20,8 @@
         data(){
             return {
                 url: '',
-                logo: this.$config.BRAND.logo,
+                /*logo: this.$config.BRAND.logo,*/
+                logo:'https://cdn.ibrand.cc/%E6%9E%9C%E9%85%B1.jpg',
                 code: '',
                 open_id: '',
                 union_id: '',

@@ -188,7 +188,7 @@
         },
         methods:{
             //请求收藏 积分 优惠券信息
-            getMarket(){
+            /*getMarket(){
                 this.$http.get(this.$config.GLOBAL.baseUrl+'api/users/market/ucenter',{
                     type:'activity'
                 },{
@@ -211,7 +211,7 @@
                         showCancel: false
                     })
                 })
-            },
+            },*/
             // 跳到首页
             jumpList(){
                 wx.reLaunch({

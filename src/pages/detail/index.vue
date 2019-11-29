@@ -76,10 +76,10 @@
                         <!--<wxParse :content="describe"></wxParse>-->
                     </div>
                 </div>
-                <div class="content goods-box" v-show="activeIndex == 2">
-                   <!--<div class="goods-tips">
+                <!--<div class="content goods-box" v-show="activeIndex == 2">
+                   &lt;!&ndash;<div class="goods-tips">
                        徒步鞋徒步袜，快干裤，短袖，皮肤风衣或软壳
-                   </div>-->
+                   </div>&ndash;&gt;
                     <div class="goods-list" v-if="meta && meta.goods">
                         <div class="goods-item" v-for="item in meta.goods">
                             <div class="goods">
@@ -142,7 +142,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>-->
             </div>
             <div class="fixed-btn">
                 <div class="btn-left">
@@ -209,9 +209,9 @@
 
             </div>
             <!--sku弹出-->
-            <div class="sku-box" :class="show_select ? 'active':''">
+            <!--<div class="sku-box" :class="show_select ? 'active':''">
                 <div class="select_goods_container">
-                    <!--关闭按钮-->
+                    &lt;!&ndash;关闭按钮&ndash;&gt;
                     <div class="select_goods_cloese" @click="show_select = false"></div>
                     <div class="select_goods_header">
 
@@ -263,7 +263,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>-->
         </block>
 
     </div>

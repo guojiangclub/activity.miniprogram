@@ -54,7 +54,7 @@ export default {
     },*/
   //  https://uto-admin.ibrand.cc/  助力手百
   GLOBAL: {
-    baseUrl: process.env.NODE_ENV === 'development' ? 'https://admin-dev.ibrand.cc/' : ' https://guojiang-activity-demo.ibrand.cc/', // 运行时自动替换变量
+    baseUrl: process.env.NODE_ENV === 'development' ? 'https://activity-admin-demo.guojiang.club/' : ' https://guojiang-activity-demo.ibrand.cc/', // 运行时自动替换变量
   },
   PACKAGES: {
     activity: false,

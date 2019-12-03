@@ -24,10 +24,10 @@
                         <view class="iconfont icon-Group98 under"></view>
                     </picker>
                 </div>
-                <div class="code">
+                <!--<div class="code">
                     <div class="detail">QQ</div>
                     <input type="text" placeholder="请输入QQ号码" @input="changeQQ" :value="qq"/>
-                </div>
+                </div>-->
                 <div class="code">
                     <div class="detail">手机号码</div>
                     <input type="text"   disabled :value="mobile"/>

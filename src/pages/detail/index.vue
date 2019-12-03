@@ -69,7 +69,7 @@
                             <image :src="detail.coach.avatar"></image>
                         </div>
                         <div class='coach-name'>{{detail.coach.nick_name}}</div>
-                        <div class="coach-nick">{{detail.coach.title}}</div>
+                        <!--<div class="coach-nick">{{detail.coach.title}}</div>-->
                     </div>
                     <div class="coach-txt" v-show="detail.coach">
                         <wxparser :rich-text="describe"></wxparser>

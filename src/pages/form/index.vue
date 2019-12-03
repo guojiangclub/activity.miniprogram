@@ -279,7 +279,6 @@
         }
 
         checkRulues(that,obj) {
-            console.log('zheihi',obj);
             var message = "";
             var val = obj.val;
             if ((obj.name == "id_card" && that.user.certificate_type == 'id_card') || (obj.name == "id_card" && !that.user.certificate_type)) {
@@ -313,7 +312,6 @@
             else if (obj.name == 'user_name') {
                 if (!is.name(val)){
                     message = `您输入的${obj.title}不符合规范`
-                    console.log(message);
                 }
             }
             else if (obj.name != 'id_card' && obj.name != "other_certificate"){

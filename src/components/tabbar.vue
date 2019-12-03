@@ -3,9 +3,9 @@
         <cover-view class="item" @click="jumpPath(0, '/pages/index/main')"  :class="index == 0 ? 'active' : ''">
             活动列表
         </cover-view>
-        <cover-view class="item mx-1px-left-right" @click="jumpPath(1, '/pages/releaseActivity/main')" :class="index == 1 ? 'active' : ''">
+       <!-- <cover-view class="item mx-1px-left-right" @click="jumpPath(1, '/pages/releaseActivity/main')" :class="index == 1 ? 'active' : ''">
             发布活动
-        </cover-view>
+        </cover-view>-->
         <cover-view class="item" @click="jumpPath(2, '/pages/user/main')" :class="index == 2 ? 'active' : ''">
             个人中心
         </cover-view>

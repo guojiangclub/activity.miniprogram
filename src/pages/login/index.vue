@@ -179,8 +179,9 @@
                     .post(this.$config.GLOBAL.baseUrl + 'api/oauth/sms', data)
                     .then(res => {
                         res = res.data;
-                        if (res.access_token) {
-                            var result = res;
+                        console.log(res,"res")
+                        if (res.data.access_token) {
+                            var result = res.data;
                             if (result.access_token) {
                                 result.access_token = result.token_type + ' ' + result.access_token;
                                 var expires_in = result.expires_in || 315360000;

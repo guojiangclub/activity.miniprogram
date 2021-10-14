@@ -35,7 +35,7 @@ npm run build --report
 
 ## API
 
-API源码地址：[果酱互动API源码](https://gitee.com/guojiangclub/activity.api)
+API源码地址：[果酱互动API源码](https://github.com/guojiangclub/activity.api)
 
 ## 交流
 
